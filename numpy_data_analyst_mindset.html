@@ -1,0 +1,425 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NumPy for Data Analyst Mindset</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f7f2e8;
+      --surface: #fffdf8;
+      --ink: #182c24;
+      --muted: #4e655b;
+      --line: #d9d0bf;
+      --brand: #1b5fbf;
+      --brand2: #b45a2a;
+      --ok: #116d33;
+      --warn: #a14f10;
+      --code-bg: #0f233d;
+      --code-ink: #d8edff;
+      --radius: 14px;
+      --shadow: 0 12px 30px rgba(24, 44, 36, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Manrope", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 8% 10%, rgba(180, 90, 42, 0.12), transparent 36%),
+        radial-gradient(circle at 92% 12%, rgba(27, 95, 191, 0.12), transparent 35%),
+        var(--bg);
+      line-height: 1.64;
+    }
+
+    .wrap {
+      width: min(1160px, 92%);
+      margin: 0 auto;
+      padding: 24px 0 40px;
+    }
+
+    .hero, .card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .hero { padding: 18px; }
+    h1 { margin: 0; font-size: clamp(1.6rem, 3.2vw, 2.3rem); line-height: 1.2; }
+    .sub { margin: 8px 0 0; color: var(--muted); font-size: 0.98rem; max-width: 980px; }
+
+    .quick {
+      margin-top: 12px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .quick a {
+      text-decoration: none;
+      color: var(--ink);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 7px 12px;
+      font-size: 0.84rem;
+      background: #fff;
+      transition: transform 0.16s ease, border-color 0.16s ease;
+    }
+
+    .quick a:hover {
+      transform: translateY(-1px);
+      border-color: rgba(27, 95, 191, 0.6);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 14px;
+      margin-top: 16px;
+    }
+
+    .card { grid-column: span 12; padding: 16px; }
+    .w6 { grid-column: span 12; }
+
+    .chip {
+      display: inline-block;
+      font-size: 0.74rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      color: var(--brand);
+      background: rgba(27, 95, 191, 0.1);
+      border: 1px solid rgba(27, 95, 191, 0.28);
+      border-radius: 999px;
+      padding: 4px 10px;
+      margin-bottom: 8px;
+    }
+
+    h2, h3 { margin: 0 0 8px; line-height: 1.25; }
+    h2 { font-size: 1.22rem; }
+    h3 { font-size: 1rem; margin-top: 12px; }
+    p { margin: 0 0 10px; }
+
+    ul, ol { margin: 8px 0 0; padding-left: 20px; }
+    li { margin-bottom: 6px; }
+
+    .step {
+      margin-top: 10px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px;
+      background: #fff;
+    }
+
+    .step h4 {
+      margin: 0 0 6px;
+      color: var(--brand2);
+      font-size: 0.95rem;
+    }
+
+    pre {
+      margin: 10px 0 0;
+      border-radius: 10px;
+      background: var(--code-bg);
+      color: var(--code-ink);
+      border: 1px solid rgba(216, 237, 255, 0.24);
+      padding: 12px;
+      overflow-x: auto;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.83rem;
+      line-height: 1.55;
+    }
+
+    code {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.92em;
+      background: rgba(27, 95, 191, 0.08);
+      color: var(--brand);
+      padding: 2px 6px;
+      border-radius: 6px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      overflow: hidden;
+      background: #fff;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 10px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+      font-size: 0.9rem;
+    }
+
+    th {
+      background: rgba(27, 95, 191, 0.08);
+      font-size: 0.82rem;
+      font-weight: 800;
+    }
+
+    tr:last-child td { border-bottom: none; }
+
+    .out {
+      margin-top: 10px;
+      border-left: 4px solid var(--ok);
+      border-radius: 10px;
+      background: rgba(17, 109, 51, 0.09);
+      padding: 10px 12px;
+      font-size: 0.92rem;
+    }
+
+    .warn {
+      border-left-color: var(--warn);
+      background: rgba(161, 79, 16, 0.1);
+    }
+
+    .mind {
+      margin-top: 10px;
+      border-left: 4px solid var(--brand);
+      border-radius: 10px;
+      background: rgba(27, 95, 191, 0.09);
+      padding: 10px 12px;
+    }
+
+    @media (min-width: 920px) {
+      .w6 { grid-column: span 6; }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="hero">
+      <h1>NumPy Master Section: Numeric Thinking for Data Analysts</h1>
+      <p class="sub">NumPy is core for fast numeric operations and clean analytical logic. This section gives each NumPy keyword with meaning, output, and what decision/action you take from that output as a data analyst.</p>
+      <nav class="quick" aria-label="Quick links">
+        <a href="#flow">Analyst Workflow</a>
+        <a href="#keywords">NumPy Keywords</a>
+        <a href="#deep">Deep Examples</a>
+        <a href="#mindset">Analyst Mindset</a>
+        <a href="#checklist">Ready Checklist</a>
+      </nav>
+    </section>
+
+    <section class="grid" id="flow">
+      <article class="card">
+        <span class="chip">Workflow</span>
+        <h2>How a Data Analyst Should Use NumPy</h2>
+        <ol>
+          <li>Convert raw numeric columns to clean arrays first.</li>
+          <li>Use vectorized operations instead of loops for speed and consistency.</li>
+          <li>Validate ranges and distributions before KPI decisions.</li>
+          <li>Use masking for focused segment analysis.</li>
+          <li>Translate results into business action, not just math output.</li>
+        </ol>
+        <div class="mind">
+          <strong>Rule:</strong> NumPy is for truth in numbers. Use it to make numeric logic fast, auditable, and less error-prone.
+        </div>
+      </article>
+    </section>
+
+    <section class="grid" id="keywords">
+      <article class="card">
+        <span class="chip">Keyword Dictionary</span>
+        <h2>NumPy Keywords: Meaning -> Output -> What To Do Next</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Keyword</th>
+              <th>What it is</th>
+              <th>What output it gives</th>
+              <th>What you should do from that output</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><code>np.array()</code></td><td>Create ndarray</td><td>NumPy array object</td><td>Standardize numeric operations on one data type.</td></tr>
+            <tr><td><code>shape</code></td><td>Array dimensions</td><td>Tuple like <code>(rows, cols)</code></td><td>Verify expected structure before calculations.</td></tr>
+            <tr><td><code>ndim</code></td><td>Number of dimensions</td><td>1, 2, 3 ...</td><td>Choose correct indexing and axis operations.</td></tr>
+            <tr><td><code>dtype</code></td><td>Element data type</td><td><code>int64</code>, <code>float64</code>, etc.</td><td>Fix precision/performance trade-offs.</td></tr>
+            <tr><td><code>astype()</code></td><td>Type conversion</td><td>Array with new dtype</td><td>Prepare for accurate arithmetic and memory control.</td></tr>
+            <tr><td><code>np.arange()</code></td><td>Range creation</td><td>Sequence array</td><td>Build index/time-step simulations quickly.</td></tr>
+            <tr><td><code>np.linspace()</code></td><td>Evenly spaced points</td><td>Fixed count between start-end</td><td>Create smooth scales for trend modeling.</td></tr>
+            <tr><td><code>reshape()</code></td><td>Change shape</td><td>Same data, new dimensions</td><td>Prepare data for matrix operations/model input.</td></tr>
+            <tr><td><code>sum()</code></td><td>Total aggregation</td><td>Scalar or axis total</td><td>Compute total sales/cost quickly.</td></tr>
+            <tr><td><code>mean()</code></td><td>Average</td><td>Arithmetic mean</td><td>Benchmark typical value across segments.</td></tr>
+            <tr><td><code>median()</code></td><td>Middle value</td><td>Robust center</td><td>Use when outliers distort mean.</td></tr>
+            <tr><td><code>std()</code></td><td>Standard deviation</td><td>Spread metric</td><td>Check volatility and stability risk.</td></tr>
+            <tr><td><code>min()</code>/<code>max()</code></td><td>Extremes</td><td>Boundary values</td><td>Detect impossible or suspicious values.</td></tr>
+            <tr><td><code>percentile()</code></td><td>Quantile thresholds</td><td>Cutoff values</td><td>Build bands/tier rules for segmentation.</td></tr>
+            <tr><td><code>np.where()</code></td><td>Vectorized condition</td><td>Conditional mapped array</td><td>Create rule-based flags without loops.</td></tr>
+            <tr><td><code>np.isnan()</code></td><td>NaN detection</td><td>Boolean mask</td><td>Filter/fill missing numeric values.</td></tr>
+            <tr><td><code>np.nanmean()</code></td><td>Mean ignoring NaNs</td><td>NaN-safe average</td><td>Keep summaries stable with missing data.</td></tr>
+            <tr><td><code>boolean mask</code></td><td>Conditional filter</td><td>Subset array</td><td>Analyze only needed records quickly.</td></tr>
+            <tr><td><code>np.unique()</code></td><td>Unique values</td><td>Distinct sorted values</td><td>Inspect category-like numeric codes.</td></tr>
+            <tr><td><code>np.sort()</code></td><td>Sort values</td><td>Ordered array</td><td>Check tails and rank behavior.</td></tr>
+            <tr><td><code>np.argsort()</code></td><td>Sort indices</td><td>Index positions</td><td>Find top/bottom performers by index.</td></tr>
+            <tr><td><code>np.dot()</code>/<code>@</code></td><td>Matrix multiplication</td><td>Dot product/matrix result</td><td>Use weighted scoring and linear models.</td></tr>
+            <tr><td><code>np.corrcoef()</code></td><td>Correlation matrix</td><td>Pairwise correlations</td><td>Check relationships before feature selection.</td></tr>
+            <tr><td><code>np.random.*</code></td><td>Random sampling/distributions</td><td>Simulated arrays</td><td>Run Monte Carlo or scenario testing.</td></tr>
+            <tr><td><code>np.concatenate()</code></td><td>Join arrays</td><td>Merged array</td><td>Combine monthly numeric extracts.</td></tr>
+            <tr><td><code>np.stack()</code></td><td>Stack new dimension</td><td>Higher-dim array</td><td>Prepare multi-feature model blocks.</td></tr>
+          </tbody>
+        </table>
+      </article>
+    </section>
+
+    <section class="grid" id="deep">
+      <article class="card w6">
+        <span class="chip">Deep Example</span>
+        <h2><code>mean()</code> vs <code>median()</code> for Analyst Decisions</h2>
+        <pre><code>import numpy as np
+
+sales = np.array([500, 550, 520, 540, 20000])
+print("Mean:", sales.mean())
+print("Median:", np.median(sales))</code></pre>
+        <div class="out">
+          <strong>Output understanding:</strong>
+          <ul>
+            <li>Mean is inflated because of one extreme value.</li>
+            <li>Median better represents typical daily sales in this case.</li>
+          </ul>
+        </div>
+        <div class="step">
+          <h4>What to do next from this output</h4>
+          <ol>
+            <li>Use median in dashboard for typical performance metric.</li>
+            <li>Tag extreme values as special-event/outlier candidates.</li>
+            <li>Confirm with percentile checks before removing any values.</li>
+          </ol>
+        </div>
+      </article>
+
+      <article class="card w6">
+        <span class="chip">Deep Example</span>
+        <h2><code>np.where()</code> for Fast Business Flags</h2>
+        <pre><code>import numpy as np
+
+profit = np.array([1200, -300, 450, -50, 980])
+flag = np.where(profit < 0, "Loss", "Profit")
+print(flag)</code></pre>
+        <div class="out">
+          <strong>Output understanding:</strong>
+          <p>You get row-wise class labels instantly: <code>["Profit", "Loss", ...]</code> without Python loops.</p>
+        </div>
+        <div class="step">
+          <h4>What to do next from this output</h4>
+          <ol>
+            <li>Count loss rows to estimate risk exposure.</li>
+            <li>Segment by region/product and prioritize corrective action.</li>
+            <li>Feed flags into reporting and alert rules.</li>
+          </ol>
+        </div>
+      </article>
+
+      <article class="card">
+        <span class="chip">Mini Numeric Flow</span>
+        <h2>NumPy-First Analysis Flow in 10 Steps</h2>
+        <pre><code># 1) Create / load numeric arrays
+import numpy as np
+sales = np.array([45000, 52000, 48000, np.nan, 61000])
+cost  = np.array([30000, 35000, 32000, 28000, 40000])
+
+# 2) Missing check
+mask_nan = np.isnan(sales)
+
+# 3) NaN-safe fill
+sales[mask_nan] = np.nanmedian(sales)
+
+# 4) KPI math
+profit = sales - cost
+margin = (profit / sales) * 100
+
+# 5) Distribution checks
+summary = {
+    "mean_sales": np.mean(sales),
+    "median_sales": np.median(sales),
+    "std_sales": np.std(sales),
+    "p90_sales": np.percentile(sales, 90)
+}
+
+# 6) Risk flags
+loss_flag = np.where(profit < 0, 1, 0)
+
+# 7) Top performers index
+top_idx = np.argsort(sales)[-3:]
+
+# 8) Correlation signal
+corr = np.corrcoef(sales, cost)[0, 1]
+
+# 9) Decision summary
+# high volatility? high loss count? top values concentrated?
+
+# 10) Convert to business action
+# pricing fix, discount control, inventory adjustment</code></pre>
+      </article>
+    </section>
+
+    <section class="grid" id="mindset">
+      <article class="card">
+        <span class="chip">Mindset Training</span>
+        <h2>NumPy Mindset for Data Analysts</h2>
+
+        <div class="step">
+          <h4>1) Numeric integrity mindset</h4>
+          <p>Always ask: are numbers clean, comparable, and same unit? Bad units create false insights.</p>
+        </div>
+
+        <div class="step">
+          <h4>2) Speed + reliability mindset</h4>
+          <p>Prefer vectorized NumPy operations over manual loops for fewer mistakes and faster execution.</p>
+        </div>
+
+        <div class="step">
+          <h4>3) Distribution-aware mindset</h4>
+          <p>Never trust mean alone. Compare mean, median, std, and percentiles before decision.</p>
+        </div>
+
+        <div class="step">
+          <h4>4) Threshold mindset</h4>
+          <p>Use business thresholds with <code>np.where()</code> to create explainable flags and action groups.</p>
+        </div>
+
+        <div class="step">
+          <h4>5) Signal-to-action mindset</h4>
+          <p>End with a direct recommendation: what to fix, where, and expected impact.</p>
+        </div>
+
+        <div class="mind">
+          <strong>Interview one-liner:</strong> I use NumPy to make numerical decisions robust, fast, and defensible before reporting insights.
+        </div>
+      </article>
+    </section>
+
+    <section class="grid" id="checklist">
+      <article class="card">
+        <span class="chip">Ready Checklist</span>
+        <h2>Are You NumPy-Ready as a Data Analyst?</h2>
+        <table>
+          <thead>
+            <tr><th>Capability</th><th>Self check</th><th>Status</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>I can choose mean vs median correctly</td><td>Outlier-aware metric decision</td><td>___</td></tr>
+            <tr><td>I can use masks and <code>np.where()</code></td><td>Fast segmentation and flags</td><td>___</td></tr>
+            <tr><td>I can detect missing values and fix safely</td><td><code>np.isnan</code> + NaN-safe aggregates</td><td>___</td></tr>
+            <tr><td>I can interpret spread and volatility</td><td><code>std</code> + percentiles + risk signal</td><td>___</td></tr>
+            <tr><td>I can explain numeric output in business language</td><td>Metric -> reason -> action flow</td><td>___</td></tr>
+          </tbody>
+        </table>
+        <div class="out warn">
+          <strong>Practice plan:</strong> For the next 10 days, solve one numeric scenario daily with NumPy only, then explain results in 3 business sentences.
+        </div>
+      </article>
+    </section>
+  </main>
+</body>
+</html>
