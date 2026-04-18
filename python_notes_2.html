@@ -1,0 +1,1908 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Python Notes 2 - Advanced Continuation</title>
+  <style>
+    :root {
+      --bg: #f7f6f1;
+      --bg-alt: #eef6f0;
+      --surface: #ffffff;
+      --surface-2: #f4fbf8;
+      --text: #1f2d24;
+      --muted: #526258;
+      --line: #d5ddd6;
+      --accent: #0f8a72;
+      --accent-2: #e46d47;
+      --accent-3: #c79a1d;
+      --code-bg: #17221c;
+      --code-text: #eef7f1;
+      --shadow: 0 10px 24px rgba(25, 45, 36, 0.06);
+      --radius: 8px;
+      --wrap: 1180px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Arial, sans-serif;
+      color: var(--text);
+      background: linear-gradient(180deg, var(--bg) 0%, #fbfaf6 42%, var(--bg-alt) 100%);
+      line-height: 1.6;
+    }
+
+    img {
+      max-width: 100%;
+      display: block;
+    }
+
+    a {
+      color: var(--accent);
+    }
+
+    .wrap {
+      width: min(var(--wrap), calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    .masthead {
+      padding: 36px 0 28px;
+      border-top: 8px solid var(--accent);
+      background:
+        linear-gradient(135deg, rgba(15, 138, 114, 0.08), rgba(228, 109, 71, 0.08)),
+        var(--surface);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .eyebrow {
+      margin: 0 0 10px;
+      color: var(--accent);
+      font-size: 0.82rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    h1,
+    h2,
+    h3 {
+      margin: 0;
+      line-height: 1.2;
+      letter-spacing: 0;
+    }
+
+    h1 {
+      font-size: 2.6rem;
+      max-width: 840px;
+    }
+
+    h2 {
+      font-size: 1.72rem;
+      margin-bottom: 10px;
+    }
+
+    h3 {
+      font-size: 1.08rem;
+      margin-bottom: 10px;
+    }
+
+    p {
+      margin: 0 0 12px;
+    }
+
+    .lede {
+      max-width: 860px;
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 1.02rem;
+    }
+
+    .actions,
+    .quick-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .actions {
+      margin-top: 18px;
+    }
+
+    .btn,
+    .quick-links a {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: var(--surface);
+      color: var(--text);
+      text-decoration: none;
+      font-size: 0.94rem;
+      padding: 10px 14px;
+      cursor: pointer;
+      box-shadow: none;
+    }
+
+    .btn.primary {
+      border-color: rgba(15, 138, 114, 0.28);
+      background: rgba(15, 138, 114, 0.08);
+    }
+
+    .quick-links {
+      margin-top: 16px;
+    }
+
+    .section {
+      padding: 32px 0;
+      border-bottom: 1px solid rgba(213, 221, 214, 0.8);
+    }
+
+    .section.alt {
+      background: rgba(238, 246, 240, 0.55);
+    }
+
+    .section-head {
+      max-width: 860px;
+      margin-bottom: 18px;
+    }
+
+    .section-head p {
+      color: var(--muted);
+    }
+
+    .tile-grid {
+      display: grid;
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .tile {
+      grid-column: span 12;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 18px;
+      box-shadow: var(--shadow);
+    }
+
+    .tile.soft {
+      background: var(--surface-2);
+    }
+
+    .span-4 {
+      grid-column: span 4;
+    }
+
+    .span-6 {
+      grid-column: span 6;
+    }
+
+    .span-8 {
+      grid-column: span 8;
+    }
+
+    .span-12 {
+      grid-column: span 12;
+    }
+
+    .pill {
+      display: inline-block;
+      margin-bottom: 12px;
+      border-radius: 999px;
+      padding: 5px 10px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      background: rgba(15, 138, 114, 0.1);
+      color: var(--accent);
+    }
+
+    .highlight {
+      color: var(--accent-2);
+      font-weight: 700;
+    }
+
+    .callout {
+      border-left: 4px solid var(--accent-2);
+      padding: 12px 14px;
+      background: rgba(228, 109, 71, 0.08);
+      border-radius: 0 8px 8px 0;
+      margin: 12px 0;
+    }
+
+    .checklist,
+    .flat-list {
+      margin: 0;
+      padding-left: 18px;
+    }
+
+    .checklist li,
+    .flat-list li {
+      margin-bottom: 8px;
+    }
+
+    pre {
+      margin: 12px 0 0;
+      padding: 14px;
+      border-radius: var(--radius);
+      background: var(--code-bg);
+      color: var(--code-text);
+      border: 1px solid rgba(238, 247, 241, 0.12);
+      overflow-x: auto;
+      font-size: 0.91rem;
+      line-height: 1.5;
+    }
+
+    code,
+    pre {
+      font-family: Consolas, "Courier New", monospace;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .data-table th,
+    .data-table td {
+      padding: 10px 12px;
+      text-align: left;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+    }
+
+    .data-table th {
+      background: rgba(15, 138, 114, 0.08);
+      font-size: 0.93rem;
+    }
+
+    .data-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .stat-strip {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .stat {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 14px;
+      box-shadow: var(--shadow);
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 1.4rem;
+      margin-bottom: 6px;
+      color: var(--accent);
+    }
+
+    .stat span {
+      display: block;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 16px;
+    }
+
+    figure {
+      margin: 0;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+
+    figure img {
+      width: 100%;
+      height: 240px;
+      object-fit: cover;
+      border-bottom: 1px solid var(--line);
+    }
+
+    figcaption {
+      padding: 12px 14px;
+      font-size: 0.92rem;
+      color: var(--muted);
+    }
+
+    .caption {
+      color: var(--muted);
+      font-size: 0.92rem;
+      margin-top: 10px;
+    }
+
+    details {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+      padding: 0 14px;
+    }
+
+    details + details {
+      margin-top: 10px;
+    }
+
+    summary {
+      cursor: pointer;
+      font-weight: 700;
+      padding: 14px 0;
+    }
+
+    details p,
+    details ul {
+      margin-bottom: 14px;
+    }
+
+    .footer-note {
+      padding: 28px 0 40px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    @media (max-width: 1024px) {
+      .span-4,
+      .span-6,
+      .span-8 {
+        grid-column: span 12;
+      }
+
+      .stat-strip {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .gallery {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 760px) {
+      h1 {
+        font-size: 2rem;
+      }
+
+      h2 {
+        font-size: 1.45rem;
+      }
+
+      .wrap {
+        width: min(var(--wrap), calc(100% - 24px));
+      }
+
+      .stat-strip {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .btn,
+      .quick-links a {
+        width: auto;
+      }
+
+      figure img {
+        height: 210px;
+      }
+    }
+
+    @media print {
+      body {
+        background: #ffffff;
+      }
+
+      .masthead,
+      .section,
+      .tile,
+      .stat,
+      figure,
+      details {
+        box-shadow: none;
+      }
+
+      .btn {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="masthead">
+    <div class="wrap">
+      <p class="eyebrow">Python Notes Continuation</p>
+      <h1>Python Notes 2: detailed notes on Pandas, NumPy, distributions, ufuncs, Matplotlib, and Seaborn</h1>
+      <p class="lede">
+        This page is written as a standalone continuation after Python basics. It focuses on structured theory plus examples:
+        what each concept means, why we use it, the common syntax, and how it looks in real code. The main focus is on
+        Pandas, Series, DataFrame, NumPy arrays, NumPy distributions, NumPy ufuncs, Matplotlib, and Seaborn.
+      </p>
+      <div class="actions">
+        <a class="btn primary" href="#pandas">Jump to Pandas</a>
+        <a class="btn" href="#numpy">Jump to NumPy</a>
+        <a class="btn" href="#viz">Jump to Visualization</a>
+        <button class="btn" type="button" onclick="window.print()">Print or Save as PDF</button>
+      </div>
+      <nav class="quick-links" aria-label="Quick links">
+        <a href="#modules">Modules</a>
+        <a href="#stdlib">Stdlib</a>
+        <a href="#pandas">Pandas</a>
+        <a href="#pandas-series">Series</a>
+        <a href="#pandas-dataframe">DataFrame</a>
+        <a href="#numpy">NumPy</a>
+        <a href="#numpy-distributions">Distributions</a>
+        <a href="#numpy-ufuncs">UFuncs</a>
+        <a href="#viz">Charts</a>
+        <a href="#practice">Practice</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="section alt" id="scope">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow">Study Structure</p>
+          <h2>How this notes page is organized</h2>
+          <p>This file is meant to be a clean theory sheet. Each major topic is explained in the same pattern: definition, why we use it, syntax, example, and common operations.</p>
+        </div>
+        <div class="tile-grid">
+          <article class="tile soft span-4">
+            <h3>Section order</h3>
+            <ul class="flat-list">
+              <li>Modules and environments</li>
+              <li>Useful standard library tools</li>
+              <li>Pandas foundation, Series, and DataFrame</li>
+              <li>NumPy arrays, distributions, and ufuncs</li>
+              <li>Matplotlib and Seaborn for charts</li>
+              <li>Practice questions and quick viva answers</li>
+            </ul>
+          </article>
+          <article class="tile soft span-4">
+            <h3>Best way to read it</h3>
+            <ul class="flat-list">
+              <li>Read the definition first</li>
+              <li>See the small syntax example next</li>
+              <li>Understand the common methods or operations</li>
+              <li>Practice the same concept with one small dataset</li>
+              <li>Then revise with the viva section at the end</li>
+            </ul>
+          </article>
+          <article class="tile soft span-4">
+            <h3>Main high-value concepts</h3>
+            <ul class="flat-list">
+              <li>Difference between Series and DataFrame</li>
+              <li><code>loc</code> vs <code>iloc</code></li>
+              <li><code>groupby</code> vs <code>pivot_table</code></li>
+              <li>Copy vs view in NumPy</li>
+              <li>Why NumPy is faster than plain Python loops</li>
+              <li>Matplotlib vs Seaborn</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="modules">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow">Modules and Environments</p>
+          <h2>Turn scripts into reusable pieces</h2>
+          <p>
+            The jump from beginner code to useful project code begins when you stop writing everything in one file and start organizing imports,
+            modules, packages, environments, and clear entry points.
+          </p>
+        </div>
+        <div class="tile-grid">
+          <article class="tile span-6">
+            <span class="pill">Module Mental Model</span>
+            <h3>One file can teach two jobs</h3>
+            <p>A Python module can be imported by another file or run directly. That is why the <code>if __name__ == "__main__":</code> block matters.</p>
+            <pre><code>import json
+import math
+from datetime import datetime, timedelta
+
+def build_report():
+    today = datetime.now()
+    return {
+        "date": today.strftime("%Y-%m-%d"),
+        "sqrt_16": math.sqrt(16),
+        "tomorrow": (today + timedelta(days=1)).strftime("%Y-%m-%d"),
+    }
+
+def main():
+    print(json.dumps(build_report(), indent=2))
+
+if __name__ == "__main__":
+    main()</code></pre>
+            <p class="caption">
+              That pattern is already visible in <code>vinod.py</code>. Importing a module should usually expose functions. Running it directly should usually start the demo or app.
+            </p>
+          </article>
+          <article class="tile span-6">
+            <span class="pill">Import Styles</span>
+            <h3>Choose imports for clarity, not style points</h3>
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Style</th>
+                  <th>Example</th>
+                  <th>When to use</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Whole module</td>
+                  <td><code>import vinod</code></td>
+                  <td>Best default. Clear source. Easy to trace.</td>
+                </tr>
+                <tr>
+                  <td>Alias</td>
+                  <td><code>import pandas as pd</code></td>
+                  <td>Common with long, standard library names used often.</td>
+                </tr>
+                <tr>
+                  <td>Specific import</td>
+                  <td><code>from datetime import datetime</code></td>
+                  <td>Fine when a symbol is central and used repeatedly.</td>
+                </tr>
+                <tr>
+                  <td>Avoid</td>
+                  <td><code>from module import *</code></td>
+                  <td>Creates confusion and naming collisions.</td>
+                </tr>
+              </tbody>
+            </table>
+          </article>
+          <article class="tile span-6">
+            <span class="pill">Windows Setup</span>
+            <h3>Virtual environment and package flow</h3>
+            <pre><code>python -m venv .venv
+.venv\Scripts\activate
+python -m pip install --upgrade pip
+pip install pandas numpy matplotlib seaborn openpyxl streamlit requests
+pip freeze &gt; requirements.txt</code></pre>
+            <ul class="flat-list" style="margin-top: 12px;">
+              <li><code>.venv</code> keeps project packages isolated.</li>
+              <li><code>requirements.txt</code> records dependencies for later install.</li>
+              <li>Use <code>python -m pip</code> when you want the current interpreter to be unambiguous.</li>
+            </ul>
+          </article>
+          <article class="tile span-6">
+            <span class="pill">Package Thinking</span>
+            <h3>Module vs package vs library</h3>
+            <ul class="flat-list">
+              <li><strong>Module:</strong> one <code>.py</code> file.</li>
+              <li><strong>Package:</strong> a folder containing related modules.</li>
+              <li><strong>Library:</strong> a broader collection of reusable code, often installed through <code>pip</code>.</li>
+              <li><strong>Notebook:</strong> great for exploration, weaker for long-term structure unless you refactor working code into modules.</li>
+            </ul>
+            <div class="callout">
+              A good habit: once a notebook cell becomes stable and useful, move the reusable part into a Python file and import it back into the notebook.
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section alt" id="stdlib">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow">Standard Library and Daily Tools</p>
+          <h2>The toolkit sitting under your imports</h2>
+          <p>
+            Your files already touch several useful modules. Learn them as practical jobs, not as a memorized list.
+          </p>
+        </div>
+        <div class="tile-grid">
+          <article class="tile span-4">
+            <span class="pill">Math and Time</span>
+            <h3><code>math</code>, <code>datetime</code>, <code>timedelta</code></h3>
+            <pre><code>import math
+from datetime import datetime, timedelta
+
+today = datetime.now()
+tomorrow = today + timedelta(days=1)
+root = math.sqrt(16)</code></pre>
+            <p class="caption">Use for date arithmetic, age calculations, schedules, numeric formulas, and timestamped reports.</p>
+          </article>
+          <article class="tile span-4">
+            <span class="pill">Data Exchange</span>
+            <h3><code>json</code></h3>
+            <pre><code>import json
+
+payload = {"name": "Vinod", "score": 91}
+text = json.dumps(payload)
+back = json.loads(text)</code></pre>
+            <p class="caption">Use when saving structured data, sending API data, or serializing a clean report.</p>
+          </article>
+          <article class="tile span-4">
+            <span class="pill">Pattern Matching</span>
+            <h3><code>re</code></h3>
+            <pre><code>import re
+
+email = "test@example.com"
+ok = bool(re.match(r"^[\\w.-]+@[\\w.-]+\\.\\w+$", email))</code></pre>
+            <p class="caption">Use when a string must follow a pattern: email, phone, pin code, invoice id, or log cleanup.</p>
+          </article>
+          <article class="tile span-4">
+            <span class="pill">File System</span>
+            <h3><code>os</code> and <code>pathlib</code></h3>
+            <pre><code>from pathlib import Path
+
+path = Path("data.csv")
+if path.exists():
+    print(path.stat().st_size)</code></pre>
+            <p class="caption">Prefer <code>pathlib</code> for modern path handling. Keep <code>os</code> in your toolbox because many examples still use it.</p>
+          </article>
+          <article class="tile span-4">
+            <span class="pill">Compact Numeric Storage</span>
+            <h3><code>array</code></h3>
+            <pre><code>from array import array
+
+numbers = array("i", [1, 2, 3, 4, 5])</code></pre>
+            <p class="caption">Less flexible than NumPy, but useful for typed numeric collections and understanding memory-aware data structures.</p>
+          </article>
+          <article class="tile span-4">
+            <span class="pill">Third Party</span>
+            <h3><code>requests</code>, <code>pandas</code>, <code>numpy</code>, <code>streamlit</code></h3>
+            <pre><code>import requests
+import pandas as pd
+import numpy as np
+import streamlit as st</code></pre>
+            <p class="caption">These are not built in. They must come from your environment, which is why <code>pip</code> and <code>requirements.txt</code> matter.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="pandas">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow">Pandas</p>
+          <h2>Detailed Pandas notes in structured format</h2>
+          <p>
+            Pandas is the most important Python library for structured data analysis. Use it when your data looks like rows and columns and
+            you want to inspect, clean, filter, summarize, reshape, merge, and export that data.
+          </p>
+        </div>
+        <div class="stat-strip">
+          <div class="stat">
+            <strong>1200</strong>
+            <span>Rows in <code>data.csv</code></span>
+          </div>
+          <div class="stat">
+            <strong>22</strong>
+            <span>Columns in <code>data.csv</code></span>
+          </div>
+          <div class="stat">
+            <strong>458</strong>
+            <span>Rows in <code>nba.csv</code></span>
+          </div>
+          <div class="stat">
+            <strong>12</strong>
+            <span>Missing salaries in <code>nba.csv</code></span>
+          </div>
+          <div class="stat">
+            <strong>3</strong>
+            <span>Sheets in <code>data.xlsx</code></span>
+          </div>
+          <div class="stat">
+            <strong>40</strong>
+            <span>Rows in <code>orders.csv</code></span>
+          </div>
+        </div>
+
+        <div class="tile-grid" style="margin-top: 18px;">
+          <article class="tile span-12">
+            <span class="pill">Pandas Foundation</span>
+            <h3>Definition, why we use it, and basic syntax</h3>
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Point</th>
+                  <th>Meaning</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Definition</td>
+                  <td>Pandas is a Python library for data manipulation and analysis. It works mainly with labeled tabular data.</td>
+                </tr>
+                <tr>
+                  <td>Main objects</td>
+                  <td><strong>Series</strong> for one-dimensional labeled data and <strong>DataFrame</strong> for two-dimensional tabular data.</td>
+                </tr>
+                <tr>
+                  <td>Why we use it</td>
+                  <td>It makes filtering, cleaning, grouping, merging, date handling, and exporting much easier than plain Python lists and dictionaries.</td>
+                </tr>
+                <tr>
+                  <td>Import syntax</td>
+                  <td><code>import pandas as pd</code></td>
+                </tr>
+                <tr>
+                  <td>Typical use cases</td>
+                  <td>CSV files, Excel files, business reports, data cleaning, feature engineering, dashboards, and ML preprocessing.</td>
+                </tr>
+              </tbody>
+            </table>
+            <pre><code>import pandas as pd
+
+df = pd.read_csv("data.csv")
+print(df.head())</code></pre>
+          </article>
+          <article class="tile span-6">
+            <span class="pill">Series</span>
+            <h3 id="pandas-series">Pandas Series: definition and structure</h3>
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Part</th>
+                  <th>Meaning</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Definition</td>
+                  <td>A Series is a one-dimensional labeled array. It stores a single column of values with an index.</td>
+                </tr>
+                <tr>
+                  <td>Looks like</td>
+                  <td>A list plus labels.</td>
+                </tr>
+                <tr>
+                  <td>Used for</td>
+                  <td>One column, one measure, one feature, or the result of selecting a single DataFrame column.</td>
+                </tr>
+                <tr>
+                  <td>Important parts</td>
+                  <td>Values, index, name, dtype.</td>
+                </tr>
+              </tbody>
+            </table>
+            <pre><code>import pandas as pd
+
+marks = pd.Series([88, 92, 79], index=["Asha", "Ravi", "Imran"], name="marks")
+print(marks)
+print(marks.index)
+print(marks.dtype)</code></pre>
+            <ul class="flat-list" style="margin-top: 12px;">
+              <li><strong>Series stores one dimension only.</strong></li>
+              <li><strong>Index labels help access values by name.</strong></li>
+              <li><strong>Many DataFrame operations return a Series.</strong></li>
+            </ul>
+          </article>
+          <article class="tile span-6">
+            <span class="pill">Series Operations</span>
+            <h3>Creating, selecting, and summarizing a Series</h3>
+            <pre><code>marks = pd.Series([88, 92, 79, 92], name="marks")
+
+marks.mean()
+marks.max()
+marks.min()
+marks.sum()
+marks.count()
+marks.value_counts()
+marks.astype(float)</code></pre>
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Common Series method</th>
+                  <th>Use</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>head()</code> / <code>tail()</code></td>
+                  <td>See first or last values</td>
+                </tr>
+                <tr>
+                  <td><code>value_counts()</code></td>
+                  <td>Frequency of each unique value</td>
+                </tr>
+                <tr>
+                  <td><code>unique()</code></td>
+                  <td>See distinct values</td>
+                </tr>
+                <tr>
+                  <td><code>isna()</code></td>
+                  <td>Check missing values</td>
+                </tr>
+                <tr>
+                  <td><code>map()</code></td>
+                  <td>Map values using dictionary or function</td>
+                </tr>
+              </tbody>
+            </table>
+          </article>
+          <article class="tile span-6">
+            <span class="pill">DataFrame</span>
+            <h3 id="pandas-dataframe">Pandas DataFrame: definition and structure</h3>
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Part</th>
+                  <th>Meaning</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Definition</td>
+                  <td>A DataFrame is a two-dimensional labeled data structure with rows and columns.</td>
+                </tr>
+                <tr>
+                  <td>Looks like</td>
+                  <td>A spreadsheet table or SQL table.</td>
+                </tr>
+                <tr>
+                  <td>Columns</td>
+                  <td>Each column is usually a Series.</td>
+                </tr>
+                <tr>
+                  <td>Used for</td>
+                  <td>Working with multiple related columns at once.</td>
+                </tr>
+              </tbody>
+            </table>
+            <pre><code>df = pd.DataFrame({
+    "name": ["Asha", "Ravi", "Imran"],
+    "marks": [88, 92, 79],
+    "city": ["Mysuru", "Mumbai", "Chennai"]
+})
+
+print(df)
+print(df.columns)
+print(df.index)</code></pre>
+          </article>
+          <article class="tile span-6">
+            <span class="pill">DataFrame Creation</span>
+            <h3>Different ways to create a DataFrame</h3>
+            <pre><code>from_dict = pd.DataFrame({
+    "name": ["A", "B"],
+    "score": [90, 85]
+})
+
+from_list_of_dicts = pd.DataFrame([
+    {"name": "A", "score": 90},
+    {"name": "B", "score": 85}
+])
+
+from_csv = pd.read_csv("data.csv")
+from_excel = pd.read_excel("data.xlsx", sheet_name="Orders")</code></pre>
+            <ul class="flat-list" style="margin-top: 12px;">
+              <li><strong>Manual creation</strong> is good for teaching and small practice.</li>
+              <li><strong><code>read_csv()</code></strong> is one of the most used Pandas functions.</li>
+              <li><strong><code>read_excel()</code></strong> is used for spreadsheet-based work.</li>
+            </ul>
+          </article>
+          <article class="tile span-6">
+            <span class="pill">Load and Inspect</span>
+            <h3>Understand a DataFrame before analysis</h3>
+            <pre><code>retail = pd.read_csv("data.csv", parse_dates=["order_date"])
+
+retail.head()
+retail.tail()
+retail.info()
+retail.describe(numeric_only=True)
+retail.shape
+retail.columns
+retail.dtypes</code></pre>
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Inspection method</th>
+                  <th>What it tells you</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>shape</code></td>
+                  <td>Number of rows and columns</td>
+                </tr>
+                <tr>
+                  <td><code>columns</code></td>
+                  <td>Column names</td>
+                </tr>
+                <tr>
+                  <td><code>dtypes</code></td>
+                  <td>Data type of each column</td>
+                </tr>
+                <tr>
+                  <td><code>info()</code></td>
+                  <td>Non-null counts and types</td>
+                </tr>
+                <tr>
+                  <td><code>describe()</code></td>
+                  <td>Summary statistics for numeric columns</td>
+                </tr>
+              </tbody>
+            </table>
+          </article>
+          <article class="tile span-6">
+            <span class="pill">Selection</span>
+            <h3>Columns, rows, <code>loc</code>, and <code>iloc</code></h3>
+            <pre><code>retail["state"]
+retail[["state", "city", "profit"]]
+
+retail.loc[0:4, ["state", "profit"]]
+retail.iloc[:5, :3]
+
+high_profit = retail.loc[retail["profit"] &gt; 1000]</code></pre>
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Tool</th>
+                  <th>Use</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>df["col"]</code></td>
+                  <td>Select one column</td>
+                </tr>
+                <tr>
+                  <td><code>df[["a", "b"]]</code></td>
+                  <td>Select multiple columns</td>
+                </tr>
+                <tr>
+                  <td><code>loc</code></td>
+                  <td>Label-based selection</td>
+                </tr>
+                <tr>
+                  <td><code>iloc</code></td>
+                  <td>Position-based selection</td>
+                </tr>
+              </tbody>
+            </table>
+          </article>
+          <article class="tile span-6">
+            <span class="pill">Cleaning</span>
+            <h3>Missing values, types, duplicates, and naming</h3>
+            <pre><code>nba = pd.read_csv("nba.csv")
+nba.columns = nba.columns.str.lower()
+nba["salary_filled"] = nba["salary"].fillna(nba["salary"].median())
+nba = nba.dropna(subset=["college"])
+nba["age"] = nba["age"].astype(float)
+nba = nba.drop_duplicates()</code></pre>
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Function</th>
+                  <th>Meaning</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>fillna()</code></td>
+                  <td>Replace missing values</td>
+                </tr>
+                <tr>
+                  <td><code>dropna()</code></td>
+                  <td>Remove rows or columns with missing values</td>
+                </tr>
+                <tr>
+                  <td><code>astype()</code></td>
+                  <td>Convert to a different data type</td>
+                </tr>
+                <tr>
+                  <td><code>drop_duplicates()</code></td>
+                  <td>Remove duplicate rows</td>
+                </tr>
+              </tbody>
+            </table>
+          </article>
+          <article class="tile span-4">
+            <span class="pill">Sorting and Counts</span>
+            <h3>Fast analysis methods you will use daily</h3>
+            <pre><code>retail["payment_mode"].value_counts()
+retail["channel"].value_counts(normalize=True)
+retail.sort_values("profit", ascending=False).head(10)
+retail["state"].nunique()</code></pre>
+            <p class="caption">These methods answer a lot of quick questions before you move to advanced analysis.</p>
+          </article>
+          <article class="tile span-6">
+            <span class="pill">Transform Columns</span>
+            <h3><code>map()</code>, <code>apply()</code>, <code>assign()</code>, and new columns</h3>
+            <pre><code>retail["zone_short"] = retail["zone"].map({
+    "North": "N", "South": "S", "East": "E", "West": "W", "Central": "C"
+})
+
+retail["net_after_shipping"] = retail["net_sales"] - retail["shipping_cost"]
+
+retail["profit_flag"] = retail["profit"].apply(
+    lambda x: "High" if x &gt; 1000 else "Normal"
+)</code></pre>
+            <p class="caption">
+              Use <code>map()</code> for simple value mapping, <code>apply()</code> for custom logic, and direct assignment to create new columns.
+            </p>
+          </article>
+          <article class="tile span-6">
+            <span class="pill">String and Date Handling</span>
+            <h3><code>.str</code> and <code>.dt</code> accessors</h3>
+            <pre><code>retail["city_upper"] = retail["city"].str.upper()
+retail["product_first_word"] = retail["product"].str.split().str[0]
+
+retail["order_date"] = pd.to_datetime(retail["order_date"])
+retail["year"] = retail["order_date"].dt.year
+retail["month"] = retail["order_date"].dt.month
+retail["day_name"] = retail["order_date"].dt.day_name()</code></pre>
+            <p class="caption">
+              <code>.str</code> is for text operations. <code>.dt</code> is for datetime operations. Both are major Pandas strengths.
+            </p>
+          </article>
+          <article class="tile span-6">
+            <span class="pill">Groupby</span>
+            <h3>Definition, syntax, and common patterns</h3>
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Point</th>
+                  <th>Meaning</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Definition</td>
+                  <td><code>groupby</code> splits rows into groups, applies an aggregation, then combines the result.</td>
+                </tr>
+                <tr>
+                  <td>Why useful</td>
+                  <td>It answers business questions like total sales by category, average salary by team, or count by status.</td>
+                </tr>
+                <tr>
+                  <td>Typical syntax</td>
+                  <td><code>df.groupby("col")["value"].sum()</code></td>
+                </tr>
+              </tbody>
+            </table>
+            <pre><code>category_sales = retail.groupby("category")["net_sales"].sum()
+state_profit = retail.groupby("state")["profit"].sum()
+avg_age_by_position = nba.groupby("position")["age"].mean()</code></pre>
+          </article>
+          <article class="tile span-6">
+            <span class="pill">Actual Groupby Result</span>
+            <h3>Examples from real data</h3>
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Question</th>
+                  <th>Actual result</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Top category by net sales</td>
+                  <td>Electronics: 3,058,370.84</td>
+                </tr>
+                <tr>
+                  <td>Second category by net sales</td>
+                  <td>Home and Kitchen: 2,405,723.39</td>
+                </tr>
+                <tr>
+                  <td>Top state by profit</td>
+                  <td>Maharashtra: 360,726.62</td>
+                </tr>
+                <tr>
+                  <td>Average youngest position in NBA</td>
+                  <td>Shooting Guard: 26.54 years</td>
+                </tr>
+              </tbody>
+            </table>
+          </article>
+          <article class="tile span-6">
+            <span class="pill">Merge, Join, Concat</span>
+            <h3>Combine DataFrames correctly</h3>
+            <pre><code>customers = pd.read_csv("customers.csv")
+orders = pd.read_csv("orders.csv")
+products = pd.read_csv("products.csv")
+
+merged = orders.merge(customers, on="customer_id") \
+               .merge(products, on="product_id")
+
+stacked = pd.concat([df1, df2], ignore_index=True)</code></pre>
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Method</th>
+                  <th>Use</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>merge()</code></td>
+                  <td>Join tables using a key column</td>
+                </tr>
+                <tr>
+                  <td><code>join()</code></td>
+                  <td>Combine mostly by index</td>
+                </tr>
+                <tr>
+                  <td><code>concat()</code></td>
+                  <td>Stack or append DataFrames</td>
+                </tr>
+                <tr>
+                  <td>Real merged rows here</td>
+                  <td>40 rows after combining orders, customers, and products</td>
+                </tr>
+              </tbody>
+            </table>
+          </article>
+          <article class="tile span-6">
+            <span class="pill">Pivot and Crosstab</span>
+            <h3>Reshape grouped results into report form</h3>
+            <pre><code>pivot = pd.pivot_table(
+    retail,
+    index="state",
+    columns="channel",
+    values="net_sales",
+    aggfunc="sum",
+    fill_value=0
+)
+
+cross = pd.crosstab(retail["category"], retail["payment_mode"])</code></pre>
+            <p class="caption">
+              Use <code>groupby</code> when you want one summarized answer. Use <code>pivot_table</code> when you want rows and columns arranged like a report.
+            </p>
+          </article>
+          <article class="tile span-6">
+            <span class="pill">Window Functions</span>
+            <h3>Rolling, ranking, cumulative logic</h3>
+            <pre><code>monthly = (
+    retail.groupby(retail["order_date"].dt.to_period("M"))["net_sales"]
+    .sum()
+    .sort_index()
+)
+
+monthly_rolling = monthly.rolling(3).mean()
+retail["profit_rank"] = retail["profit"].rank(ascending=False)</code></pre>
+            <p class="caption">
+              Rolling averages smooth change over time. Rank gives ordering. Expanding and cumulative operations help running totals and progression tracking.
+            </p>
+          </article>
+          <article class="tile span-6">
+            <span class="pill">Outlier Detection</span>
+            <h3>Use IQR for unusually high or low values</h3>
+            <pre><code>q1 = nba["salary_filled"].quantile(0.25)
+q3 = nba["salary_filled"].quantile(0.75)
+iqr = q3 - q1
+upper = q3 + 1.5 * iqr
+
+salary_outliers = nba[nba["salary_filled"] &gt; upper]</code></pre>
+            <p>
+              In the NBA sheet, the upper outlier boundary comes to about <strong>14,157,979.50</strong>. The highest outliers include Kobe Bryant,
+              LeBron James, Carmelo Anthony, Dwight Howard, and Chris Bosh.
+            </p>
+          </article>
+          <article class="tile span-6">
+            <span class="pill">Export</span>
+            <h3>Write cleaned data back to file</h3>
+            <pre><code>nba_small = nba[[
+    "name", "team", "position", "age",
+    "salary_filled", "salary_million",
+    "conference", "contract_start", "contract_end"
+]]
+
+nba_small.to_csv("nba_deep_dive_export.csv", index=False)
+nba_small.to_excel("nba_deep_dive_export.xlsx", index=False)</code></pre>
+            <p class="caption">
+              Exporting is the final step of many projects. Analysis is not complete until the cleaned or summarized result can be saved and shared.
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section alt" id="numpy">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow">NumPy</p>
+          <h2>Detailed NumPy notes: arrays, distributions, and ufuncs</h2>
+          <p>
+            NumPy is the core numerical computing library in Python. It is used when data is mainly numeric and you want high performance,
+            vectorized calculations, matrix-style operations, random number generation, and mathematical functions over full arrays.
+          </p>
+        </div>
+        <div class="tile-grid">
+          <article class="tile span-12">
+            <span class="pill">NumPy Foundation</span>
+            <h3>Definition, why we use it, and base syntax</h3>
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Point</th>
+                  <th>Meaning</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Definition</td>
+                  <td>NumPy stands for Numerical Python. It provides the <code>ndarray</code> object for efficient numerical computation.</td>
+                </tr>
+                <tr>
+                  <td>Main object</td>
+                  <td><code>ndarray</code>, a multidimensional array.</td>
+                </tr>
+                <tr>
+                  <td>Why we use it</td>
+                  <td>It is faster and more memory efficient than plain Python lists for numeric work.</td>
+                </tr>
+                <tr>
+                  <td>Typical tasks</td>
+                  <td>Math operations, matrix operations, reshaping, random simulation, distributions, and preprocessing numeric data.</td>
+                </tr>
+                <tr>
+                  <td>Import syntax</td>
+                  <td><code>import numpy as np</code></td>
+                </tr>
+              </tbody>
+            </table>
+            <pre><code>import numpy as np
+
+arr = np.array([1, 2, 3, 4])
+print(arr * 2)
+print(arr.mean())</code></pre>
+          </article>
+          <article class="tile span-6">
+            <span class="pill">Array Basics</span>
+            <h3>Definition of array, shape, dimension, and dtype</h3>
+            <pre><code>arr = np.array([10, 20, 30, 40])
+
+print(arr.ndim)   # number of dimensions
+print(arr.shape)  # size of each dimension
+print(arr.dtype)  # data type
+print(arr.size)   # total number of elements</code></pre>
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Term</th>
+                  <th>Meaning</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>ndim</code></td>
+                  <td>How many dimensions the array has</td>
+                </tr>
+                <tr>
+                  <td><code>shape</code></td>
+                  <td>How many elements in each dimension</td>
+                </tr>
+                <tr>
+                  <td><code>dtype</code></td>
+                  <td>Type of values stored</td>
+                </tr>
+                <tr>
+                  <td><code>size</code></td>
+                  <td>Total count of elements</td>
+                </tr>
+              </tbody>
+            </table>
+          </article>
+          <article class="tile span-6">
+            <span class="pill">Array Creation</span>
+            <h3>Common ways to create NumPy arrays</h3>
+            <pre><code>import numpy as np
+
+arr1 = np.array([1, 2, 3])
+zeros = np.zeros((2, 3))
+ones = np.ones((2, 2))
+seq = np.arange(1, 10, 2)
+line = np.linspace(0, 1, 5)</code></pre>
+            <ul class="flat-list" style="margin-top: 12px;">
+              <li><code>array()</code> converts list-like data into NumPy array form.</li>
+              <li><code>zeros()</code> and <code>ones()</code> are used for initialization.</li>
+              <li><code>arange()</code> and <code>linspace()</code> are used for sequences.</li>
+            </ul>
+          </article>
+          <article class="tile span-6">
+            <span class="pill">Indexing and Slicing</span>
+            <h3>Select values from one-dimensional and two-dimensional arrays</h3>
+            <pre><code>arr = np.array([5, 10, 15, 20, 25])
+print(arr[0])
+print(arr[1:4])
+
+matrix = np.array([[1, 2, 3], [4, 5, 6]])
+print(matrix[0, 1])
+print(matrix[:, 2])</code></pre>
+            <p class="caption">
+              NumPy indexing is similar to list indexing, but multidimensional arrays allow row and column access in one expression.
+            </p>
+          </article>
+          <article class="tile span-6">
+            <span class="pill">Shape and Reshape</span>
+            <h3>Convert one layout into another layout</h3>
+            <pre><code>arr = np.arange(1, 13)
+matrix = arr.reshape(3, 4)
+first_row = matrix[0]
+second_col = matrix[:, 1]</code></pre>
+            <p class="caption">
+              Reshaping does not change the data itself. It changes how the same data is arranged across dimensions.
+            </p>
+          </article>
+          <article class="tile span-6">
+            <span class="pill">Copy vs View</span>
+            <h3>Very important memory concept</h3>
+            <pre><code>arr = np.array([1, 2, 3, 4])
+view_arr = arr.view()
+copy_arr = arr.copy()
+
+arr[0] = 99
+print(view_arr)  # changes
+print(copy_arr)  # stays old</code></pre>
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Concept</th>
+                  <th>Meaning</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>View</td>
+                  <td>Shares the same memory with the original array</td>
+                </tr>
+                <tr>
+                  <td>Copy</td>
+                  <td>Creates separate memory</td>
+                </tr>
+              </tbody>
+            </table>
+          </article>
+          <article class="tile span-6">
+            <span class="pill">Broadcasting</span>
+            <h3>How NumPy expands compatible shapes</h3>
+            <pre><code>scores = np.array([[70, 80, 90], [60, 75, 88]])
+bonus = np.array([5, 5, 5])
+updated = scores + bonus</code></pre>
+            <p class="caption">
+              Broadcasting means NumPy can stretch a smaller array across a bigger one when shapes are compatible. This removes many manual loops.
+            </p>
+          </article>
+          <article class="tile span-6">
+            <span class="pill">Vectorized Math</span>
+            <h3>Operate on the whole array at once</h3>
+            <pre><code>arr = np.array([5, 8, 11, 14, 17])
+print(arr + 2)
+print(arr * 3)
+print(arr ** 2)
+print(np.sqrt(arr))
+print(np.sin(arr))</code></pre>
+            <p class="caption">
+              Vectorization means doing one array operation instead of writing a loop for each element.
+            </p>
+          </article>
+          <article class="tile span-6">
+            <span class="pill">Selection and Aggregation</span>
+            <h3>Boolean masks, <code>where()</code>, and statistics</h3>
+            <pre><code>arr = np.array([5, 8, 11, 14, 17])
+high = arr[arr &gt; 10]
+labels = np.where(arr % 2 == 0, "even", "odd")
+
+arr.sum()
+arr.mean()
+arr.max()
+arr.min()
+arr.std()</code></pre>
+            <p class="caption">
+              Boolean masks filter values. Aggregation functions compress many values into one summary number.
+            </p>
+          </article>
+          <article class="tile span-6">
+            <span class="pill">Random Module</span>
+            <h3>Random values for simulation and practice</h3>
+            <pre><code>from numpy import random
+
+random.randint(1, 10, size=5)
+random.rand(3)
+random.choice([10, 20, 30], size=5)
+random.shuffle(arr)</code></pre>
+            <p class="caption">
+              Random generation is useful for testing, simulation, and understanding distributions before you collect real data.
+            </p>
+          </article>
+          <article class="tile span-12" id="numpy-distributions">
+            <span class="pill">NumPy Distributions</span>
+            <h3>Definition, idea, syntax, and common distribution types</h3>
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Distribution</th>
+                  <th>What it models</th>
+                  <th>Common syntax</th>
+                  <th>Example use case</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Normal</td>
+                  <td>Values clustered around a mean</td>
+                  <td><code>random.normal(loc, scale, size)</code></td>
+                  <td>Exam scores, heights, measurement error</td>
+                </tr>
+                <tr>
+                  <td>Uniform</td>
+                  <td>All values equally likely in a range</td>
+                  <td><code>random.uniform(low, high, size)</code></td>
+                  <td>Random values between two limits</td>
+                </tr>
+                <tr>
+                  <td>Binomial</td>
+                  <td>Number of successes in fixed trials</td>
+                  <td><code>random.binomial(n, p, size)</code></td>
+                  <td>Number of heads in repeated coin flips</td>
+                </tr>
+                <tr>
+                  <td>Poisson</td>
+                  <td>Number of events in fixed interval</td>
+                  <td><code>random.poisson(lam, size)</code></td>
+                  <td>Calls per minute, arrivals per hour</td>
+                </tr>
+                <tr>
+                  <td>Exponential</td>
+                  <td>Time between events</td>
+                  <td><code>random.exponential(scale, size)</code></td>
+                  <td>Waiting time between arrivals</td>
+                </tr>
+                <tr>
+                  <td>Geometric</td>
+                  <td>Trials needed for first success</td>
+                  <td><code>random.geometric(p, size)</code></td>
+                  <td>Attempts before first success</td>
+                </tr>
+                <tr>
+                  <td>Chi-square</td>
+                  <td>Positive skewed statistical distribution</td>
+                  <td><code>random.chisquare(df, size)</code></td>
+                  <td>Hypothesis testing and variance-related work</td>
+                </tr>
+              </tbody>
+            </table>
+            <pre><code>from numpy import random
+
+normal = random.normal(loc=50, scale=8, size=1000)
+uniform = random.uniform(low=0, high=1, size=1000)
+binomial = random.binomial(n=10, p=0.4, size=1000)
+poisson = random.poisson(lam=3, size=1000)</code></pre>
+            <div class="callout">
+              <strong>Simple definition:</strong> a probability distribution describes how values are expected to occur. NumPy gives ready-made tools to generate sample data from those distributions.
+            </div>
+          </article>
+          <article class="tile span-12" id="numpy-ufuncs">
+            <span class="pill">NumPy UFuncs</span>
+            <h3>Definition, why they matter, and deep examples</h3>
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Point</th>
+                  <th>Meaning</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Definition</td>
+                  <td>UFunc means Universal Function. It is a function that works element by element on NumPy arrays.</td>
+                </tr>
+                <tr>
+                  <td>Why important</td>
+                  <td>They are fast, vectorized, memory-aware, and avoid manual loops.</td>
+                </tr>
+                <tr>
+                  <td>Examples</td>
+                  <td><code>np.add</code>, <code>np.subtract</code>, <code>np.multiply</code>, <code>np.divide</code>, <code>np.sqrt</code>, <code>np.sin</code></td>
+                </tr>
+              </tbody>
+            </table>
+            <pre><code>arr = np.array([1, 2, 3, 4])
+
+np.add(arr, 10)
+np.multiply(arr, 5)
+np.sqrt(arr)
+np.add.reduce(arr)
+np.add.accumulate(arr)
+np.multiply.outer([1, 2, 3], [10, 20])
+np.where(arr &gt; 2, arr, 0)</code></pre>
+            <ul class="flat-list" style="margin-top: 12px;">
+              <li><strong><code>reduce</code>:</strong> combines all elements to one result.</li>
+              <li><strong><code>accumulate</code>:</strong> returns running results step by step.</li>
+              <li><strong><code>outer</code>:</strong> applies the operation to every pair between two arrays.</li>
+              <li><strong><code>where</code>:</strong> chooses values conditionally.</li>
+              <li><strong><code>out</code> parameter:</strong> stores result in a given output array.</li>
+              <li><strong><code>dtype</code> parameter:</strong> controls calculation data type.</li>
+              <li><strong><code>vectorize</code> and <code>frompyfunc</code>:</strong> create custom element-wise function behavior.</li>
+            </ul>
+          </article>
+          <article class="tile span-6">
+            <span class="pill">Custom UFunc Style</span>
+            <h3><code>vectorize()</code> and <code>frompyfunc()</code></h3>
+            <pre><code>def grade_label(x):
+    return "Pass" if x &gt;= 40 else "Fail"
+
+vf = np.vectorize(grade_label)
+print(vf(np.array([35, 44, 81, 20])))</code></pre>
+            <p class="caption">
+              These tools help apply Python functions across arrays, though built-in NumPy ufuncs are usually faster.
+            </p>
+          </article>
+          <article class="tile span-6">
+            <span class="pill">Why NumPy Is Fast</span>
+            <h3>One-line exam answer plus technical reason</h3>
+            <ul class="flat-list">
+              <li>It stores homogeneous values efficiently in contiguous memory.</li>
+              <li>Many operations are implemented in optimized low-level code.</li>
+              <li>Vectorization removes the overhead of Python-level loops.</li>
+              <li>Broadcasting avoids writing extra manual expansion logic.</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="viz">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow">Visualization</p>
+          <h2 id="matplotlib-seaborn">Detailed notes on Matplotlib and Seaborn</h2>
+          <p>
+            Visualization is about choosing the right picture for the question. Matplotlib gives low-level plotting control, while Seaborn gives a higher-level,
+            cleaner interface built on top of Matplotlib.
+          </p>
+        </div>
+        <div class="tile-grid">
+          <article class="tile span-12">
+            <span class="pill">Visualization Foundation</span>
+            <h3>Definition, role, and chart selection guide</h3>
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Question type</th>
+                  <th>Best chart</th>
+                  <th>Why</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Compare categories</td>
+                  <td>Bar chart</td>
+                  <td>Easy to compare heights across groups</td>
+                </tr>
+                <tr>
+                  <td>Show change over time</td>
+                  <td>Line chart</td>
+                  <td>Best for trend and progression</td>
+                </tr>
+                <tr>
+                  <td>Show distribution</td>
+                  <td>Histogram</td>
+                  <td>Shows how values are spread across ranges</td>
+                </tr>
+                <tr>
+                  <td>Show relationship between two numeric values</td>
+                  <td>Scatter plot</td>
+                  <td>Shows pattern, clustering, and possible correlation</td>
+                </tr>
+                <tr>
+                  <td>Show frequency of classes</td>
+                  <td>Count plot</td>
+                  <td>Counts occurrences of each label directly</td>
+                </tr>
+                <tr>
+                  <td>Show spread with outliers</td>
+                  <td>Box plot</td>
+                  <td>Highlights quartiles and outliers clearly</td>
+                </tr>
+                <tr>
+                  <td>Show correlations in a matrix</td>
+                  <td>Heatmap</td>
+                  <td>Compact view of many relationships</td>
+                </tr>
+              </tbody>
+            </table>
+          </article>
+          <article class="tile span-6">
+            <span class="pill">Matplotlib</span>
+            <h3>Definition, why we use it, and core syntax</h3>
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Point</th>
+                  <th>Meaning</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Definition</td>
+                  <td>Matplotlib is a foundational plotting library in Python used to create static, animated, and interactive visualizations.</td>
+                </tr>
+                <tr>
+                  <td>Why use it</td>
+                  <td>It gives detailed control over figure size, axes, colors, labels, legends, and layout.</td>
+                </tr>
+                <tr>
+                  <td>Main import</td>
+                  <td><code>import matplotlib.pyplot as plt</code></td>
+                </tr>
+              </tbody>
+            </table>
+            <pre><code>import matplotlib.pyplot as plt
+
+plt.figure(figsize=(8, 4))
+plt.plot(monthly.index.astype(str), monthly.values)
+plt.title("Monthly Net Sales")
+plt.xlabel("Month")
+plt.ylabel("Net Sales")
+plt.xticks(rotation=45)
+plt.tight_layout()
+plt.show()</code></pre>
+          </article>
+          <article class="tile span-6">
+            <span class="pill">Seaborn</span>
+            <h3>Definition, why we use it, and core syntax</h3>
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Point</th>
+                  <th>Meaning</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Definition</td>
+                  <td>Seaborn is a high-level statistical visualization library built on top of Matplotlib.</td>
+                </tr>
+                <tr>
+                  <td>Why use it</td>
+                  <td>It gives better default styling and simpler syntax for common statistical plots.</td>
+                </tr>
+                <tr>
+                  <td>Main import</td>
+                  <td><code>import seaborn as sns</code></td>
+                </tr>
+              </tbody>
+            </table>
+            <pre><code>import seaborn as sns
+
+sns.barplot(data=category_sales, x="category", y="net_sales")
+plt.xticks(rotation=15)
+plt.tight_layout()
+plt.show()</code></pre>
+          </article>
+          <article class="tile span-6">
+            <span class="pill">Matplotlib Plot Types</span>
+            <h3>Common chart functions with short examples</h3>
+            <pre><code>plt.plot(x, y)        # line chart
+plt.bar(labels, y)    # bar chart
+plt.scatter(x, y)     # scatter plot
+plt.hist(values)      # histogram
+plt.pie(values)       # pie chart</code></pre>
+            <ul class="flat-list" style="margin-top: 12px;">
+              <li><strong>Line:</strong> trend over time</li>
+              <li><strong>Bar:</strong> compare categories</li>
+              <li><strong>Scatter:</strong> relationship between two numeric variables</li>
+              <li><strong>Histogram:</strong> distribution of values</li>
+            </ul>
+          </article>
+          <article class="tile span-6">
+            <span class="pill">Matplotlib Customization</span>
+            <h3>Titles, labels, legends, colors, and subplots</h3>
+            <pre><code>plt.figure(figsize=(8, 5))
+plt.plot(x, y, color="teal", label="Sales")
+plt.title("Monthly Sales")
+plt.xlabel("Month")
+plt.ylabel("Amount")
+plt.legend()
+plt.grid(True)
+plt.tight_layout()</code></pre>
+            <p class="caption">
+              Matplotlib becomes especially powerful when you want fine control over each part of the chart.
+            </p>
+          </article>
+          <article class="tile span-6">
+            <span class="pill">Seaborn Plot Types</span>
+            <h3>Most useful Seaborn functions for revision</h3>
+            <pre><code>sns.barplot(data=df, x="category", y="sales")
+sns.lineplot(data=df, x="month", y="sales")
+sns.scatterplot(data=df, x="age", y="salary")
+sns.histplot(data=df, x="salary", kde=True)
+sns.boxplot(data=df, x="position", y="salary")
+sns.heatmap(corr_matrix, annot=True, cmap="crest")</code></pre>
+            <p class="caption">
+              Seaborn is excellent for statistical charts, grouped comparisons, and correlation-style visual summaries.
+            </p>
+          </article>
+          <article class="tile span-6">
+            <span class="pill">Matplotlib vs Seaborn</span>
+            <h3>Difference in one table</h3>
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Feature</th>
+                  <th>Matplotlib</th>
+                  <th>Seaborn</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Level</td>
+                  <td>Lower level</td>
+                  <td>Higher level</td>
+                </tr>
+                <tr>
+                  <td>Control</td>
+                  <td>More manual control</td>
+                  <td>Faster clean defaults</td>
+                </tr>
+                <tr>
+                  <td>Best for</td>
+                  <td>Custom chart building</td>
+                  <td>Statistical plots and quick analysis charts</td>
+                </tr>
+                <tr>
+                  <td>Built on</td>
+                  <td>Independent plotting library</td>
+                  <td>Built on top of Matplotlib</td>
+                </tr>
+              </tbody>
+            </table>
+          </article>
+          <article class="tile span-12">
+            <span class="pill">Visualization Workflow</span>
+            <h3>Simple process to create a correct chart</h3>
+            <ol class="flat-list">
+              <li>Understand the question: comparison, trend, distribution, or relationship.</li>
+              <li>Choose the correct chart type before coding.</li>
+              <li>Clean the data if needed.</li>
+              <li>Add a clear title and readable axis labels.</li>
+              <li>Do not overload the chart with too many categories at once.</li>
+              <li>Use color to support meaning, not to decorate randomly.</li>
+            </ol>
+          </article>
+        </div>
+        <div class="gallery" aria-label="Chart gallery">
+          <figure>
+            <img src="python_notes_2_assets/retail_sales_by_category.png" alt="Bar chart of retail net sales by category" />
+            <figcaption><strong>Retail sales by category.</strong> A clean first bar chart because the question is a comparison between groups.</figcaption>
+          </figure>
+          <figure>
+            <img src="python_notes_2_assets/order_status_counts.png" alt="Bar chart of order status counts" />
+            <figcaption><strong>Order status distribution.</strong> Count-style questions usually become a bar chart before they become anything else.</figcaption>
+          </figure>
+          <figure>
+            <img src="python_notes_2_assets/nba_avg_salary_by_position.png" alt="Bar chart of NBA average salary by position" />
+            <figcaption><strong>NBA average salary by position.</strong> This is a grouped category comparison built from a <code>groupby</code> result.</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="section alt" id="streamlit">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow">Streamlit</p>
+          <h2>Move from notebook output to a small app</h2>
+          <p>
+            <code>app.py</code> is already a useful pattern: configure the page, build a few metrics, accept input from the sidebar, and turn DataFrame logic into something interactive.
+          </p>
+        </div>
+        <div class="tile-grid">
+          <article class="tile span-6">
+            <span class="pill">Current Pattern</span>
+            <h3>What your existing app already teaches</h3>
+            <pre><code>import streamlit as st
+import pandas as pd
+import plotly.express as px
+
+st.set_page_config(page_title="Python Collections Dashboard", layout="wide")
+goal = st.sidebar.selectbox("Choose a scenario", [...])</code></pre>
+            <ul class="flat-list" style="margin-top: 12px;">
+              <li><code>st.set_page_config()</code> sets the app shell.</li>
+              <li>Sidebar widgets collect user intent.</li>
+              <li>DataFrames become charts and summary tables.</li>
+              <li>Small helper functions can power recommendations.</li>
+            </ul>
+          </article>
+          <article class="tile span-6">
+            <span class="pill">Best Next Upgrade</span>
+            <h3>Three project ideas using your real files</h3>
+            <ul class="flat-list">
+              <li><strong>Retail dashboard:</strong> filter <code>data.csv</code> by state, channel, category, and month.</li>
+              <li><strong>Commerce dashboard:</strong> merge customers, orders, and products, then show top buyers and status trends.</li>
+              <li><strong>NBA explorer:</strong> position filters, salary sliders, team summaries, and missing-value handling.</li>
+            </ul>
+            <pre><code>streamlit run app.py</code></pre>
+            <p class="caption">
+              Good workflow: explore in notebook, stabilize logic in functions, then expose the useful pieces through Streamlit controls.
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="practice">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow">Practice and Viva</p>
+          <h2>Questions that belong after the basics</h2>
+          <p>These are the questions that naturally fit the material in your notebooks and datasets.</p>
+        </div>
+
+        <details open>
+          <summary>10 quick viva answers</summary>
+          <ul class="flat-list">
+            <li><strong>Series vs DataFrame:</strong> Series is one labeled column. DataFrame is a table of labeled columns.</li>
+            <li><strong><code>loc</code> vs <code>iloc</code>:</strong> <code>loc</code> uses labels, <code>iloc</code> uses integer positions.</li>
+            <li><strong><code>fillna()</code> vs <code>dropna()</code>:</strong> one fills gaps, the other removes incomplete rows or columns.</li>
+            <li><strong><code>groupby</code>:</strong> split data into groups, apply aggregation, combine the result.</li>
+            <li><strong><code>pivot_table</code>:</strong> reshapes grouped values into a report-style matrix.</li>
+            <li><strong>Why NumPy is faster:</strong> homogeneous typed arrays and vectorized low-level operations.</li>
+            <li><strong>Broadcasting:</strong> NumPy stretches compatible shapes so arithmetic can happen without manual loops.</li>
+            <li><strong>Virtual environment:</strong> isolated Python environment for project-specific packages.</li>
+            <li><strong><code>if __name__ == "__main__":</code>:</strong> run code only when the file is executed directly, not when imported.</li>
+            <li><strong>Why export to CSV and Excel:</strong> CSV is lightweight and universal, Excel is convenient for business users and multi-sheet workflows.</li>
+          </ul>
+        </details>
+
+        <details>
+          <summary>8 practical tasks from your files</summary>
+          <ul class="flat-list">
+            <li>Load <code>data.csv</code> and find the top five states by profit.</li>
+            <li>Create a monthly sales table from <code>order_date</code> and calculate a 3-month rolling average.</li>
+            <li>Fill missing salaries in <code>nba.csv</code> using the median and rank players by salary.</li>
+            <li>Merge <code>customers.csv</code>, <code>orders.csv</code>, and <code>products.csv</code> into one report table.</li>
+            <li>Count how many orders belong to each status and plot the result.</li>
+            <li>Read all sheets from <code>data.xlsx</code> and print each sheet name with row count.</li>
+            <li>Create a pivot table of <code>category</code> by <code>payment_mode</code> from <code>data.csv</code>.</li>
+            <li>Export a cleaned NBA subset to both CSV and Excel formats.</li>
+          </ul>
+        </details>
+
+        <details>
+          <summary>One clean 7-day revision path</summary>
+          <ul class="flat-list">
+            <li><strong>Day 1:</strong> imports, modules, virtual environment, <code>requirements.txt</code></li>
+            <li><strong>Day 2:</strong> <code>json</code>, <code>datetime</code>, <code>re</code>, <code>pathlib</code></li>
+            <li><strong>Day 3:</strong> Pandas loading, inspection, <code>head()</code>, <code>info()</code>, <code>describe()</code></li>
+            <li><strong>Day 4:</strong> selection, filters, sorting, <code>value_counts()</code></li>
+            <li><strong>Day 5:</strong> <code>groupby</code>, merge, pivot table, export</li>
+            <li><strong>Day 6:</strong> NumPy arrays, broadcasting, ufuncs, random distributions</li>
+            <li><strong>Day 7:</strong> one chart notebook and one small Streamlit app</li>
+          </ul>
+        </details>
+      </div>
+    </section>
+
+    <section class="section alt" id="closing">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow">Takeaway</p>
+          <h2>How to use this page well</h2>
+          <p>
+            Read the definition first, then write the example yourself, then change the values and run it again. These topics become easy only when
+            you mix theory with small code practice. Pandas, NumPy, Matplotlib, and Seaborn are not separate islands; they work best together.
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="wrap footer-note">
+    Standalone revision notes for intermediate Python data topics: Pandas, Series, DataFrame, NumPy arrays, distributions, ufuncs, Matplotlib, and Seaborn.
+  </div>
+</body>
+</html>

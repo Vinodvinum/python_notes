@@ -1,0 +1,1432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Python Notes 3 — Advanced Continuation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root{
+      --bg:#f5f7f5;--bg-alt:#eef5f0;--surface:#ffffff;
+      --text:#1a2a1e;--muted:#4a6654;--line:#cddad2;
+      --accent:#0f7a5a;--accent2:#e05c28;--accent3:#c48a14;
+      --accent4:#2d6fa8;--accent5:#7c3aed;
+      --code-bg:#131f18;--code-text:#d4f0e0;
+      --shadow:0 8px 28px rgba(15,60,40,0.08);
+      --radius:10px;--wrap:1180px;
+    }
+    *{box-sizing:border-box;}
+    html{scroll-behavior:smooth;}
+    body{margin:0;font-family:"Plus Jakarta Sans",sans-serif;color:var(--text);
+      background:linear-gradient(180deg,var(--bg) 0%,#fafaf8 40%,var(--bg-alt) 100%);
+      line-height:1.62;}
+    .wrap{width:min(var(--wrap),calc(100% - 32px));margin:0 auto;}
+
+    /* ── MASTHEAD ── */
+    .masthead{padding:40px 0 32px;border-top:8px solid var(--accent);
+      background:linear-gradient(135deg,rgba(15,122,90,.07),rgba(224,92,40,.07)),var(--surface);
+      border-bottom:1px solid var(--line);}
+    .eyebrow{margin:0 0 8px;color:var(--accent);font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.8px;}
+    h1{margin:0;font-size:clamp(1.8rem,4vw,2.8rem);line-height:1.15;font-weight:800;max-width:860px;}
+    h2{margin:0 0 10px;font-size:1.6rem;font-weight:700;line-height:1.2;}
+    h3{margin:0 0 8px;font-size:1.05rem;font-weight:700;}
+    p{margin:0 0 12px;}
+    .lede{font-size:1rem;color:var(--muted);max-width:820px;margin:14px 0 0;font-weight:400;}
+    .actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px;}
+    .btn{display:inline-block;text-decoration:none;border-radius:6px;padding:9px 16px;font-size:.88rem;font-weight:600;cursor:pointer;border:none;font-family:"Plus Jakarta Sans",sans-serif;transition:all .18s;}
+    .btn.primary{background:var(--accent);color:#fff;}
+    .btn.primary:hover{background:#0a6349;}
+    .btn{background:var(--surface);color:var(--text);border:1px solid var(--line);}
+    .btn:hover{border-color:var(--accent);}
+    .quick-links{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px;}
+    .quick-links a{text-decoration:none;color:var(--muted);background:rgba(15,122,90,.07);border:1px solid rgba(15,122,90,.2);border-radius:6px;padding:5px 11px;font-size:.78rem;font-weight:500;transition:all .16s;}
+    .quick-links a:hover{color:var(--accent);border-color:var(--accent);}
+
+    /* ── SECTIONS ── */
+    .section{padding:52px 0;}
+    .section.alt{background:var(--bg-alt);}
+    .section-head{max-width:760px;margin-bottom:28px;}
+
+    /* ── TILES ── */
+    .tile-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:16px;}
+    .tile{grid-column:span 12;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:22px 24px;box-shadow:var(--shadow);position:relative;overflow:hidden;}
+    .tile::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:0;transition:opacity .3s;}
+    .tile:hover::before{opacity:1;}
+    .tile.soft{background:rgba(15,122,90,.04);border-color:rgba(15,122,90,.18);}
+    .tile.yellow{background:rgba(196,138,20,.06);border-color:rgba(196,138,20,.25);}
+    .tile.blue{background:rgba(45,111,168,.06);border-color:rgba(45,111,168,.25);}
+    .tile.purple{background:rgba(124,58,237,.06);border-color:rgba(124,58,237,.22);}
+    .tile.orange{background:rgba(224,92,40,.06);border-color:rgba(224,92,40,.22);}
+
+    @media(min-width:640px){.span-6{grid-column:span 6;}}
+    @media(min-width:900px){
+      .span-4{grid-column:span 4;}
+      .span-6{grid-column:span 6;}
+      .span-8{grid-column:span 8;}
+      .span-12{grid-column:span 12;}
+    }
+
+    /* ── PILLS ── */
+    .pill{display:inline-block;font-size:.72rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;border-radius:999px;padding:3px 10px;margin-bottom:10px;background:rgba(15,122,90,.1);color:var(--accent);border:1px solid rgba(15,122,90,.25);}
+    .pill.orange{background:rgba(224,92,40,.1);color:var(--accent2);border-color:rgba(224,92,40,.28);}
+    .pill.yellow{background:rgba(196,138,20,.1);color:var(--accent3);border-color:rgba(196,138,20,.28);}
+    .pill.blue{background:rgba(45,111,168,.1);color:var(--accent4);border-color:rgba(45,111,168,.28);}
+    .pill.purple{background:rgba(124,58,237,.1);color:var(--accent5);border-color:rgba(124,58,237,.28);}
+
+    /* ── CODE ── */
+    pre{margin:12px 0 0;border-radius:10px;background:var(--code-bg);color:var(--code-text);border:1px solid rgba(212,240,224,.12);padding:16px 18px;overflow-x:auto;font-family:"JetBrains Mono",monospace;font-size:.82rem;line-height:1.65;tab-size:4;}
+    code{font-family:"JetBrains Mono",monospace;font-size:.88em;}
+    p code,td code,li code{background:rgba(15,122,90,.1);color:var(--accent);padding:2px 6px;border-radius:4px;font-size:.82em;}
+    .c-kw{color:#5eead4;}
+    .c-fn{color:#86efac;}
+    .c-st{color:#fde68a;}
+    .c-cm{color:#3d6b52;font-style:italic;}
+    .c-num{color:#93c5fd;}
+
+    /* ── TABLES ── */
+    .data-table{width:100%;border-collapse:collapse;margin-top:10px;border-radius:8px;overflow:hidden;border:1px solid var(--line);}
+    .data-table th,.data-table td{text-align:left;padding:9px 13px;border-bottom:1px solid var(--line);font-size:.87rem;vertical-align:top;}
+    .data-table th{background:rgba(15,122,90,.07);color:var(--accent);font-weight:700;font-size:.82rem;}
+    .data-table tr:last-child td{border-bottom:none;}
+    .data-table tr:hover td{background:rgba(15,122,90,.03);}
+
+    /* ── CALLOUTS ── */
+    .callout{border-left:4px solid var(--accent);background:rgba(15,122,90,.07);border-radius:0 8px 8px 0;padding:10px 14px;margin:12px 0;font-size:.9rem;}
+    .callout.orange{border-left-color:var(--accent2);background:rgba(224,92,40,.07);}
+    .callout.yellow{border-left-color:var(--accent3);background:rgba(196,138,20,.07);}
+    .callout.blue{border-left-color:var(--accent4);background:rgba(45,111,168,.07);}
+    .callout.purple{border-left-color:var(--accent5);background:rgba(124,58,237,.07);}
+    .callout strong{color:inherit;}
+    .memory{border-left:4px solid var(--accent5);background:rgba(124,58,237,.07);border-radius:0 8px 8px 0;padding:10px 14px;margin:12px 0;font-size:.88rem;}
+    .memory strong{color:var(--accent5);}
+
+    /* ── LISTS ── */
+    .flat-list{margin:0;padding-left:18px;line-height:1.9;}
+    .flat-list li{margin-bottom:4px;font-size:.9rem;}
+    .caption{font-size:.82rem;color:var(--muted);margin-top:10px;margin-bottom:0;}
+
+    /* ── STATS ROW ── */
+    .stat-row{display:flex;flex-wrap:wrap;gap:14px;margin:18px 0;}
+    .stat{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 18px;min-width:140px;box-shadow:var(--shadow);}
+    .stat strong{display:block;font-size:1.6rem;font-weight:800;color:var(--accent);}
+    .stat span{font-size:.8rem;color:var(--muted);}
+
+    /* ── DETAILS ── */
+    details{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 16px;margin-top:12px;}
+    summary{cursor:pointer;font-weight:700;font-size:.95rem;}
+    summary::marker{color:var(--accent);}
+
+    /* ── CHART VISUAL ── */
+    .chart-demo{background:var(--code-bg);border:1px solid rgba(212,240,224,.1);border-radius:10px;padding:18px;margin-top:12px;overflow:hidden;}
+    .chart-title{font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.6px;color:#3d6b52;margin-bottom:14px;}
+    .h-bars{display:flex;flex-direction:column;gap:8px;}
+    .h-bar-row{display:flex;align-items:center;gap:10px;font-size:.75rem;color:#7aa88c;}
+    .h-bar-lbl{width:90px;text-align:right;flex-shrink:0;}
+    .h-bar-fill{border-radius:3px;height:18px;transition:width .8s ease;}
+    .h-bar-val{color:#d4f0e0;font-size:.72rem;}
+    .v-bars{display:flex;align-items:flex-end;gap:10px;height:130px;padding-bottom:20px;position:relative;}
+    .v-bars::after{content:"";position:absolute;bottom:20px;left:0;right:0;border-top:1px solid rgba(212,240,224,.12);}
+    .v-bar-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;}
+    .v-bar-fill{width:100%;border-radius:4px 4px 0 0;}
+    .v-bar-lbl{font-size:.65rem;color:#3d6b52;position:absolute;bottom:0;}
+    .v-bar-val{font-size:.66rem;color:#d4f0e0;}
+    .scatter-wrap svg{width:100%;height:130px;}
+
+    /* ── GRID 2 COLS ── */
+    .cols2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+    @media(max-width:700px){.cols2{grid-template-columns:1fr;}}
+
+    /* ── STEP LIST ── */
+    .steps{display:flex;flex-direction:column;gap:10px;margin-top:10px;}
+    .step{display:flex;gap:12px;align-items:flex-start;}
+    .step-num{width:26px;height:26px;border-radius:7px;background:rgba(15,122,90,.12);border:1px solid rgba(15,122,90,.3);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.85rem;color:var(--accent);flex-shrink:0;margin-top:2px;}
+    .step-body h4{margin:0 0 3px;font-size:.92rem;}
+    .step-body p{margin:0;font-size:.83rem;color:var(--muted);}
+
+    /* ── INTERVIEW LIST ── */
+    .q-list{list-style:none;padding:0;margin:0;}
+    .q-list li{border-bottom:1px solid var(--line);padding:10px 0;font-size:.88rem;}
+    .q-list li:last-child{border-bottom:none;}
+    .q-list li strong{color:var(--text);display:block;margin-bottom:3px;}
+
+    footer{text-align:center;padding:14px 0 32px;color:var(--muted);font-size:.85rem;border-top:1px solid var(--line);margin-top:40px;}
+
+    @media(max-width:640px){
+      h1{font-size:1.7rem;}h2{font-size:1.3rem;}
+      .stat-row{gap:10px;}
+      pre{font-size:.77rem;}
+    }
+    @media print{
+      body{background:#fff;}
+      .tile,.stat,.section,.masthead{box-shadow:none;}
+      .btn{display:none;}
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── MASTHEAD ── -->
+<header class="masthead">
+  <div class="wrap">
+    <p class="eyebrow">Python Notes 3 — Continuation</p>
+    <h1>Advanced Pandas · NumPy Deep · Full Visualization · Statistics · Scikit-learn · SQL with Python</h1>
+    <p class="lede">Continues directly from Notes 2 (Pandas basics, NumPy arrays, Matplotlib/Seaborn intro). This page covers the deeper topics every data analyst and data science job interview will test.</p>
+    <div class="actions">
+      <button class="btn primary" type="button" onclick="window.print()">🖨 Print / Save PDF</button>
+    </div>
+    <nav class="quick-links">
+      <a href="#pandas-deep">🐼 Pandas Deep</a>
+      <a href="#merge-join">🔗 Merge & Join</a>
+      <a href="#window">📉 Window Functions</a>
+      <a href="#numpy-adv">⚡ NumPy Advanced</a>
+      <a href="#seaborn">🎨 Seaborn Full</a>
+      <a href="#plotly">📊 Plotly Express</a>
+      <a href="#stats">📐 Statistics (scipy)</a>
+      <a href="#sklearn">🤖 Scikit-learn</a>
+      <a href="#sql">🗄 SQL with Python</a>
+      <a href="#interview">🎯 Interview Q&A</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+<!-- ══════════════════════════════════════════
+     SECTION 1 — PANDAS DEEP DIVE
+══════════════════════════════════════════ -->
+<section class="section" id="pandas-deep">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">Pandas Deep Dive</p>
+      <h2>Everything after groupby — the topics interviewers actually test</h2>
+      <p>Notes 2 covered Series, DataFrame, loc/iloc, groupby, pivot_table, and export. This continues with merge/join types, concat, melt, window functions, agg, transform, binning, and encoding.</p>
+    </div>
+
+    <!-- AGG + TRANSFORM -->
+    <div class="tile-grid">
+      <article class="tile span-6">
+        <span class="pill">agg()</span>
+        <h3>agg() — Multiple Aggregations at Once</h3>
+        <p>Instead of calling <code>.sum()</code> and <code>.mean()</code> separately, <code>agg()</code> runs multiple functions in one go and returns a clean summary.</p>
+        <pre><span class="c-cm"># Single aggregation</span>
+df.groupby(<span class="c-st">"category"</span>)[<span class="c-st">"sales"</span>].agg([<span class="c-st">"sum"</span>,<span class="c-st">"mean"</span>,<span class="c-st">"count"</span>,<span class="c-st">"max"</span>])
+
+<span class="c-cm"># Different functions per column</span>
+df.groupby(<span class="c-st">"category"</span>).agg({
+    <span class="c-st">"sales"</span>:   [<span class="c-st">"sum"</span>, <span class="c-st">"mean"</span>],
+    <span class="c-st">"profit"</span>:  [<span class="c-st">"sum"</span>, <span class="c-st">"max"</span>],
+    <span class="c-st">"quantity"</span>:[<span class="c-st">"sum"</span>, <span class="c-st">"count"</span>]
+})
+
+<span class="c-cm"># Named aggregation (clean column names)</span>
+df.groupby(<span class="c-st">"state"</span>).agg(
+    total_sales  = (<span class="c-st">"sales"</span>,   <span class="c-st">"sum"</span>),
+    avg_profit   = (<span class="c-st">"profit"</span>,  <span class="c-st">"mean"</span>),
+    order_count  = (<span class="c-st">"order_id"</span>,<span class="c-st">"count"</span>)
+).reset_index()</pre>
+        <div class="memory"><strong>🧠 Trick:</strong> <code>agg()</code> = "give me many stats in one shot." Named agg gives you clean output column names without multi-level header headaches.</div>
+      </article>
+
+      <article class="tile span-6">
+        <span class="pill">transform()</span>
+        <h3>transform() — Add Group Stats Back to Original Rows</h3>
+        <p><code>groupby().transform()</code> returns a Series of the same length as the original DataFrame — each row gets the group's aggregated value. Unlike <code>agg()</code> which collapses rows.</p>
+        <pre><span class="c-cm"># Add category-level average to each row</span>
+df[<span class="c-st">"cat_avg_sales"</span>] = df.groupby(<span class="c-st">"category"</span>)[<span class="c-st">"sales"</span>].transform(<span class="c-st">"mean"</span>)
+
+<span class="c-cm"># Calculate each row's % contribution within its group</span>
+df[<span class="c-st">"pct_of_cat"</span>] = (
+    df[<span class="c-st">"sales"</span>] / df.groupby(<span class="c-st">"category"</span>)[<span class="c-st">"sales"</span>].transform(<span class="c-st">"sum"</span>)
+) * <span class="c-num">100</span>
+
+<span class="c-cm"># Z-score normalization within each group</span>
+df[<span class="c-st">"zscore"</span>] = df.groupby(<span class="c-st">"category"</span>)[<span class="c-st">"sales"</span>].transform(
+    <span class="c-kw">lambda</span> x: (x - x.mean()) / x.std()
+)</pre>
+        <table class="data-table" style="margin-top:12px;">
+          <thead><tr><th>Method</th><th>Output length</th><th>Use when</th></tr></thead>
+          <tbody>
+            <tr><td><code>agg()</code></td><td>One row per group</td><td>Summary reports, pivot-style results</td></tr>
+            <tr><td><code>transform()</code></td><td>Same as original</td><td>Adding group stats as new columns</td></tr>
+            <tr><td><code>apply()</code></td><td>Flexible</td><td>Custom function per group</td></tr>
+          </tbody>
+        </table>
+      </article>
+
+      <!-- MERGE / JOIN -->
+      <article class="tile span-12" id="merge-join">
+        <span class="pill">Merge & Join</span>
+        <h3>merge() — All Four Join Types</h3>
+        <p>Pandas <code>merge()</code> is equivalent to SQL JOIN. Understanding all four types is a core interview topic.</p>
+        <div class="cols2">
+          <div>
+            <pre><span class="c-cm"># INNER JOIN — only matching rows (default)</span>
+result = pd.merge(customers, orders,
+                  on=<span class="c-st">"customer_id"</span>, how=<span class="c-st">"inner"</span>)
+
+<span class="c-cm"># LEFT JOIN — all from left, matching from right</span>
+result = pd.merge(customers, orders,
+                  on=<span class="c-st">"customer_id"</span>, how=<span class="c-st">"left"</span>)
+<span class="c-cm"># NaN for right side where no match</span>
+
+<span class="c-cm"># RIGHT JOIN — all from right, matching from left</span>
+result = pd.merge(customers, orders,
+                  on=<span class="c-st">"customer_id"</span>, how=<span class="c-st">"right"</span>)
+
+<span class="c-cm"># OUTER JOIN — all rows from both, NaN where no match</span>
+result = pd.merge(customers, orders,
+                  on=<span class="c-st">"customer_id"</span>, how=<span class="c-st">"outer"</span>)
+
+<span class="c-cm"># Merge on different column names</span>
+pd.merge(orders, products,
+         left_on=<span class="c-st">"prod_id"</span>, right_on=<span class="c-st">"id"</span>)
+
+<span class="c-cm"># Merge on multiple columns</span>
+pd.merge(df1, df2, on=[<span class="c-st">"state"</span>, <span class="c-st">"year"</span>])
+
+<span class="c-cm"># Three-table merge (chain them)</span>
+combined = (orders
+    .merge(customers, on=<span class="c-st">"customer_id"</span>)
+    .merge(products,  on=<span class="c-st">"product_id"</span>)
+)</pre>
+          </div>
+          <div>
+            <table class="data-table">
+              <thead><tr><th>Join Type</th><th>Rows Kept</th><th>Real-life analogy</th></tr></thead>
+              <tbody>
+                <tr><td><strong>INNER</strong></td><td>Only matching rows from BOTH</td><td>Students who are in BOTH attendance AND marks list</td></tr>
+                <tr><td><strong>LEFT</strong></td><td>All from left + matches from right</td><td>All customers, even those with no orders (NaN for orders)</td></tr>
+                <tr><td><strong>RIGHT</strong></td><td>All from right + matches from left</td><td>All orders, even if customer record is missing</td></tr>
+                <tr><td><strong>OUTER</strong></td><td>All rows from both</td><td>Complete picture — NaN wherever no match on either side</td></tr>
+              </tbody>
+            </table>
+            <div class="callout" style="margin-top:12px;">
+              <strong>💡 Interview Tip:</strong> LEFT JOIN is the most common in real DA work. "Give me all customers and their orders — show NaN if they haven't ordered yet." Always check row count after merge to catch duplicates!
+            </div>
+            <div class="memory"><strong>🧠 Mnemonic:</strong> INNER = overlap only. LEFT = all of left side. RIGHT = all of right side. OUTER = everyone, NaN fills gaps.</div>
+          </div>
+        </div>
+      </article>
+
+      <article class="tile span-6">
+        <span class="pill">concat()</span>
+        <h3>concat() — Stack DataFrames Vertically or Horizontally</h3>
+        <pre><span class="c-cm"># Stack rows vertically (same columns)</span>
+monthly = [jan_df, feb_df, mar_df]
+full_year = pd.concat(monthly, ignore_index=<span class="c-kw">True</span>)
+
+<span class="c-cm"># Stack columns horizontally (same rows)</span>
+combined = pd.concat([df1, df2], axis=<span class="c-num">1</span>)
+
+<span class="c-cm"># Keep track of origin with keys</span>
+all_data = pd.concat(
+    [q1_df, q2_df, q3_df],
+    keys=[<span class="c-st">"Q1"</span>,<span class="c-st">"Q2"</span>,<span class="c-st">"Q3"</span>],
+    ignore_index=<span class="c-kw">False</span>
+)
+
+<span class="c-cm"># Read all sheets from Excel and concat</span>
+xf = pd.ExcelFile(<span class="c-st">"data.xlsx"</span>)
+all_sheets = pd.concat(
+    [xf.parse(s) <span class="c-kw">for</span> s <span class="c-kw">in</span> xf.sheet_names],
+    ignore_index=<span class="c-kw">True</span>
+)</pre>
+        <table class="data-table" style="margin-top:10px;">
+          <thead><tr><th></th><th>merge()</th><th>concat()</th></tr></thead>
+          <tbody>
+            <tr><td>Purpose</td><td>Join on common key (like SQL JOIN)</td><td>Stack tables together</td></tr>
+            <tr><td>Direction</td><td>Horizontal (adds columns)</td><td>Vertical (axis=0) or horizontal (axis=1)</td></tr>
+            <tr><td>Needs key?</td><td>Yes</td><td>No</td></tr>
+          </tbody>
+        </table>
+      </article>
+
+      <article class="tile span-6">
+        <span class="pill">melt() & pivot()</span>
+        <h3>melt() — Wide to Long Format | pivot() — Long to Wide</h3>
+        <pre><span class="c-cm"># WIDE format (one row = one student, columns = subjects)</span>
+<span class="c-cm"># name | Math | Science | English</span>
+<span class="c-cm"># Vinu |  92  |   88    |   79</span>
+
+<span class="c-cm"># melt() → LONG format (one row = one subject score)</span>
+long_df = df.melt(
+    id_vars=[<span class="c-st">"name"</span>],               <span class="c-cm"># keep as identifier</span>
+    value_vars=[<span class="c-st">"Math"</span>,<span class="c-st">"Science"</span>,<span class="c-st">"English"</span>],
+    var_name=<span class="c-st">"subject"</span>,             <span class="c-cm"># column name for variable</span>
+    value_name=<span class="c-st">"score"</span>              <span class="c-cm"># column name for values</span>
+)
+<span class="c-cm"># Result: name | subject | score</span>
+<span class="c-cm">#         Vinu |  Math   |  92</span>
+<span class="c-cm">#         Vinu | Science |  88</span>
+
+<span class="c-cm"># pivot() → WIDE format (reverse of melt)</span>
+wide_df = long_df.pivot(
+    index=<span class="c-st">"name"</span>, columns=<span class="c-st">"subject"</span>, values=<span class="c-st">"score"</span>
+)</pre>
+        <div class="callout orange"><strong>Why melt() matters:</strong> Seaborn and Plotly work better with LONG format (one observation per row). Pivot tables need WIDE format. Know how to convert between both.</div>
+      </article>
+
+      <!-- WINDOW FUNCTIONS -->
+      <article class="tile span-12" id="window">
+        <span class="pill">Window Functions</span>
+        <h3>rolling(), expanding(), ewm() — Time Series Analysis</h3>
+        <div class="cols2">
+          <div>
+            <pre><span class="c-cm"># ── rolling() — fixed window ──</span>
+<span class="c-cm"># 3-month moving average of sales</span>
+df[<span class="c-st">"sales_ma3"</span>] = df[<span class="c-st">"sales"</span>].rolling(window=<span class="c-num">3</span>).mean()
+
+<span class="c-cm"># 7-day rolling sum</span>
+df[<span class="c-st">"sales_7d"</span>] = df[<span class="c-st">"sales"</span>].rolling(window=<span class="c-num">7</span>).sum()
+
+<span class="c-cm"># Rolling std (volatility measurement)</span>
+df[<span class="c-st">"vol_30d"</span>] = df[<span class="c-st">"price"</span>].rolling(window=<span class="c-num">30</span>).std()
+
+<span class="c-cm"># ── expanding() — grows from start ──</span>
+<span class="c-cm"># Cumulative average (all data up to current row)</span>
+df[<span class="c-st">"cum_avg"</span>] = df[<span class="c-st">"sales"</span>].expanding().mean()
+
+<span class="c-cm"># Cumulative max</span>
+df[<span class="c-st">"cum_max"</span>] = df[<span class="c-st">"sales"</span>].expanding().max()
+
+<span class="c-cm"># ── ewm() — exponentially weighted ──</span>
+<span class="c-cm"># Recent values get more weight (smoothing)</span>
+df[<span class="c-st">"ema"</span>] = df[<span class="c-st">"sales"</span>].ewm(span=<span class="c-num">10</span>).mean()
+
+<span class="c-cm"># ── cumsum(), cummax(), pct_change() ──</span>
+df[<span class="c-st">"running_total"</span>] = df[<span class="c-st">"sales"</span>].cumsum()
+df[<span class="c-st">"mom_growth"</span>]    = df[<span class="c-st">"sales"</span>].pct_change() * <span class="c-num">100</span>
+df[<span class="c-st">"yoy_diff"</span>]      = df[<span class="c-st">"sales"</span>].diff(<span class="c-num">12</span>)</pre>
+          </div>
+          <div>
+            <table class="data-table">
+              <thead><tr><th>Function</th><th>Window type</th><th>Use case</th></tr></thead>
+              <tbody>
+                <tr><td><code>rolling(n)</code></td><td>Fixed n rows</td><td>Moving average, smoothed trend</td></tr>
+                <tr><td><code>expanding()</code></td><td>All rows from start</td><td>Cumulative stats, running totals</td></tr>
+                <tr><td><code>ewm(span)</code></td><td>Exponential decay</td><td>Smoothing, EMA for stocks</td></tr>
+                <tr><td><code>cumsum()</code></td><td>All rows</td><td>Running total</td></tr>
+                <tr><td><code>pct_change()</code></td><td>Row to row</td><td>Month-over-month growth %</td></tr>
+                <tr><td><code>diff(n)</code></td><td>n rows back</td><td>Year-over-year difference</td></tr>
+              </tbody>
+            </table>
+            <div class="memory"><strong>🧠 Trick:</strong> rolling = "sliding window" (fixed size). expanding = "growing window" (always starts from row 1). ewm = "smart rolling" (recent data counts more).</div>
+            <div class="callout yellow" style="margin-top:10px;"><strong>Real DA use:</strong> "Calculate 3-month moving average of sales" = <code>.rolling(3).mean()</code>. Sort by date FIRST before applying!</div>
+          </div>
+        </div>
+      </article>
+
+      <!-- BINNING + ENCODING -->
+      <article class="tile span-6">
+        <span class="pill">Binning</span>
+        <h3>cut() and qcut() — Convert Numbers into Categories</h3>
+        <pre><span class="c-cm"># cut() — fixed boundaries you define</span>
+df[<span class="c-st">"age_group"</span>] = pd.cut(
+    df[<span class="c-st">"age"</span>],
+    bins=[<span class="c-num">0</span>, <span class="c-num">18</span>, <span class="c-num">35</span>, <span class="c-num">60</span>, <span class="c-num">100</span>],
+    labels=[<span class="c-st">"Teen"</span>, <span class="c-st">"Young"</span>, <span class="c-st">"Middle"</span>, <span class="c-st">"Senior"</span>]
+)
+
+df[<span class="c-st">"sales_tier"</span>] = pd.cut(
+    df[<span class="c-st">"sales"</span>],
+    bins=[<span class="c-num">0</span>, <span class="c-num">1000</span>, <span class="c-num">5000</span>, <span class="c-num">float</span>(<span class="c-st">"inf"</span>)],
+    labels=[<span class="c-st">"Low"</span>, <span class="c-st">"Mid"</span>, <span class="c-st">"High"</span>]
+)
+
+<span class="c-cm"># qcut() — equal-frequency bins (percentile-based)</span>
+df[<span class="c-st">"quartile"</span>] = pd.qcut(
+    df[<span class="c-st">"sales"</span>],
+    q=<span class="c-num">4</span>,
+    labels=[<span class="c-st">"Q1"</span>, <span class="c-st">"Q2"</span>, <span class="c-st">"Q3"</span>, <span class="c-st">"Q4"</span>]
+)
+
+<span class="c-cm"># Value counts of bins</span>
+df[<span class="c-st">"age_group"</span>].value_counts()</pre>
+        <table class="data-table" style="margin-top:10px;">
+          <tr><th></th><th>cut()</th><th>qcut()</th></tr>
+          <tr><td>Bins</td><td>Fixed boundaries</td><td>Equal frequency (percentiles)</td></tr>
+          <tr><td>Use when</td><td>You know the meaningful ranges</td><td>You want equal-sized groups</td></tr>
+        </table>
+      </article>
+
+      <article class="tile span-6">
+        <span class="pill orange">Encoding</span>
+        <h3>Encoding Categorical Variables for ML</h3>
+        <pre><span class="c-cm"># ── get_dummies() — One-Hot Encoding ──</span>
+<span class="c-cm"># "City" column with values: Mysuru, Bangalore, Chennai</span>
+encoded = pd.get_dummies(df[<span class="c-st">"city"</span>], prefix=<span class="c-st">"city"</span>)
+<span class="c-cm"># Creates: city_Mysuru | city_Bangalore | city_Chennai</span>
+df = pd.concat([df, encoded], axis=<span class="c-num">1</span>)
+df.drop(columns=[<span class="c-st">"city"</span>], inplace=<span class="c-kw">True</span>)
+
+<span class="c-cm"># Drop first dummy (avoid multicollinearity)</span>
+encoded = pd.get_dummies(df, columns=[<span class="c-st">"city"</span>], drop_first=<span class="c-kw">True</span>)
+
+<span class="c-cm"># ── map() — Label Encoding (ordinal) ──</span>
+<span class="c-cm"># For ordered categories</span>
+df[<span class="c-st">"grade_num"</span>] = df[<span class="c-st">"grade"</span>].map({<span class="c-st">"Low"</span>:<span class="c-num">0</span>,<span class="c-st">"Mid"</span>:<span class="c-num">1</span>,<span class="c-st">"High"</span>:<span class="c-num">2</span>})
+
+<span class="c-cm"># ── Categorical dtype (memory efficient) ──</span>
+df[<span class="c-st">"state"</span>] = df[<span class="c-st">"state"</span>].astype(<span class="c-st">"category"</span>)
+<span class="c-cm"># Reduces memory for repetitive string columns</span>
+df[<span class="c-st">"state"</span>].cat.categories    <span class="c-cm"># unique values</span>
+df[<span class="c-st">"state"</span>].cat.codes          <span class="c-cm"># integer codes</span></pre>
+        <div class="callout blue"><strong>When to use what:</strong> One-Hot (get_dummies) for nominal categories (city, color — no order). Label Encoding (map) for ordinal categories (Low/Mid/High — has order).</div>
+      </article>
+
+      <!-- CROSSTAB + SAMPLE + DUPLICATES -->
+      <article class="tile span-6">
+        <span class="pill">crosstab & sample</span>
+        <h3>More Essential Pandas Tools</h3>
+        <pre><span class="c-cm"># crosstab() — frequency table of two columns</span>
+pd.crosstab(df[<span class="c-st">"category"</span>], df[<span class="c-st">"payment_mode"</span>])
+<span class="c-cm"># Like pivot but for counting occurrences</span>
+
+<span class="c-cm"># With normalize — show percentages</span>
+pd.crosstab(df[<span class="c-st">"zone"</span>], df[<span class="c-st">"status"</span>], normalize=<span class="c-st">"index"</span>)
+
+<span class="c-cm"># sample() — random rows</span>
+df.sample(<span class="c-num">100</span>)                    <span class="c-cm"># 100 random rows</span>
+df.sample(frac=<span class="c-num">0.2</span>)              <span class="c-cm"># 20% of rows</span>
+df.sample(frac=<span class="c-num">0.8</span>, random_state=<span class="c-num">42</span>)  <span class="c-cm"># reproducible</span>
+
+<span class="c-cm"># nlargest / nsmallest</span>
+df.nlargest(<span class="c-num">10</span>, <span class="c-st">"profit"</span>)       <span class="c-cm"># top 10 by profit</span>
+df.nsmallest(<span class="c-num">5</span>, <span class="c-st">"sales"</span>)        <span class="c-cm"># bottom 5 by sales</span>
+
+<span class="c-cm"># explode() — split list-like cell into rows</span>
+df[<span class="c-st">"tags"</span>] = df[<span class="c-st">"tags"</span>].str.split(<span class="c-st">","</span>)
+df.explode(<span class="c-st">"tags"</span>)               <span class="c-cm"># one row per tag</span>
+
+<span class="c-cm"># query() — readable filtering</span>
+df.query(<span class="c-st">"profit > 1000 and state == 'Maharashtra'"</span>)
+df.query(<span class="c-st">"category in @target_cats"</span>)  <span class="c-cm"># use local var with @</span></pre>
+      </article>
+
+      <article class="tile span-6">
+        <span class="pill">Regex with Pandas</span>
+        <h3>str accessor + Regex — Powerful Text Cleaning</h3>
+        <pre><span class="c-cm"># str.contains — filter rows matching pattern</span>
+df[df[<span class="c-st">"product"</span>].str.contains(<span class="c-st">"laptop"</span>, case=<span class="c-kw">False</span>)]
+
+<span class="c-cm"># str.extract — pull regex group into new column</span>
+df[<span class="c-st">"phone"</span>].str.extract(r<span class="c-st">"(\d{10})"</span>)
+df[<span class="c-st">"email"</span>].str.extract(r<span class="c-st">"@([\w.]+)"</span>)  <span class="c-cm"># domain from email</span>
+
+<span class="c-cm"># str.replace with regex</span>
+df[<span class="c-st">"price"</span>] = df[<span class="c-st">"price"</span>].str.replace(r<span class="c-st">"[₹,]"</span>, <span class="c-st">""</span>, regex=<span class="c-kw">True</span>)
+df[<span class="c-st">"price"</span>] = pd.to_numeric(df[<span class="c-st">"price"</span>], errors=<span class="c-st">"coerce"</span>)
+
+<span class="c-cm"># str.split — split into multiple columns</span>
+df[[<span class="c-st">"first"</span>,<span class="c-st">"last"</span>]] = df[<span class="c-st">"name"</span>].str.split(<span class="c-st">" "</span>, n=<span class="c-num">1</span>, expand=<span class="c-kw">True</span>)
+
+<span class="c-cm"># str.match — check if starts with pattern</span>
+df[df[<span class="c-st">"order_id"</span>].str.match(r<span class="c-st">"^ORD-\d{4}"</span>)]
+
+<span class="c-cm"># pd.to_numeric with coerce — handles non-numeric</span>
+df[<span class="c-st">"marks"</span>] = pd.to_numeric(df[<span class="c-st">"marks"</span>], errors=<span class="c-st">"coerce"</span>)
+<span class="c-cm"># "coerce" turns bad values into NaN instead of error</span></pre>
+        <div class="memory"><strong>🧠 Trick:</strong> <code>pd.to_numeric(df["col"], errors="coerce")</code> is the safest way to convert a messy column to numbers. It converts "abc" to NaN instead of crashing.</div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     SECTION 2 — NUMPY ADVANCED
+══════════════════════════════════════════ -->
+<section class="section alt" id="numpy-adv">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">NumPy Advanced</p>
+      <h2>Linear algebra, stacking, fancy indexing, and performance tricks</h2>
+    </div>
+    <div class="tile-grid">
+      <article class="tile span-6">
+        <span class="pill">Linear Algebra</span>
+        <h3>np.linalg — Matrix Operations</h3>
+        <pre><span class="c-cm">import numpy as np
+
+A = np.array([[1,2],[3,4]])
+B = np.array([[5,6],[7,8]])
+
+<span class="c-cm"># Matrix multiplication (NOT element-wise!)</span>
+np.dot(A, B)            <span class="c-cm"># same as A @ B (Python 3.5+)</span>
+A @ B                   <span class="c-cm"># preferred operator</span>
+
+<span class="c-cm"># Transpose</span>
+A.T                     <span class="c-cm"># flip rows ↔ columns</span>
+
+<span class="c-cm"># Determinant</span>
+np.linalg.det(A)        <span class="c-cm"># -2.0</span>
+
+<span class="c-cm"># Inverse</span>
+np.linalg.inv(A)        <span class="c-cm"># A⁻¹ (only if det ≠ 0)</span>
+
+<span class="c-cm"># Eigenvalues and eigenvectors</span>
+vals, vecs = np.linalg.eig(A)
+
+<span class="c-cm"># Solve linear equations: Ax = b</span>
+b = np.array([5, 11])
+x = np.linalg.solve(A, b)  <span class="c-cm"># result: x vector</span>
+
+<span class="c-cm"># Norm</span>
+np.linalg.norm(A)           <span class="c-cm"># Frobenius norm</span>
+np.linalg.norm(b)           <span class="c-cm"># Euclidean length of vector</span></pre>
+        <div class="callout blue"><strong>Why it matters for DA/ML:</strong> Linear algebra underpins all of machine learning — regression coefficients, PCA, neural network weights. Knowing these ops helps you understand what sklearn is doing internally.</div>
+      </article>
+
+      <article class="tile span-6">
+        <span class="pill">Stacking & Splitting</span>
+        <h3>Combine and Split Arrays</h3>
+        <pre><span class="c-cm">a = np.array([1,2,3])
+b = np.array([4,5,6])
+
+<span class="c-cm"># Stack — create new axis</span>
+np.stack([a, b])         <span class="c-cm"># [[1,2,3],[4,5,6]]  shape (2,3)</span>
+np.stack([a, b], axis=1) <span class="c-cm"># [[1,4],[2,5],[3,6]] shape (3,2)</span>
+
+<span class="c-cm"># hstack / vstack — concatenate along existing axis</span>
+np.hstack([a, b])        <span class="c-cm"># [1,2,3,4,5,6]</span>
+np.vstack([a, b])        <span class="c-cm"># [[1,2,3],[4,5,6]]</span>
+
+<span class="c-cm"># concatenate — explicit axis control</span>
+np.concatenate([a, b])           <span class="c-cm"># horizontal</span>
+np.concatenate([[a],[b]], axis=0) <span class="c-cm"># vertical</span>
+
+<span class="c-cm"># Split</span>
+chunks = np.array_split(a, 3)   <span class="c-cm"># split into 3 parts</span>
+np.hsplit(matrix, 2)             <span class="c-cm"># split columns</span>
+np.vsplit(matrix, 2)             <span class="c-cm"># split rows</span></pre>
+        <h3 style="margin-top:14px;">Fancy Indexing + Boolean Masking</h3>
+        <pre><span class="c-cm">arr = np.array([10,20,30,40,50,60])
+
+<span class="c-cm"># Fancy indexing — non-contiguous selection</span>
+arr[[0, 2, 4]]       <span class="c-cm"># [10, 30, 50]</span>
+arr[np.array([1,3])] <span class="c-cm"># [20, 40]</span>
+
+<span class="c-cm"># Boolean masking</span>
+mask = arr > 30
+arr[mask]            <span class="c-cm"># [40, 50, 60]</span>
+
+<span class="c-cm"># Combine conditions</span>
+arr[(arr > 20) & (arr < 50)]  <span class="c-cm"># [30, 40]</span>
+
+<span class="c-cm"># np.where — vectorized if-else</span>
+np.where(arr > 30, arr, 0)    <span class="c-cm"># [0, 0, 0, 40, 50, 60]</span>
+np.where(arr%2==0, "even","odd")
+
+<span class="c-cm"># Sorting</span>
+np.sort(arr)                  <span class="c-cm"># sorted values</span>
+np.argsort(arr)               <span class="c-cm"># indices that would sort</span>
+np.unique(arr, return_counts=<span class="c-kw">True</span>)  <span class="c-cm"># unique + frequency</span></pre>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     SECTION 3 — SEABORN FULL CHART GALLERY
+══════════════════════════════════════════ -->
+<section class="section" id="seaborn">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">Seaborn + Matplotlib</p>
+      <h2>Full chart gallery — every chart type with code + when to use</h2>
+    </div>
+    <div class="tile-grid">
+      <article class="tile span-6">
+        <span class="pill">Matplotlib Anatomy</span>
+        <h3>Figure, Axes, Subplots — The Right Way</h3>
+        <pre><span class="c-cm">import matplotlib.pyplot as plt
+
+<span class="c-cm"># Object-oriented approach (professional way)</span>
+fig, ax = plt.subplots(figsize=(<span class="c-num">10</span>, <span class="c-num">5</span>))
+
+ax.plot(df[<span class="c-st">"month"</span>], df[<span class="c-st">"sales"</span>], color=<span class="c-st">"#0f7a5a"</span>, linewidth=2)
+ax.set_title(<span class="c-st">"Monthly Sales Trend"</span>, fontsize=<span class="c-num">14</span>, fontweight=<span class="c-st">"bold"</span>)
+ax.set_xlabel(<span class="c-st">"Month"</span>)
+ax.set_ylabel(<span class="c-st">"Sales (₹)"</span>)
+ax.tick_params(axis=<span class="c-st">"x"</span>, rotation=<span class="c-num">45</span>)
+ax.grid(axis=<span class="c-st">"y"</span>, alpha=<span class="c-num">0.3</span>)
+ax.yaxis.set_major_formatter(plt.FuncFormatter(<span class="c-kw">lambda</span> x, _: f<span class="c-st">"{x/1e5:.1f}L"</span>))
+plt.tight_layout()
+plt.savefig(<span class="c-st">"sales_trend.png"</span>, dpi=<span class="c-num">150</span>, bbox_inches=<span class="c-st">"tight"</span>)
+plt.show()
+
+<span class="c-cm"># Multiple subplots</span>
+fig, axes = plt.subplots(<span class="c-num">2</span>, <span class="c-num">2</span>, figsize=(<span class="c-num">14</span>, <span class="c-num">10</span>))
+axes[<span class="c-num">0</span>,<span class="c-num">0</span>].bar(categories, values)
+axes[<span class="c-num">0</span>,<span class="c-num">1</span>].plot(months, revenue)
+axes[<span class="c-num">1</span>,<span class="c-num">0</span>].scatter(x, y)
+axes[<span class="c-num">1</span>,<span class="c-num">1</span>].hist(data, bins=<span class="c-num">20</span>)
+fig.suptitle(<span class="c-st">"Sales Dashboard"</span>, fontsize=<span class="c-num">16</span>, fontweight=<span class="c-st">"bold"</span>)
+plt.tight_layout()</pre>
+        <div class="memory"><strong>🧠 Trick:</strong> Always use <code>fig, ax = plt.subplots()</code>. This gives you the <code>ax</code> object to call methods on — much more professional than <code>plt.plot()</code> directly. <code>fig</code> = paper, <code>ax</code> = the chart on the paper.</div>
+      </article>
+
+      <article class="tile span-6">
+        <span class="pill">Seaborn All Charts</span>
+        <h3>Complete Seaborn Reference</h3>
+        <pre><span class="c-cm">import seaborn as sns
+import matplotlib.pyplot as plt
+
+<span class="c-cm"># ── DISTRIBUTION PLOTS ──</span>
+sns.histplot(df[<span class="c-st">"sales"</span>], bins=<span class="c-num">30</span>, kde=<span class="c-kw">True</span>)          <span class="c-cm"># histogram + density curve</span>
+sns.kdeplot(df[<span class="c-st">"salary"</span>], fill=<span class="c-kw">True</span>)                   <span class="c-cm"># smooth distribution</span>
+sns.boxplot(x=<span class="c-st">"position"</span>, y=<span class="c-st">"salary"</span>, data=nba)         <span class="c-cm"># box + whisker</span>
+sns.violinplot(x=<span class="c-st">"category"</span>, y=<span class="c-st">"sales"</span>, data=retail)    <span class="c-cm"># violin shape</span>
+
+<span class="c-cm"># ── COMPARISON PLOTS ──</span>
+sns.barplot(x=<span class="c-st">"category"</span>, y=<span class="c-st">"sales"</span>, data=df)           <span class="c-cm"># bars with CI</span>
+sns.countplot(x=<span class="c-st">"status"</span>, data=df, palette=<span class="c-st">"Set2"</span>)      <span class="c-cm"># count of categories</span>
+
+<span class="c-cm"># ── RELATIONSHIP PLOTS ──</span>
+sns.scatterplot(x=<span class="c-st">"sales"</span>, y=<span class="c-st">"profit"</span>, hue=<span class="c-st">"category"</span>, data=df)
+sns.regplot(x=<span class="c-st">"age"</span>, y=<span class="c-st">"salary"</span>, data=nba)              <span class="c-cm"># scatter + regression line</span>
+sns.lineplot(x=<span class="c-st">"month"</span>, y=<span class="c-st">"sales"</span>, hue=<span class="c-st">"year"</span>, data=df)
+
+<span class="c-cm"># ── HEATMAP ──</span>
+corr = df.select_dtypes(include=<span class="c-st">"number"</span>).corr()
+sns.heatmap(corr, annot=<span class="c-kw">True</span>, fmt=<span class="c-st">".2f"</span>, cmap=<span class="c-st">"RdYlGn"</span>, center=<span class="c-num">0</span>)
+
+<span class="c-cm"># ── MULTI-CHART GRIDS ──</span>
+sns.pairplot(df[[<span class="c-st">"sales"</span>,<span class="c-st">"profit"</span>,<span class="c-st">"quantity"</span>]])         <span class="c-cm"># all-pairs scatter</span>
+sns.FacetGrid(df, col=<span class="c-st">"zone"</span>).map(sns.histplot, <span class="c-st">"sales"</span>) <span class="c-cm"># one chart per zone</span>
+
+<span class="c-cm"># ── STYLING ──</span>
+sns.set_theme(style=<span class="c-st">"whitegrid"</span>, palette=<span class="c-st">"muted"</span>)
+<span class="c-cm"># style options: white, dark, whitegrid, darkgrid, ticks</span></pre>
+      </article>
+
+      <!-- CHART SELECTION TABLE -->
+      <article class="tile span-12">
+        <span class="pill">Chart Selection</span>
+        <h3>Complete Chart Selection Guide — Which chart for which question</h3>
+        <table class="data-table">
+          <thead><tr><th>Question type</th><th>Chart</th><th>Seaborn function</th><th>Matplotlib function</th><th>Memory tip</th></tr></thead>
+          <tbody>
+            <tr><td>Compare categories</td><td>Bar Chart</td><td><code>sns.barplot()</code></td><td><code>ax.bar()</code></td><td>Bars = "stand and compare"</td></tr>
+            <tr><td>Count occurrences</td><td>Count Plot</td><td><code>sns.countplot()</code></td><td><code>ax.bar() + value_counts()</code></td><td>Counting heads in groups</td></tr>
+            <tr><td>Trend over time</td><td>Line Chart</td><td><code>sns.lineplot()</code></td><td><code>ax.plot()</code></td><td>Lines = "connect the dots over time"</td></tr>
+            <tr><td>Two numeric variables</td><td>Scatter Plot</td><td><code>sns.scatterplot()</code></td><td><code>ax.scatter()</code></td><td>Dots = "does X relate to Y?"</td></tr>
+            <tr><td>Distribution of one variable</td><td>Histogram</td><td><code>sns.histplot()</code></td><td><code>ax.hist()</code></td><td>Histogram = "spread of values"</td></tr>
+            <tr><td>Distribution + spread</td><td>Box Plot</td><td><code>sns.boxplot()</code></td><td><code>ax.boxplot()</code></td><td>Box = median, quartiles, outliers</td></tr>
+            <tr><td>Distribution shape detailed</td><td>Violin Plot</td><td><code>sns.violinplot()</code></td><td>via seaborn</td><td>Violin = boxplot + kde inside</td></tr>
+            <tr><td>Correlation matrix</td><td>Heatmap</td><td><code>sns.heatmap()</code></td><td>via seaborn</td><td>Colors show strength of relationship</td></tr>
+            <tr><td>All pairs of variables</td><td>Pair Plot</td><td><code>sns.pairplot()</code></td><td>Manual subplots</td><td>EDA quick view of all relationships</td></tr>
+            <tr><td>Part-of-whole</td><td>Pie / Donut</td><td>via Plotly</td><td><code>ax.pie()</code></td><td>Use only with ≤5 categories</td></tr>
+            <tr><td>Linear trend + confidence</td><td>Reg Plot</td><td><code>sns.regplot()</code></td><td>Manual</td><td>Shows fit line + shaded CI</td></tr>
+            <tr><td>Smooth distribution</td><td>KDE Plot</td><td><code>sns.kdeplot()</code></td><td>Manual</td><td>Like histogram but smooth curve</td></tr>
+          </tbody>
+        </table>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     SECTION 4 — PLOTLY EXPRESS
+══════════════════════════════════════════ -->
+<section class="section alt" id="plotly">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">Plotly Express — Interactive Charts</p>
+      <h2>The best visualization library for Streamlit dashboards</h2>
+      <p>Plotly charts are interactive — hover, zoom, filter. Perfect for your Streamlit apps and portfolio dashboards.</p>
+    </div>
+    <div class="tile-grid">
+      <article class="tile span-6">
+        <span class="pill blue">Plotly Express</span>
+        <h3>All Essential Plotly Charts</h3>
+        <pre><span class="c-cm">import plotly.express as px
+
+<span class="c-cm"># Bar chart</span>
+fig = px.bar(df, x=<span class="c-st">"category"</span>, y=<span class="c-st">"sales"</span>,
+             color=<span class="c-st">"zone"</span>, barmode=<span class="c-st">"group"</span>,
+             title=<span class="c-st">"Sales by Category and Zone"</span>)
+fig.show()
+
+<span class="c-cm"># Line chart</span>
+fig = px.line(monthly_df, x=<span class="c-st">"month"</span>, y=<span class="c-st">"sales"</span>,
+              color=<span class="c-st">"year"</span>, markers=<span class="c-kw">True</span>)
+
+<span class="c-cm"># Scatter plot with size + color</span>
+fig = px.scatter(df, x=<span class="c-st">"sales"</span>, y=<span class="c-st">"profit"</span>,
+                 size=<span class="c-st">"quantity"</span>, color=<span class="c-st">"category"</span>,
+                 hover_name=<span class="c-st">"product"</span>,
+                 title=<span class="c-st">"Sales vs Profit"</span>)
+
+<span class="c-cm"># Pie / Donut</span>
+fig = px.pie(df, names=<span class="c-st">"category"</span>, values=<span class="c-st">"sales"</span>,
+             hole=<span class="c-num">0.4</span>, title=<span class="c-st">"Revenue Share"</span>)
+
+<span class="c-cm"># Histogram</span>
+fig = px.histogram(nba, x=<span class="c-st">"salary"</span>, nbins=<span class="c-num">30</span>,
+                   color=<span class="c-st">"position"</span>)
+
+<span class="c-cm"># Box plot</span>
+fig = px.box(nba, x=<span class="c-st">"position"</span>, y=<span class="c-st">"salary"</span>,
+             color=<span class="c-st">"position"</span>, points=<span class="c-st">"outliers"</span>)
+
+<span class="c-cm"># Heatmap (pivot to 2D first)</span>
+pivot = df.pivot_table(index=<span class="c-st">"category"</span>, columns=<span class="c-st">"zone"</span>,
+                       values=<span class="c-st">"sales"</span>, aggfunc=<span class="c-st">"sum"</span>)
+fig = px.imshow(pivot, text_auto=<span class="c-st">".0f"</span>, aspect=<span class="c-st">"auto"</span>)
+
+<span class="c-cm"># Treemap</span>
+fig = px.treemap(df, path=[<span class="c-st">"zone"</span>,<span class="c-st">"category"</span>],
+                 values=<span class="c-st">"sales"</span>, color=<span class="c-st">"profit"</span>)</pre>
+      </article>
+
+      <article class="tile span-6">
+        <span class="pill blue">Plotly in Streamlit</span>
+        <h3>Full Streamlit + Plotly Pattern</h3>
+        <pre><span class="c-cm">import streamlit as st
+import pandas as pd
+import plotly.express as px
+
+st.set_page_config(page_title=<span class="c-st">"Retail Dashboard"</span>, layout=<span class="c-st">"wide"</span>)
+st.title(<span class="c-st">"📊 Sales Analysis Dashboard"</span>)
+
+<span class="c-cm"># Load data</span>
+df = pd.read_csv(<span class="c-st">"data.csv"</span>, parse_dates=[<span class="c-st">"order_date"</span>])
+
+<span class="c-cm"># Sidebar filters</span>
+zones    = st.sidebar.multiselect(<span class="c-st">"Zone"</span>, df[<span class="c-st">"zone"</span>].unique(), default=df[<span class="c-st">"zone"</span>].unique())
+cats     = st.sidebar.multiselect(<span class="c-st">"Category"</span>, df[<span class="c-st">"category"</span>].unique(), default=df[<span class="c-st">"category"</span>].unique())
+date_rng = st.sidebar.date_input(<span class="c-st">"Date Range"</span>, [df[<span class="c-st">"order_date"</span>].min(), df[<span class="c-st">"order_date"</span>].max()])
+
+<span class="c-cm"># Filter data</span>
+mask = (
+    df[<span class="c-st">"zone"</span>].isin(zones) &
+    df[<span class="c-st">"category"</span>].isin(cats) &
+    df[<span class="c-st">"order_date"</span>].between(*[pd.Timestamp(d) <span class="c-kw">for</span> d <span class="c-kw">in</span> date_rng])
+)
+filtered = df[mask]
+
+<span class="c-cm"># KPI row</span>
+c1, c2, c3 = st.columns(<span class="c-num">3</span>)
+c1.metric(<span class="c-st">"Total Sales"</span>, f<span class="c-st">"₹{filtered['sales'].sum():,.0f}"</span>)
+c2.metric(<span class="c-st">"Total Profit"</span>, f<span class="c-st">"₹{filtered['profit'].sum():,.0f}"</span>)
+c3.metric(<span class="c-st">"Orders"</span>, f<span class="c-st">"{len(filtered):,}"</span>)
+
+<span class="c-cm"># Charts</span>
+col1, col2 = st.columns(<span class="c-num">2</span>)
+col1.plotly_chart(
+    px.bar(filtered.groupby(<span class="c-st">"category"</span>)[<span class="c-st">"sales"</span>].sum().reset_index(),
+           x=<span class="c-st">"category"</span>, y=<span class="c-st">"sales"</span>, title=<span class="c-st">"Sales by Category"</span>),
+    use_container_width=<span class="c-kw">True</span>
+)
+col2.plotly_chart(
+    px.line(filtered.groupby(<span class="c-st">"order_date"</span>)[<span class="c-st">"sales"</span>].sum().reset_index(),
+            x=<span class="c-st">"order_date"</span>, y=<span class="c-st">"sales"</span>, title=<span class="c-st">"Daily Trend"</span>),
+    use_container_width=<span class="c-kw">True</span>
+)</pre>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     SECTION 5 — STATISTICS WITH SCIPY
+══════════════════════════════════════════ -->
+<section class="section" id="stats">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">Statistics — scipy.stats</p>
+      <h2>Descriptive stats, correlation, outliers, and hypothesis testing</h2>
+    </div>
+    <div class="tile-grid">
+      <article class="tile span-6">
+        <span class="pill yellow">Descriptive Statistics</span>
+        <h3>All Stats Summary Functions</h3>
+        <pre><span class="c-cm">import numpy as np
+import pandas as pd
+from scipy import stats
+
+data = df[<span class="c-st">"sales"</span>]
+
+<span class="c-cm"># ── Basic Stats ──</span>
+data.mean()           <span class="c-cm"># average</span>
+data.median()         <span class="c-cm"># middle value</span>
+data.mode()[<span class="c-num">0</span>]        <span class="c-cm"># most frequent</span>
+data.std()            <span class="c-cm"># standard deviation (σ)</span>
+data.var()            <span class="c-cm"># variance (σ²)</span>
+data.min(), data.max()
+data.quantile(<span class="c-num">0.25</span>)  <span class="c-cm"># Q1</span>
+data.quantile(<span class="c-num">0.75</span>)  <span class="c-cm"># Q3</span>
+
+<span class="c-cm"># IQR — Interquartile Range</span>
+Q1  = data.quantile(<span class="c-num">0.25</span>)
+Q3  = data.quantile(<span class="c-num">0.75</span>)
+IQR = Q3 - Q1
+
+<span class="c-cm"># Skewness and Kurtosis</span>
+data.skew()           <span class="c-cm"># >0 right skew, <0 left skew</span>
+data.kurtosis()       <span class="c-cm"># >0 heavy tails, <0 light tails</span>
+
+<span class="c-cm"># scipy detailed stats</span>
+stats.describe(data)  <span class="c-cm"># all stats at once</span></pre>
+        <table class="data-table" style="margin-top:10px;">
+          <thead><tr><th>Term</th><th>Simple meaning</th><th>Formula</th></tr></thead>
+          <tbody>
+            <tr><td>Mean</td><td>Average of all values</td><td>Σx / n</td></tr>
+            <tr><td>Median</td><td>Middle value when sorted</td><td>Middle index</td></tr>
+            <tr><td>Mode</td><td>Most frequent value</td><td>Highest frequency</td></tr>
+            <tr><td>Variance</td><td>How spread out values are</td><td>Σ(x-mean)² / n</td></tr>
+            <tr><td>Std Dev</td><td>√variance (same units as data)</td><td>√variance</td></tr>
+            <tr><td>IQR</td><td>Middle 50% spread</td><td>Q3 - Q1</td></tr>
+            <tr><td>Skewness</td><td>Asymmetry of distribution</td><td>+ve = right tail longer</td></tr>
+          </tbody>
+        </table>
+      </article>
+
+      <article class="tile span-6">
+        <span class="pill yellow">Outlier Detection</span>
+        <h3>IQR Method + Z-Score Method</h3>
+        <pre><span class="c-cm"># ── METHOD 1: IQR (Interquartile Range) ──</span>
+Q1  = df[<span class="c-st">"sales"</span>].quantile(<span class="c-num">0.25</span>)
+Q3  = df[<span class="c-st">"sales"</span>].quantile(<span class="c-num">0.75</span>)
+IQR = Q3 - Q1
+
+lower = Q1 - <span class="c-num">1.5</span> * IQR
+upper = Q3 + <span class="c-num">1.5</span> * IQR
+
+outliers  = df[(df[<span class="c-st">"sales"</span>] < lower) | (df[<span class="c-st">"sales"</span>] > upper)]
+df_clean  = df[(df[<span class="c-st">"sales"</span>] >= lower) & (df[<span class="c-st">"sales"</span>] <= upper)]
+print(f<span class="c-st">"Outliers found: {len(outliers)}"</span>)
+
+<span class="c-cm"># ── METHOD 2: Z-Score ──</span>
+from scipy import stats
+z_scores = np.abs(stats.zscore(df[<span class="c-st">"sales"</span>].dropna()))
+
+<span class="c-cm"># Z-score > 3 means 3 std deviations from mean = outlier</span>
+outliers_z = df[z_scores > <span class="c-num">3</span>]
+df_clean_z = df[z_scores <= <span class="c-num">3</span>]
+
+<span class="c-cm"># ── CAP outliers instead of removing ──</span>
+df[<span class="c-st">"sales_capped"</span>] = df[<span class="c-st">"sales"</span>].clip(lower=lower, upper=upper)</pre>
+        <table class="data-table" style="margin-top:10px;">
+          <thead><tr><th></th><th>IQR Method</th><th>Z-Score Method</th></tr></thead>
+          <tbody>
+            <tr><td>Best for</td><td>Skewed data, robust</td><td>Normally distributed data</td></tr>
+            <tr><td>Threshold</td><td>1.5×IQR beyond Q1/Q3</td><td>Z > 3 (or 2.5)</td></tr>
+            <tr><td>Sensitive to</td><td>Less sensitive to extreme values</td><td>Heavily affected by extreme outliers</td></tr>
+          </tbody>
+        </table>
+        <div class="memory"><strong>🧠 Trick:</strong> IQR method = box plot whiskers. If a point is outside the whiskers, it's an outlier. Z-score > 3 = "so rare it's probably an error."</div>
+      </article>
+
+      <article class="tile span-6">
+        <span class="pill yellow">Correlation</span>
+        <h3>Pearson, Spearman, and Point Biserial</h3>
+        <pre><span class="c-cm"># ── PANDAS CORRELATION MATRIX ──</span>
+corr_matrix = df.select_dtypes(<span class="c-st">"number"</span>).corr()
+
+<span class="c-cm"># ── PEARSON — linear relationship between two numeric ──</span>
+r, p_value = stats.pearsonr(df[<span class="c-st">"sales"</span>], df[<span class="c-st">"profit"</span>])
+print(f<span class="c-st">"r = {r:.3f}, p = {p_value:.4f}"</span>)
+
+<span class="c-cm"># ── SPEARMAN — rank-based (works for non-linear, non-normal) ──</span>
+rho, p = stats.spearmanr(df[<span class="c-st">"age"</span>], df[<span class="c-st">"salary"</span>])
+
+<span class="c-cm"># ── KENDALL TAU ──</span>
+tau, p = stats.kendalltau(df[<span class="c-st">"x"</span>], df[<span class="c-st">"y"</span>])</pre>
+        <table class="data-table" style="margin-top:10px;">
+          <thead><tr><th>Value of r</th><th>Interpretation</th></tr></thead>
+          <tbody>
+            <tr><td>1.0</td><td>Perfect positive correlation</td></tr>
+            <tr><td>0.7 to 0.9</td><td>Strong positive</td></tr>
+            <tr><td>0.4 to 0.6</td><td>Moderate positive</td></tr>
+            <tr><td>0.0 to 0.3</td><td>Weak positive</td></tr>
+            <tr><td>0.0</td><td>No relationship</td></tr>
+            <tr><td>Negative</td><td>Inverse relationship</td></tr>
+          </tbody>
+        </table>
+        <div class="callout yellow"><strong>p-value rule:</strong> p &lt; 0.05 → statistically significant (the correlation is real, not by chance). p &gt; 0.05 → may be random.</div>
+      </article>
+
+      <article class="tile span-6">
+        <span class="pill yellow">Hypothesis Testing</span>
+        <h3>t-test, Chi-Square, ANOVA — with code</h3>
+        <pre><span class="c-cm"># ── ONE-SAMPLE t-test ──
+# "Is our average sales different from 5000?"</span>
+t_stat, p = stats.ttest_1samp(df[<span class="c-st">"sales"</span>], popmean=<span class="c-num">5000</span>)
+print(f<span class="c-st">"t={t_stat:.3f}, p={p:.4f}"</span>)
+<span class="c-cm"># p < 0.05 → reject null → sales ≠ 5000</span>
+
+<span class="c-cm"># ── TWO-SAMPLE t-test ──
+# "Do North and South zones have different avg sales?"</span>
+north = df[df[<span class="c-st">"zone"</span>]==<span class="c-st">"North"</span>][<span class="c-st">"sales"</span>]
+south = df[df[<span class="c-st">"zone"</span>]==<span class="c-st">"South"</span>][<span class="c-st">"sales"</span>]
+t, p  = stats.ttest_ind(north, south)
+
+<span class="c-cm"># ── PAIRED t-test ──
+# "Did the training program improve scores?"</span>
+t, p = stats.ttest_rel(before_scores, after_scores)
+
+<span class="c-cm"># ── CHI-SQUARE — categorical independence ──
+# "Is payment mode related to category?"</span>
+ct = pd.crosstab(df[<span class="c-st">"category"</span>], df[<span class="c-st">"payment_mode"</span>])
+chi2, p, dof, expected = stats.chi2_contingency(ct)
+
+<span class="c-cm"># ── ONE-WAY ANOVA ──
+# "Are sales different across all zones?"</span>
+groups = [df[df[<span class="c-st">"zone"</span>]==z][<span class="c-st">"sales"</span>] <span class="c-kw">for</span> z <span class="c-kw">in</span> df[<span class="c-st">"zone"</span>].unique()]
+f, p   = stats.f_oneway(*groups)</pre>
+        <div class="memory"><strong>🧠 Decision Rule (always):</strong> p &lt; 0.05 → reject H₀ (null hypothesis). p &gt; 0.05 → fail to reject H₀ (not enough evidence).<br>H₀ = "no difference / no effect / random"</div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     SECTION 6 — SCIKIT-LEARN
+══════════════════════════════════════════ -->
+<section class="section alt" id="sklearn">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">Scikit-learn — Machine Learning Intro</p>
+      <h2>Preprocessing · Train/Test · Linear Regression · Classification · Evaluation</h2>
+    </div>
+    <div class="tile-grid">
+
+      <article class="tile span-12">
+        <span class="pill orange">ML Workflow</span>
+        <h3>The 7-Step Machine Learning Pipeline</h3>
+        <div class="steps">
+          <div class="step"><div class="step-num">1</div><div class="step-body"><h4>Define the problem</h4><p>Regression (predict number) or Classification (predict category)?</p></div></div>
+          <div class="step"><div class="step-num">2</div><div class="step-body"><h4>Prepare data — features X and target y</h4><p>X = independent variables. y = what you want to predict.</p></div></div>
+          <div class="step"><div class="step-num">3</div><div class="step-body"><h4>Preprocessing — clean, encode, scale</h4><p>Handle nulls, encode categories, normalize numeric columns.</p></div></div>
+          <div class="step"><div class="step-num">4</div><div class="step-body"><h4>Train/Test Split</h4><p>Usually 80% train, 20% test. Always set random_state for reproducibility.</p></div></div>
+          <div class="step"><div class="step-num">5</div><div class="step-body"><h4>Train the model</h4><p>model.fit(X_train, y_train) — learns patterns from training data.</p></div></div>
+          <div class="step"><div class="step-num">6</div><div class="step-body"><h4>Predict on test set</h4><p>model.predict(X_test) — applies learned patterns to unseen data.</p></div></div>
+          <div class="step"><div class="step-num">7</div><div class="step-body"><h4>Evaluate performance</h4><p>Regression: R², RMSE, MAE. Classification: Accuracy, Precision, Recall, F1, Confusion Matrix.</p></div></div>
+        </div>
+      </article>
+
+      <article class="tile span-6">
+        <span class="pill orange">Preprocessing</span>
+        <h3>Scaling, Encoding, and Train-Test Split</h3>
+        <pre><span class="c-cm">from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler, MinMaxScaler, LabelEncoder
+
+<span class="c-cm"># ── Features and Target ──</span>
+X = df[[<span class="c-st">"age"</span>, <span class="c-st">"salary"</span>, <span class="c-st">"experience"</span>]]
+y = df[<span class="c-st">"performance"</span>]
+
+<span class="c-cm"># ── Train-Test Split ──</span>
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=<span class="c-num">0.2</span>, random_state=<span class="c-num">42</span>
+)
+print(f<span class="c-st">"Train: {X_train.shape}, Test: {X_test.shape}"</span>)
+
+<span class="c-cm"># ── StandardScaler — mean=0, std=1 (Z-score) ──</span>
+scaler = StandardScaler()
+X_train_s = scaler.fit_transform(X_train)  <span class="c-cm"># fit on train only!</span>
+X_test_s  = scaler.transform(X_test)       <span class="c-cm"># transform test separately</span>
+
+<span class="c-cm"># ── MinMaxScaler — scale to [0, 1] range ──</span>
+mm = MinMaxScaler()
+X_train_mm = mm.fit_transform(X_train)
+
+<span class="c-cm"># ── Label Encoding (ordinal categories) ──</span>
+le = LabelEncoder()
+y_encoded = le.fit_transform(df[<span class="c-st">"grade"</span>])
+
+<span class="c-cm"># ── One-Hot Encoding via Pandas ──</span>
+X = pd.get_dummies(df.drop(<span class="c-st">"target"</span>, axis=<span class="c-num">1</span>), drop_first=<span class="c-kw">True</span>)</pre>
+        <div class="callout orange"><strong>Critical Rule:</strong> Always <code>fit_transform()</code> on training data and only <code>transform()</code> on test data. Never fit the scaler on test data — that's data leakage!</div>
+      </article>
+
+      <article class="tile span-6">
+        <span class="pill orange">Linear Regression</span>
+        <h3>Regression — Predict a Number</h3>
+        <pre><span class="c-cm">from sklearn.linear_model import LinearRegression
+from sklearn.metrics import r2_score, mean_absolute_error, mean_squared_error
+
+<span class="c-cm"># Train</span>
+model = LinearRegression()
+model.fit(X_train, y_train)
+
+<span class="c-cm"># Predict</span>
+y_pred = model.predict(X_test)
+
+<span class="c-cm"># Evaluate</span>
+r2  = r2_score(y_test, y_pred)
+mae = mean_absolute_error(y_test, y_pred)
+mse = mean_squared_error(y_test, y_pred)
+rmse = np.sqrt(mse)
+
+print(f<span class="c-st">"R²   = {r2:.3f}"</span>)
+print(f<span class="c-st">"MAE  = {mae:.2f}"</span>)
+print(f<span class="c-st">"RMSE = {rmse:.2f}"</span>)
+
+<span class="c-cm"># Model internals</span>
+print(<span class="c-st">"Coefficients:"</span>, model.coef_)
+print(<span class="c-st">"Intercept:"</span>, model.intercept_)</pre>
+        <table class="data-table" style="margin-top:12px;">
+          <thead><tr><th>Metric</th><th>Meaning</th><th>Ideal</th></tr></thead>
+          <tbody>
+            <tr><td>R² (R-squared)</td><td>% of variance explained by model</td><td>Closer to 1 is better</td></tr>
+            <tr><td>MAE</td><td>Average absolute error (same units)</td><td>Lower is better</td></tr>
+            <tr><td>RMSE</td><td>Penalizes large errors more than MAE</td><td>Lower is better</td></tr>
+          </tbody>
+        </table>
+      </article>
+
+      <article class="tile span-6">
+        <span class="pill orange">Classification</span>
+        <h3>Logistic Regression + Decision Tree + Random Forest</h3>
+        <pre><span class="c-cm">from sklearn.linear_model import LogisticRegression
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier
+
+<span class="c-cm"># Logistic Regression — binary classification</span>
+lr = LogisticRegression(max_iter=<span class="c-num">1000</span>)
+lr.fit(X_train, y_train)
+y_pred_lr = lr.predict(X_test)
+y_prob_lr  = lr.predict_proba(X_test)[:,<span class="c-num">1</span>]  <span class="c-cm"># probability of class 1</span>
+
+<span class="c-cm"># Decision Tree</span>
+dt = DecisionTreeClassifier(max_depth=<span class="c-num">5</span>, random_state=<span class="c-num">42</span>)
+dt.fit(X_train, y_train)
+y_pred_dt = dt.predict(X_test)
+
+<span class="c-cm"># Random Forest (ensemble of decision trees)</span>
+rf = RandomForestClassifier(n_estimators=<span class="c-num">100</span>, random_state=<span class="c-num">42</span>)
+rf.fit(X_train, y_train)
+y_pred_rf = rf.predict(X_test)
+
+<span class="c-cm"># Feature importance</span>
+feat_imp = pd.Series(rf.feature_importances_, index=X.columns)
+feat_imp.sort_values(ascending=<span class="c-kw">False</span>).plot(kind=<span class="c-st">"bar"</span>)</pre>
+      </article>
+
+      <article class="tile span-6">
+        <span class="pill orange">Evaluation</span>
+        <h3>Classification Metrics — Deep</h3>
+        <pre><span class="c-cm">from sklearn.metrics import (
+    accuracy_score, precision_score, recall_score,
+    f1_score, confusion_matrix, classification_report,
+    roc_auc_score
+)
+
+acc  = accuracy_score(y_test, y_pred)
+prec = precision_score(y_test, y_pred, average=<span class="c-st">"weighted"</span>)
+rec  = recall_score(y_test, y_pred, average=<span class="c-st">"weighted"</span>)
+f1   = f1_score(y_test, y_pred, average=<span class="c-st">"weighted"</span>)
+cm   = confusion_matrix(y_test, y_pred)
+print(classification_report(y_test, y_pred))
+
+<span class="c-cm"># Cross-validation (more robust evaluation)</span>
+from sklearn.model_selection import cross_val_score
+scores = cross_val_score(rf, X, y, cv=<span class="c-num">5</span>, scoring=<span class="c-st">"accuracy"</span>)
+print(f<span class="c-st">"CV Accuracy: {scores.mean():.3f} ± {scores.std():.3f}"</span>)</pre>
+        <table class="data-table" style="margin-top:12px;">
+          <thead><tr><th>Metric</th><th>Formula</th><th>Use when</th></tr></thead>
+          <tbody>
+            <tr><td>Accuracy</td><td>Correct / Total</td><td>Balanced classes</td></tr>
+            <tr><td>Precision</td><td>TP / (TP+FP)</td><td>Minimize false positives (spam filter)</td></tr>
+            <tr><td>Recall</td><td>TP / (TP+FN)</td><td>Minimize false negatives (disease detection)</td></tr>
+            <tr><td>F1 Score</td><td>2×P×R/(P+R)</td><td>Imbalanced classes, balance P and R</td></tr>
+            <tr><td>AUC-ROC</td><td>Area under curve</td><td>Binary classification overall performance</td></tr>
+          </tbody>
+        </table>
+        <div class="memory"><strong>🧠 Precision vs Recall:</strong> Precision = "Of all I said YES, how many were really YES?" Recall = "Of all actual YES, how many did I catch?" High stakes (cancer) → maximize Recall. Low noise (spam) → maximize Precision.</div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     SECTION 7 — SQL WITH PYTHON
+══════════════════════════════════════════ -->
+<section class="section" id="sql">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">SQL with Python</p>
+      <h2>sqlite3, pd.read_sql, and SQLAlchemy basics</h2>
+    </div>
+    <div class="tile-grid">
+      <article class="tile span-6">
+        <span class="pill purple">sqlite3</span>
+        <h3>SQLite — Built-in Python Database</h3>
+        <pre><span class="c-cm">import sqlite3
+import pandas as pd
+
+<span class="c-cm"># ── CONNECT / CREATE ──</span>
+conn = sqlite3.connect(<span class="c-st">"mydb.db"</span>)  <span class="c-cm"># creates file if not exists</span>
+cursor = conn.cursor()
+
+<span class="c-cm"># ── CREATE TABLE ──</span>
+cursor.execute(<span class="c-st">"""
+CREATE TABLE IF NOT EXISTS students (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    marks REAL,
+    city TEXT
+)
+"""</span>)
+conn.commit()
+
+<span class="c-cm"># ── INSERT ──</span>
+cursor.execute(<span class="c-st">"INSERT INTO students (name, marks, city) VALUES (?, ?, ?)"</span>,
+               (<span class="c-st">"Vinu"</span>, <span class="c-num">92.5</span>, <span class="c-st">"Mysuru"</span>))
+
+<span class="c-cm"># Insert many at once</span>
+data = [(<span class="c-st">"Ravi"</span>, <span class="c-num">78.0</span>, <span class="c-st">"Bengaluru"</span>), (<span class="c-st">"Arun"</span>, <span class="c-num">85.5</span>, <span class="c-st">"Chennai"</span>)]
+cursor.executemany(<span class="c-st">"INSERT INTO students (name,marks,city) VALUES (?,?,?)"</span>, data)
+conn.commit()
+
+<span class="c-cm"># ── SELECT into DataFrame ──</span>
+df = pd.read_sql(<span class="c-st">"SELECT * FROM students"</span>, conn)
+df_filter = pd.read_sql(<span class="c-st">"SELECT * FROM students WHERE marks > 80"</span>, conn)
+
+<span class="c-cm"># ── UPDATE / DELETE ──</span>
+cursor.execute(<span class="c-st">"UPDATE students SET marks = 95 WHERE name = 'Vinu'"</span>)
+cursor.execute(<span class="c-st">"DELETE FROM students WHERE marks < 40"</span>)
+conn.commit()
+
+<span class="c-cm"># ── ALWAYS CLOSE ──</span>
+conn.close()</pre>
+      </article>
+
+      <article class="tile span-6">
+        <span class="pill purple">Pandas + SQL</span>
+        <h3>DataFrame to SQL and SQL to DataFrame</h3>
+        <pre><span class="c-cm">import sqlite3
+import pandas as pd
+
+conn = sqlite3.connect(<span class="c-st">"retail.db"</span>)
+
+<span class="c-cm"># ── Save DataFrame to SQL table ──</span>
+retail_df.to_sql(<span class="c-st">"retail"</span>, conn,
+                 if_exists=<span class="c-st">"replace"</span>,  <span class="c-cm"># or "append"</span>
+                 index=<span class="c-kw">False</span>)
+
+<span class="c-cm"># ── Read with complex SQL query ──</span>
+query = <span class="c-st">"""
+SELECT
+    category,
+    zone,
+    SUM(sales) AS total_sales,
+    AVG(profit) AS avg_profit,
+    COUNT(*) AS order_count
+FROM retail
+WHERE state IN ('Maharashtra', 'Karnataka')
+GROUP BY category, zone
+ORDER BY total_sales DESC
+LIMIT 20
+"""</span>
+result = pd.read_sql(query, conn)
+
+<span class="c-cm"># ── Using SQLAlchemy (production-grade) ──</span>
+from sqlalchemy import create_engine
+
+<span class="c-cm"># SQLite</span>
+engine = create_engine(<span class="c-st">"sqlite:///retail.db"</span>)
+
+<span class="c-cm"># MySQL (needs: pip install pymysql)</span>
+engine = create_engine(<span class="c-st">"mysql+pymysql://user:password@localhost/dbname"</span>)
+
+<span class="c-cm"># PostgreSQL (needs: pip install psycopg2)</span>
+engine = create_engine(<span class="c-st">"postgresql://user:password@localhost/dbname"</span>)
+
+<span class="c-cm"># Use same way as sqlite3 conn</span>
+df = pd.read_sql(<span class="c-st">"SELECT * FROM retail"</span>, engine)</pre>
+        <div class="callout purple"><strong>Key insight:</strong> <code>df.to_sql()</code> + <code>pd.read_sql()</code> is the bridge between Pandas and SQL databases. You can load CSVs into SQLite, run SQL queries on them, and get the result back as a DataFrame — best of both worlds.</div>
+      </article>
+
+      <article class="tile span-12">
+        <span class="pill purple">SQL Query Patterns for DA</span>
+        <h3>Most Used SQL Patterns — Written in Python Strings</h3>
+        <div class="cols2">
+          <pre><span class="c-cm"># GROUP BY + aggregation</span>
+<span class="c-st">"""SELECT category, SUM(sales), COUNT(*)
+   FROM retail GROUP BY category"""</span>
+
+<span class="c-cm"># HAVING — filter groups</span>
+<span class="c-st">"""SELECT state, AVG(profit)
+   FROM retail
+   GROUP BY state
+   HAVING AVG(profit) > 5000"""</span>
+
+<span class="c-cm"># CASE WHEN — conditional logic</span>
+<span class="c-st">"""SELECT name, sales,
+   CASE WHEN sales > 10000 THEN 'High'
+        WHEN sales > 5000  THEN 'Mid'
+        ELSE 'Low' END AS tier
+   FROM retail"""</span>
+
+<span class="c-cm"># Window function (ROW_NUMBER)</span>
+<span class="c-st">"""SELECT name, sales,
+   ROW_NUMBER() OVER (PARTITION BY zone
+                      ORDER BY sales DESC) AS rank
+   FROM retail"""</span></pre>
+
+          <pre><span class="c-cm"># JOIN two tables</span>
+<span class="c-st">"""SELECT o.order_id, c.name, p.product_name, o.amount
+   FROM orders o
+   JOIN customers c ON o.customer_id = c.id
+   JOIN products p  ON o.product_id  = p.id
+   WHERE o.status = 'Delivered'"""</span>
+
+<span class="c-cm"># Subquery</span>
+<span class="c-st">"""SELECT * FROM retail
+   WHERE profit > (SELECT AVG(profit) FROM retail)"""</span>
+
+<span class="c-cm"># CTE (Common Table Expression)</span>
+<span class="c-st">"""WITH zone_sales AS (
+    SELECT zone, SUM(sales) AS total
+    FROM retail GROUP BY zone
+)
+SELECT * FROM zone_sales
+WHERE total > 1000000"""</span>
+
+<span class="c-cm"># Running total (window)</span>
+<span class="c-st">"""SELECT order_date, sales,
+   SUM(sales) OVER (ORDER BY order_date) AS running_total
+   FROM retail"""</span></pre>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     SECTION 8 — INTERVIEW Q&A
+══════════════════════════════════════════ -->
+<section class="section alt" id="interview">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">Interview Q&A</p>
+      <h2>60 questions from this notes page — with clear answers</h2>
+    </div>
+    <div class="tile-grid">
+      <article class="tile span-6">
+        <span class="pill">Pandas Deep</span>
+        <ul class="q-list">
+          <li><strong>What is agg() used for?</strong> Run multiple aggregation functions (sum, mean, count) on grouped data in one call. Returns a multi-column summary.</li>
+          <li><strong>Difference between agg() and transform()?</strong> agg() collapses groups into summary rows. transform() returns same-length output — adds group stat to each original row.</li>
+          <li><strong>What are the 4 join types in merge()?</strong> inner (only matching), left (all from left), right (all from right), outer (all from both, NaN where no match).</li>
+          <li><strong>merge() vs concat()?</strong> merge() joins on a key (like SQL JOIN). concat() stacks tables vertically or horizontally — no key needed.</li>
+          <li><strong>What is melt() used for?</strong> Converts wide format (one row = one entity, multiple columns) to long format (one row = one measurement). Used to prepare data for Seaborn/Plotly.</li>
+          <li><strong>What is rolling() in Pandas?</strong> A fixed-size sliding window that computes stats over N consecutive rows. Used for moving averages and smoothing.</li>
+          <li><strong>rolling() vs expanding()?</strong> rolling(n) = fixed window of n rows. expanding() = grows from the first row to current row (cumulative).</li>
+          <li><strong>What is ewm()?</strong> Exponentially weighted mean — recent values get more weight. Used for EMA (Exponential Moving Average) in time-series.</li>
+          <li><strong>What is cut() vs qcut()?</strong> cut() = fixed boundaries you define. qcut() = equal-frequency bins (percentile-based, same count in each bin).</li>
+          <li><strong>What is pd.get_dummies()?</strong> One-Hot Encoding — converts a categorical column into multiple binary columns (0/1). Use drop_first=True to avoid multicollinearity.</li>
+          <li><strong>When use label encoding vs one-hot?</strong> Label encoding (map) = ordinal categories (Low/Mid/High). One-hot = nominal (city, color — no order).</li>
+          <li><strong>What is pd.crosstab()?</strong> Frequency table showing count of row-column combinations. Like pivot_table but specifically for counting occurrences.</li>
+          <li><strong>What does pd.to_numeric(errors="coerce") do?</strong> Converts column to numeric. Turns non-convertible values (like "abc") into NaN instead of raising an error.</li>
+          <li><strong>What is query() in Pandas?</strong> Readable filtering using SQL-like string syntax. <code>df.query("profit > 1000 and zone == 'North'")</code></li>
+          <li><strong>What is str.extract()?</strong> Extracts regex-matched groups from a string column into new columns. Useful for pulling emails, IDs, phone numbers from text.</li>
+        </ul>
+      </article>
+      <article class="tile span-6">
+        <span class="pill yellow">NumPy + Stats</span>
+        <ul class="q-list">
+          <li><strong>What is the @ operator in NumPy?</strong> Matrix multiplication operator. A @ B is equivalent to np.dot(A, B). Only works on 2D arrays (matrices).</li>
+          <li><strong>What is np.linalg.inv()?</strong> Returns the inverse of a square matrix A such that A × A⁻¹ = I (identity matrix). Fails if determinant is 0.</li>
+          <li><strong>What is broadcasting?</strong> NumPy automatically expands arrays of compatible shapes so operations work without manual loops. A (3,1) + B (1,4) → result is (3,4).</li>
+          <li><strong>What is fancy indexing?</strong> Selecting non-contiguous elements using a list/array of indices: arr[[0, 2, 5]]. Returns copy, not view.</li>
+          <li><strong>hstack vs vstack vs stack?</strong> hstack = join horizontally (adds columns). vstack = join vertically (adds rows). stack = creates new axis (adds dimension).</li>
+          <li><strong>What is np.argsort()?</strong> Returns the indices that would sort the array. Useful for ranking or reordering another array by a third array's values.</li>
+          <li><strong>What is mean vs median?</strong> Mean = sum/count (affected by outliers). Median = middle value (robust to outliers). Use median for skewed data.</li>
+          <li><strong>What is IQR?</strong> Q3 - Q1. Represents the middle 50% spread. Values below Q1 - 1.5×IQR or above Q3 + 1.5×IQR are outliers.</li>
+          <li><strong>Z-score definition?</strong> Number of standard deviations a point is from the mean: z = (x - mean) / std. Z &gt; 3 usually = outlier.</li>
+          <li><strong>Pearson vs Spearman correlation?</strong> Pearson = linear relationship (assumes normality). Spearman = rank-based (works for non-linear, non-normal data).</li>
+          <li><strong>What is p-value?</strong> Probability that results occurred by chance under the null hypothesis. p &lt; 0.05 → statistically significant.</li>
+          <li><strong>What is a t-test?</strong> Statistical test comparing means. One-sample tests against a fixed value. Two-sample tests between two groups. Returns t-statistic and p-value.</li>
+          <li><strong>Chi-square test purpose?</strong> Tests if two categorical variables are independent. Input = contingency table (crosstab). p &lt; 0.05 → they are related.</li>
+          <li><strong>What is ANOVA?</strong> Analysis of Variance — tests if means of 3+ groups are statistically different. p &lt; 0.05 → at least one group is different.</li>
+          <li><strong>What is skewness?</strong> Measure of distribution asymmetry. Positive = right tail is longer (most values below mean). Negative = left tail is longer.</li>
+        </ul>
+      </article>
+      <article class="tile span-6">
+        <span class="pill orange">Scikit-learn</span>
+        <ul class="q-list">
+          <li><strong>What is train_test_split?</strong> Splits data into training set (model learns) and test set (model evaluated). Typical: 80/20 split. Always set random_state.</li>
+          <li><strong>Why fit only on training data?</strong> Fitting scaler/encoder on test data is data leakage — the model gets information it shouldn't have. Always fit_transform on train, transform on test.</li>
+          <li><strong>StandardScaler vs MinMaxScaler?</strong> Standard = mean 0, std 1 (good when data roughly normal). MinMax = range [0,1] (good when exact range matters, like neural nets).</li>
+          <li><strong>What does model.fit() do?</strong> Trains the model — learns patterns (coefficients, decision boundaries) from training data. Must be called before predict().</li>
+          <li><strong>What does model.predict() do?</strong> Applies the learned model to new data and returns predicted values/classes.</li>
+          <li><strong>What is R² score?</strong> How much variance the model explains. R²=1 = perfect. R²=0 = no better than just predicting the mean. Can be negative (worse than mean).</li>
+          <li><strong>MAE vs RMSE?</strong> MAE (Mean Absolute Error) = average error, same units, robust to outliers. RMSE = penalizes large errors more. Use RMSE when big errors are costly.</li>
+          <li><strong>What is accuracy?</strong> Correct predictions / Total predictions. Misleading for imbalanced classes (e.g., 95% accuracy if 95% of data is one class).</li>
+          <li><strong>Precision vs Recall?</strong> Precision = "Of all I predicted positive, how many were truly positive?" Recall = "Of all actual positives, how many did I catch?"</li>
+          <li><strong>What is F1 score?</strong> Harmonic mean of Precision and Recall. Good when classes are imbalanced. F1 = 2×P×R / (P+R).</li>
+          <li><strong>What is Random Forest?</strong> Ensemble of Decision Trees. Each tree trained on random subset of data and features. Final prediction = majority vote. Reduces overfitting.</li>
+          <li><strong>What is cross-validation?</strong> Splits data into k folds, trains k times on k-1 folds, tests on remaining fold. More robust than single train/test split.</li>
+          <li><strong>What is feature importance?</strong> In tree models: how much each feature reduced impurity across all trees. Access via model.feature_importances_.</li>
+          <li><strong>Overfitting vs Underfitting?</strong> Overfitting = too complex, memorizes training data, fails on test. Underfitting = too simple, can't learn patterns.</li>
+          <li><strong>How to reduce overfitting?</strong> More data, regularization (Ridge/Lasso), reduce model complexity (max_depth), cross-validation, dropout (neural nets).</li>
+        </ul>
+      </article>
+      <article class="tile span-6">
+        <span class="pill purple">Visualization + SQL</span>
+        <ul class="q-list">
+          <li><strong>Matplotlib vs Seaborn vs Plotly?</strong> Matplotlib = low-level, most control. Seaborn = statistical plots, built on matplotlib, cleaner syntax. Plotly = interactive, best for dashboards.</li>
+          <li><strong>What is fig, ax = plt.subplots()?</strong> Creates a Figure (the canvas) and Axes (the actual plot area). Professional way to use matplotlib — enables multi-plot layouts.</li>
+          <li><strong>When use boxplot vs histogram?</strong> Histogram = shows distribution shape. Boxplot = shows quartiles, median, outliers. Boxplot is better for comparing groups.</li>
+          <li><strong>What does sns.heatmap() need?</strong> A 2D matrix — usually a correlation matrix from df.corr() or a pivot table. annot=True adds numbers in cells.</li>
+          <li><strong>What is sns.pairplot()?</strong> Scatter plot matrix — shows scatter of every pair of numeric columns. Great for EDA to spot relationships.</li>
+          <li><strong>What is a correlation heatmap used for?</strong> Visualizing pairwise correlations between all numeric columns. Helps select features for ML and detect multicollinearity.</li>
+          <li><strong>Plotly advantage over matplotlib?</strong> Interactive — hover to see values, zoom, filter. No extra code. Seamlessly embeds in Streamlit with st.plotly_chart().</li>
+          <li><strong>What is tight_layout()?</strong> Auto-adjusts subplot spacing to prevent overlap. Always call before plt.show() or savefig().</li>
+          <li><strong>What is sqlite3 in Python?</strong> Built-in Python module for SQLite (file-based database). No installation needed. conn = sqlite3.connect("db.db") creates/connects to a database file.</li>
+          <li><strong>pd.read_sql() vs cursor.fetchall()?</strong> pd.read_sql() returns a DataFrame directly — much cleaner. cursor.fetchall() returns a list of tuples.</li>
+          <li><strong>What is df.to_sql()?</strong> Saves a DataFrame as a SQL table. if_exists="replace" overwrites, "append" adds rows, "fail" raises error if table exists.</li>
+          <li><strong>What is SQLAlchemy?</strong> Python ORM and SQL toolkit. create_engine() creates a connection object for any database (SQLite, MySQL, PostgreSQL). Works with pd.read_sql().</li>
+          <li><strong>What is a CTE (Common Table Expression)?</strong> A named temporary result set defined with WITH...AS before the main query. Makes complex queries readable.</li>
+          <li><strong>What is a window function in SQL?</strong> Calculations across rows related to the current row without collapsing them. ROW_NUMBER(), RANK(), SUM() OVER(), AVG() OVER().</li>
+          <li><strong>HAVING vs WHERE in SQL?</strong> WHERE filters rows before grouping. HAVING filters groups after aggregation. Use HAVING with GROUP BY.</li>
+        </ul>
+      </article>
+    </div>
+
+    <!-- REVISION SUMMARY -->
+    <div class="tile-grid" style="margin-top:16px;">
+      <article class="tile span-12 soft">
+        <span class="pill">Revision Path</span>
+        <h3>How Notes 1 → 2 → 3 connect</h3>
+        <div class="cols2">
+          <div>
+            <table class="data-table">
+              <thead><tr><th>Notes</th><th>Topics</th></tr></thead>
+              <tbody>
+                <tr><td><strong>Notes 1</strong></td><td>Python basics, OOP, file handling, pip, collections, exceptions, decorators, generators</td></tr>
+                <tr><td><strong>Notes 2</strong></td><td>Pandas Series/DataFrame, loc/iloc, groupby, pivot, NumPy arrays, distributions, ufuncs, Matplotlib/Seaborn intro, Streamlit basics</td></tr>
+                <tr><td><strong>Notes 3 (this)</strong></td><td>Pandas deep (merge/join, window, agg, transform, melt, encoding), NumPy linear algebra, full Seaborn, Plotly, scipy stats, sklearn, SQL with Python</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div>
+            <details open>
+              <summary>7-Day Next Sprint Plan</summary>
+              <ul class="flat-list">
+                <li><strong>Day 1:</strong> Pandas — merge all 4 types on your retail + orders data</li>
+                <li><strong>Day 2:</strong> Pandas — rolling(), agg(), melt() on your datasets</li>
+                <li><strong>Day 3:</strong> NumPy — linear algebra, fancy indexing, stacking</li>
+                <li><strong>Day 4:</strong> Full Seaborn chart gallery on NBA + retail data</li>
+                <li><strong>Day 5:</strong> Plotly + Streamlit — rebuild your dashboard with interactive charts</li>
+                <li><strong>Day 6:</strong> scipy stats — correlation, outlier detection, t-test on your data</li>
+                <li><strong>Day 7:</strong> sklearn — train LinearRegression and RandomForest on your retail data. Evaluate with R², RMSE, confusion matrix.</li>
+              </ul>
+            </details>
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="wrap">
+  Python Notes 3 — Continuation from Notes 2 · Pandas Deep · NumPy · Seaborn · Plotly · scipy · Scikit-learn · SQL with Python
+</footer>
+</body>
+</html>

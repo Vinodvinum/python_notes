@@ -1,0 +1,1678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Python Notes - Simple + Practical</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg-1: #f4f7f2;
+      --bg-2: #fff5e8;
+      --ink: #17324a;
+      --muted: #4f6477;
+      --brand: #007a78;
+      --brand-2: #f08a24;
+      --card: rgba(255, 255, 255, 0.86);
+      --line: rgba(23, 50, 74, 0.12);
+      --ok: #177245;
+      --warn: #7e4f00;
+      --radius: 18px;
+      --shadow: 0 12px 34px rgba(8, 34, 48, 0.11);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: "Sora", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 8% 10%, rgba(240, 138, 36, 0.17) 0, rgba(240, 138, 36, 0) 36%),
+        radial-gradient(circle at 90% 12%, rgba(0, 122, 120, 0.17) 0, rgba(0, 122, 120, 0) 33%),
+        linear-gradient(155deg, var(--bg-1) 0%, var(--bg-2) 100%);
+      line-height: 1.65;
+      overflow-x: hidden;
+    }
+
+    .shape {
+      position: fixed;
+      border-radius: 999px;
+      z-index: -1;
+      filter: blur(8px);
+      opacity: 0.38;
+      animation: drift 14s ease-in-out infinite alternate;
+    }
+
+    .shape.s1 {
+      width: 220px;
+      height: 220px;
+      background: #9de5cf;
+      left: -70px;
+      top: 22%;
+    }
+
+    .shape.s2 {
+      width: 280px;
+      height: 280px;
+      background: #ffd1a0;
+      right: -80px;
+      top: 56%;
+      animation-delay: 2s;
+    }
+
+    .container {
+      width: min(1100px, 92%);
+      margin: 0 auto;
+    }
+
+    .hero {
+      padding: 56px 0 24px;
+      animation: rise 0.7s ease both;
+    }
+
+    .hero h1 {
+      margin: 0;
+      font-size: clamp(2rem, 4vw, 3.1rem);
+      line-height: 1.15;
+      letter-spacing: 0.3px;
+    }
+
+    .highlight {
+      color: var(--brand);
+      display: inline-block;
+      border-bottom: 4px solid rgba(0, 122, 120, 0.22);
+    }
+
+    .hero p {
+      margin: 14px 0 0;
+      max-width: 760px;
+      color: var(--muted);
+      font-size: 1rem;
+    }
+
+    .quick-nav {
+      margin: 24px 0 8px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .quick-nav a {
+      text-decoration: none;
+      color: var(--ink);
+      background: #ffffff;
+      border: 1px solid var(--line);
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-size: 0.86rem;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    .quick-nav a:hover {
+      transform: translateY(-2px);
+      border-color: rgba(0, 122, 120, 0.45);
+    }
+
+    .actions {
+      margin-top: 14px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .action-btn {
+      border: 1px solid rgba(0, 122, 120, 0.4);
+      background: #ffffff;
+      color: var(--ink);
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-family: "Sora", sans-serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    .action-btn:hover {
+      transform: translateY(-2px);
+      border-color: rgba(240, 138, 36, 0.7);
+    }
+
+    .grid {
+      display: grid;
+      gap: 16px;
+      grid-template-columns: repeat(12, 1fr);
+      margin: 18px 0 40px;
+    }
+
+    .card {
+      grid-column: span 12;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 20px;
+      animation: rise 0.65s ease both;
+    }
+
+    .card h2,
+    .card h3 {
+      margin-top: 0;
+      line-height: 1.25;
+    }
+
+    .card h2 {
+      font-size: 1.25rem;
+    }
+
+    .chip {
+      display: inline-block;
+      font-size: 0.76rem;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+      color: var(--brand);
+      background: rgba(0, 122, 120, 0.1);
+      border: 1px solid rgba(0, 122, 120, 0.28);
+      border-radius: 999px;
+      padding: 4px 10px;
+      margin-bottom: 10px;
+    }
+
+    .note {
+      border-left: 4px solid var(--brand-2);
+      background: rgba(240, 138, 36, 0.1);
+      border-radius: 10px;
+      padding: 10px 12px;
+      margin: 10px 0;
+    }
+
+    pre {
+      margin: 10px 0 0;
+      border-radius: 12px;
+      background: #0f2233;
+      color: #d8f2ff;
+      border: 1px solid rgba(216, 242, 255, 0.2);
+      padding: 14px;
+      overflow-x: auto;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.88rem;
+      line-height: 1.5;
+    }
+
+    code {
+      font-family: "IBM Plex Mono", monospace;
+    }
+
+    .columns {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .qa-block {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #fff;
+      padding: 12px 14px;
+    }
+
+    .qa-block h4 {
+      margin: 0 0 6px;
+      font-size: 0.97rem;
+      color: var(--warn);
+    }
+
+    .qa-block p {
+      margin: 0;
+      color: var(--ink);
+      font-size: 0.95rem;
+    }
+
+    .compare-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      background: #fff;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+    }
+
+    .compare-table th,
+    .compare-table td {
+      text-align: left;
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+    }
+
+    .compare-table th {
+      background: rgba(0, 122, 120, 0.08);
+      font-size: 0.9rem;
+    }
+
+    .compare-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .plan-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      background: #fff;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+    }
+
+    .plan-table th,
+    .plan-table td {
+      text-align: left;
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+      font-size: 0.94rem;
+    }
+
+    .plan-table th {
+      background: rgba(240, 138, 36, 0.12);
+      font-size: 0.9rem;
+    }
+
+    .plan-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .mcq-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    .mcq-card {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #fff;
+      padding: 12px;
+    }
+
+    .mcq-card p {
+      margin: 0 0 8px;
+      font-weight: 600;
+    }
+
+    .mcq-card ul {
+      margin: 0;
+      padding-left: 18px;
+    }
+
+    .mcq-card li {
+      margin-bottom: 4px;
+    }
+
+    .answer-chip {
+      display: inline-block;
+      margin-top: 8px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: rgba(23, 114, 69, 0.12);
+      border: 1px solid rgba(23, 114, 69, 0.25);
+      color: var(--ok);
+      font-size: 0.82rem;
+      font-weight: 700;
+    }
+
+    .booster-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    .booster-card {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #fff;
+      padding: 12px;
+    }
+
+    .booster-card h4 {
+      margin: 0 0 8px;
+      font-size: 1rem;
+      color: var(--brand);
+    }
+
+    .booster-card p {
+      margin: 0 0 8px;
+      font-size: 0.93rem;
+    }
+
+    .interview-list {
+      margin: 10px 0 0;
+      padding-left: 18px;
+    }
+
+    .interview-list li {
+      margin-bottom: 10px;
+    }
+
+    details {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #fff;
+      padding: 10px 12px;
+    }
+
+    details + details {
+      margin-top: 10px;
+    }
+
+    summary {
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    summary::marker {
+      color: var(--brand);
+    }
+
+    footer {
+      text-align: center;
+      padding: 14px 0 32px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    @media (min-width: 860px) {
+      .w6 {
+        grid-column: span 6;
+      }
+
+      .w8 {
+        grid-column: span 8;
+      }
+
+      .w4 {
+        grid-column: span 4;
+      }
+    }
+
+    @media (max-width: 780px) {
+      .columns {
+        grid-template-columns: 1fr;
+      }
+
+      .mcq-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .booster-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero {
+        padding-top: 36px;
+      }
+    }
+
+    @media print {
+      body {
+        background: #ffffff;
+      }
+
+      .shape,
+      .quick-nav,
+      .actions {
+        display: none;
+      }
+
+      .card {
+        box-shadow: none;
+        background: #ffffff;
+      }
+    }
+
+    @keyframes rise {
+      from {
+        opacity: 0;
+        transform: translateY(12px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes drift {
+      from {
+        transform: translateY(-10px) translateX(-8px);
+      }
+      to {
+        transform: translateY(10px) translateX(8px);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="shape s1"></div>
+  <div class="shape s2"></div>
+
+  <main class="container">
+    <section class="hero">
+      <h1>Python Notes in <span class="highlight">Simple English</span></h1>
+      <p>
+        These notes are built from your notebook topics: data types, control flow, functions, regex, file handling,
+        OOP, and more. Each section has simple explanation + quick code example + revision questions.
+      </p>
+      <div class="actions">
+        <button class="action-btn" onclick="downloadNotesPDF()">Download as PDF</button>
+        <a class="action-btn" href="#theory-core">Jump to Detailed Theory</a>
+      </div>
+      <nav class="quick-nav" aria-label="Quick links">
+        <a href="#w3py">Python Roadmap</a>
+        <a href="#theory-core">Theory Notes</a>
+        <a href="#casting">Casting</a>
+        <a href="#json-deep">JSON</a>
+        <a href="#function-deep">Function Deep</a>
+        <a href="#methods-hub">Methods Hub</a>
+        <a href="#exam-booster">Exam Booster</a>
+        <a href="#datatypes">Data Types</a>
+        <a href="#collections">Collections</a>
+        <a href="#differences">Differences</a>
+        <a href="#control">If and Loops</a>
+        <a href="#functions">Functions</a>
+        <a href="#regex">Regex</a>
+        <a href="#files">Files and Errors</a>
+        <a href="#oop">OOP</a>
+        <a href="#oop-diff">OOP Differences</a>
+        <a href="#copy-types">Copy Types</a>
+        <a href="#interview">Interview 25</a>
+        <a href="#study-plan">30-Day Plan</a>
+        <a href="#mcq">MCQ Quiz</a>
+        <a href="#answers-sheet">Answer Sheet</a>
+        <a href="#qa">Q and A</a>
+      </nav>
+    </section>
+
+    <section class="grid" id="w3py">
+      <article class="card">
+        <span class="chip">Python Only</span>
+        <h2>W3Schools-Style Python Roadmap (Only Python)</h2>
+        <p>
+          This section is organized in the same learning flow as a typical W3Schools Python path, but written in
+          simple words. Use this as your syllabus + revision map.
+        </p>
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th>Stage</th>
+              <th>Topics to Learn</th>
+              <th>Simple Real-Life Example</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1. Basics</td>
+              <td>Intro, syntax, output, comments, variables, data types, numbers, casting, strings, booleans, operators.</td>
+              <td>Store student name, marks, pass/fail status in variables and print report.</td>
+            </tr>
+            <tr>
+              <td>2. Collections</td>
+              <td>Lists, tuples, sets, dictionaries, arrays, range, iterators.</td>
+              <td>Attendance list, unique IDs set, and student profile dictionary.</td>
+            </tr>
+            <tr>
+              <td>3. Logic and Flow</td>
+              <td>If/else, match-case, for loop, while loop, break, continue.</td>
+              <td>ATM menu: check balance, withdraw, or exit based on user choice.</td>
+            </tr>
+            <tr>
+              <td>4. Functions and Modules</td>
+              <td>Functions, arguments, modules, import, built-in modules like math/json/datetime/re.</td>
+              <td>Create a bill calculator function and reuse it in multiple files.</td>
+            </tr>
+            <tr>
+              <td>5. Error and Input</td>
+              <td>User input, try/except, string formatting, None.</td>
+              <td>Take marks input safely and show friendly message for invalid values.</td>
+            </tr>
+            <tr>
+              <td>6. Files and Environment</td>
+              <td>Read/write/create files, delete files, pip, virtual environment.</td>
+              <td>Create log file, append entries, and delete old report files.</td>
+            </tr>
+            <tr>
+              <td>7. OOP</td>
+              <td>Classes/objects, __init__, self, properties, class methods, inheritance, polymorphism, encapsulation.</td>
+              <td>School system with Person -> Student/Teacher classes.</td>
+            </tr>
+            <tr>
+              <td>8. Python Libraries</td>
+              <td>NumPy, Pandas, SciPy, Matplotlib, Django basics.</td>
+              <td>Load CSV marks with Pandas and plot score trends with Matplotlib.</td>
+            </tr>
+            <tr>
+              <td>9. Databases with Python</td>
+              <td>MySQL and MongoDB basics: connect, insert, find, update, delete.</td>
+              <td>Store customer orders and fetch recent records.</td>
+            </tr>
+            <tr>
+              <td>10. DSA in Python</td>
+              <td>Lists/arrays, stack, queue, linked list, hash table, trees, graphs, sorting, searching.</td>
+              <td>Use binary search to find roll number quickly in sorted list.</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="note">
+          Suggested order for fast learning: Basics -> Collections -> If/Loops -> Functions -> Errors/Files -> OOP -> Libraries -> DB -> DSA.
+        </div>
+      </article>
+    </section>
+
+    <section class="grid" id="theory-core">
+      <article class="card">
+        <span class="chip">Detailed Theory</span>
+        <h2>Core Theory Format: Definition, Explanation, Why, Applications</h2>
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th>Topic</th>
+              <th>Definition</th>
+              <th>Why We Use It</th>
+              <th>Applications</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Data Types</td>
+              <td>Data type defines what kind of value is stored: int, float, str, bool, list, tuple, set, dict.</td>
+              <td>To choose correct operations and avoid logical/runtime errors.</td>
+              <td>Marks as int, name as str, tags as list, profile as dict.</td>
+            </tr>
+            <tr>
+              <td>Operators</td>
+              <td>Symbols to perform operations like math, comparison, and logic.</td>
+              <td>To process data and decisions in programs.</td>
+              <td>Price calculation, validation rules, filter conditions.</td>
+            </tr>
+            <tr>
+              <td>Control Flow</td>
+              <td>Program path control using if, loops, break, continue.</td>
+              <td>To execute code based on conditions and repetition.</td>
+              <td>ATM menu, login attempts, form validation loops.</td>
+            </tr>
+            <tr>
+              <td>Functions</td>
+              <td>Reusable blocks of code created with <code>def</code>.</td>
+              <td>To reduce repetition and improve maintainability.</td>
+              <td>Tax calculator, report formatter, API helper functions.</td>
+            </tr>
+            <tr>
+              <td>Modules</td>
+              <td>Python files/libraries that provide reusable tools.</td>
+              <td>To use tested code instead of rewriting from scratch.</td>
+              <td>math, json, re, datetime, requests.</td>
+            </tr>
+            <tr>
+              <td>Exception Handling</td>
+              <td>Handling runtime errors using try/except/else/finally.</td>
+              <td>To stop program crashes and show user-friendly messages.</td>
+              <td>Invalid input, missing files, division by zero.</td>
+            </tr>
+          </tbody>
+        </table>
+      </article>
+
+      <article class="card" id="casting">
+        <span class="chip">Casting</span>
+        <h2>Detailed Casting Notes</h2>
+        <p><strong>Definition:</strong> Casting means converting one data type to another data type.</p>
+        <p><strong>Explanation:</strong> Sometimes input or external data is in string format, but we need integer/float/list operations.</p>
+        <p><strong>Why we use:</strong> To perform correct operations, avoid type errors, and normalize data format.</p>
+        <p><strong>Applications:</strong> User input conversion, API data cleaning, report generation.</p>
+        <pre><code># Number casting
+num_str = "25"
+num_int = int(num_str)
+num_float = float(num_str)
+
+# String casting
+price = 99
+message = "Price is " + str(price)
+
+# Collection casting
+nums_tuple = (1, 2, 2, 3)
+nums_list = list(nums_tuple)
+nums_set = set(nums_tuple)      # removes duplicates
+nums_back = tuple(nums_list)
+
+# Dict casting from list of pairs
+pairs = [("name", "Vinod"), ("age", 26)]
+profile = dict(pairs)</code></pre>
+        <div class="note">Real-life example: Online form sends age as text "26". You cast to int before checking voting eligibility.</div>
+      </article>
+
+      <article class="card" id="json-deep">
+        <span class="chip">JSON</span>
+        <h2>Detailed JSON Notes</h2>
+        <p><strong>Definition:</strong> JSON (JavaScript Object Notation) is a text format for storing and exchanging structured data.</p>
+        <p><strong>Explanation:</strong> Python converts between dictionary/list and JSON string using <code>json.dumps()</code> and <code>json.loads()</code>.</p>
+        <p><strong>Why we use:</strong> JSON is lightweight, human-readable, and standard for APIs and config files.</p>
+        <p><strong>Applications:</strong> API request/response, configuration files, logging structured data.</p>
+        <pre><code>import json
+
+# Python object -> JSON string
+data = {"name": "Vinod", "marks": [88, 92], "active": True}
+json_text = json.dumps(data, indent=2)
+print(json_text)
+
+# JSON string -> Python object
+parsed = json.loads(json_text)
+print(parsed["name"])
+
+# Save JSON to file
+with open("student.json", "w") as f:
+    json.dump(data, f, indent=2)
+
+# Read JSON from file
+with open("student.json", "r") as f:
+    restored = json.load(f)
+print(restored)</code></pre>
+        <div class="note">Real-life example: A mobile app sends user profile data to server in JSON format.</div>
+      </article>
+
+      <article class="card" id="function-deep">
+        <span class="chip">Functions Deep</span>
+        <h2>Detailed Function Notes</h2>
+        <p><strong>Definition:</strong> A function is a named reusable block defined with <code>def</code> that can accept input and return output.</p>
+        <p><strong>Explanation:</strong> Functions reduce repeated code and make logic modular and testable.</p>
+        <p><strong>Why we use:</strong> Reusability, readability, easier debugging, clean architecture.</p>
+        <p><strong>Applications:</strong> Validation functions, calculations, formatting utilities, database helpers.</p>
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th>Type</th>
+              <th>Meaning</th>
+              <th>Example</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Positional args</td><td>Order matters.</td><td><code>add(2, 3)</code></td></tr>
+            <tr><td>Keyword args</td><td>Name-based passing.</td><td><code>add(a=2, b=3)</code></td></tr>
+            <tr><td>Default args</td><td>Fallback values.</td><td><code>greet(name, city="Bengaluru")</code></td></tr>
+            <tr><td>*args</td><td>Variable positional arguments.</td><td><code>sum_all(*nums)</code></td></tr>
+            <tr><td>**kwargs</td><td>Variable keyword arguments.</td><td><code>show_profile(**data)</code></td></tr>
+            <tr><td>Lambda</td><td>Small one-line function.</td><td><code>lambda x: x*x</code></td></tr>
+          </tbody>
+        </table>
+        <pre><code>def add(a, b):
+    return a + b
+
+def greet(name, city="Bengaluru"):
+    return f"Hi {name} from {city}"
+
+def total(*nums):
+    return sum(nums)
+
+def profile(**info):
+    return info
+
+square = lambda x: x * x
+
+print(add(5, 7))
+print(greet("Vinod"))
+print(total(1, 2, 3, 4))
+print(profile(name="Vinod", role="Learner"))
+print(square(6))</code></pre>
+      </article>
+
+      <article class="card" id="methods-hub">
+        <span class="chip">Collection Methods</span>
+        <h2>List, Tuple, Set, Dictionary Methods (Detailed)</h2>
+        <div class="columns">
+          <div>
+            <h3>List Methods</h3>
+            <table class="compare-table">
+              <thead><tr><th>Method</th><th>Use</th></tr></thead>
+              <tbody>
+                <tr><td><code>append(x)</code></td><td>Add one item at end.</td></tr>
+                <tr><td><code>extend(it)</code></td><td>Add multiple items.</td></tr>
+                <tr><td><code>insert(i, x)</code></td><td>Add at specific index.</td></tr>
+                <tr><td><code>remove(x)</code></td><td>Remove first matching item.</td></tr>
+                <tr><td><code>pop(i)</code></td><td>Remove and return item by index.</td></tr>
+                <tr><td><code>sort()</code></td><td>Sort items in place.</td></tr>
+                <tr><td><code>reverse()</code></td><td>Reverse list in place.</td></tr>
+                <tr><td><code>clear()</code></td><td>Remove all items.</td></tr>
+                <tr><td><code>copy()</code></td><td>Shallow copy of list.</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div>
+            <h3>Tuple Methods and Functions</h3>
+            <table class="compare-table">
+              <thead><tr><th>Method/Function</th><th>Use</th></tr></thead>
+              <tbody>
+                <tr><td><code>count(x)</code></td><td>Count occurrences.</td></tr>
+                <tr><td><code>index(x)</code></td><td>Find first index.</td></tr>
+                <tr><td><code>len(t)</code></td><td>Total elements.</td></tr>
+                <tr><td><code>max(t)</code></td><td>Largest value.</td></tr>
+                <tr><td><code>min(t)</code></td><td>Smallest value.</td></tr>
+                <tr><td><code>sum(t)</code></td><td>Sum numeric values.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="columns" style="margin-top: 12px;">
+          <div>
+            <h3>Set Methods</h3>
+            <table class="compare-table">
+              <thead><tr><th>Method</th><th>Use</th></tr></thead>
+              <tbody>
+                <tr><td><code>add(x)</code></td><td>Add one element.</td></tr>
+                <tr><td><code>update(it)</code></td><td>Add many elements.</td></tr>
+                <tr><td><code>remove(x)</code></td><td>Remove; error if missing.</td></tr>
+                <tr><td><code>discard(x)</code></td><td>Remove; no error if missing.</td></tr>
+                <tr><td><code>union()</code></td><td>Combine sets.</td></tr>
+                <tr><td><code>intersection()</code></td><td>Common elements.</td></tr>
+                <tr><td><code>difference()</code></td><td>Elements not in other set.</td></tr>
+                <tr><td><code>symmetric_difference()</code></td><td>Elements in either set, not both.</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div>
+            <h3>Dictionary Methods</h3>
+            <table class="compare-table">
+              <thead><tr><th>Method</th><th>Use</th></tr></thead>
+              <tbody>
+                <tr><td><code>get(k)</code></td><td>Safe value access.</td></tr>
+                <tr><td><code>keys()</code></td><td>All keys view.</td></tr>
+                <tr><td><code>values()</code></td><td>All values view.</td></tr>
+                <tr><td><code>items()</code></td><td>Key-value pairs view.</td></tr>
+                <tr><td><code>update(d)</code></td><td>Merge/update entries.</td></tr>
+                <tr><td><code>pop(k)</code></td><td>Remove by key and return value.</td></tr>
+                <tr><td><code>setdefault(k, v)</code></td><td>Get key value or set default.</td></tr>
+                <tr><td><code>clear()</code></td><td>Remove all entries.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <pre><code># Quick combined example
+fruits = ["apple", "banana"]
+fruits.append("mango")
+
+scores = (80, 90, 90)
+print(scores.count(90))
+
+tags = {"python", "notes"}
+tags.add("study")
+
+user = {"name": "Vinod"}
+user.setdefault("city", "Bengaluru")
+print(fruits, scores, tags, user)</code></pre>
+      </article>
+
+      <article class="card" id="exam-booster">
+        <span class="chip">Exam Booster</span>
+        <h2>Topic-Wise: Common Mistakes, Interview One-Liner, Mini Practical + Output</h2>
+        <p>This is your quick exam preparation zone. Each topic includes what students usually do wrong, what to say in interview in one line, and one mini task with expected output.</p>
+
+        <div class="booster-grid">
+          <div class="booster-card">
+            <h4>1) Data Types</h4>
+            <p><strong>Common mistake:</strong> Using wrong type in operations, like adding number and string directly.</p>
+            <p><strong>Interview one-liner:</strong> Data types define the nature of value and valid operations in Python.</p>
+            <pre><code># Task
+x = 10
+y = "20"
+print(x + int(y))
+
+# Expected Output
+30</code></pre>
+          </div>
+
+          <div class="booster-card">
+            <h4>2) Casting</h4>
+            <p><strong>Common mistake:</strong> Forgetting to cast user input before numeric logic.</p>
+            <p><strong>Interview one-liner:</strong> Casting converts data to required type for correct processing.</p>
+            <pre><code># Task
+price = "99"
+qty = "2"
+print(int(price) * int(qty))
+
+# Expected Output
+198</code></pre>
+          </div>
+
+          <div class="booster-card">
+            <h4>3) Lists</h4>
+            <p><strong>Common mistake:</strong> Using index out of range while accessing list items.</p>
+            <p><strong>Interview one-liner:</strong> List is ordered and mutable collection.</p>
+            <pre><code># Task
+nums = [2, 4, 6]
+nums.append(8)
+print(nums)
+
+# Expected Output
+[2, 4, 6, 8]</code></pre>
+          </div>
+
+          <div class="booster-card">
+            <h4>4) Tuples</h4>
+            <p><strong>Common mistake:</strong> Trying to modify tuple directly.</p>
+            <p><strong>Interview one-liner:</strong> Tuple is ordered and immutable, good for fixed data.</p>
+            <pre><code># Task
+t = (1, 2, 3, 2)
+print(t.count(2), t.index(3))
+
+# Expected Output
+2 2</code></pre>
+          </div>
+
+          <div class="booster-card">
+            <h4>5) Sets</h4>
+            <p><strong>Common mistake:</strong> Expecting order in set output.</p>
+            <p><strong>Interview one-liner:</strong> Set stores unique values and supports fast membership tests.</p>
+            <pre><code># Task
+s = {1, 2, 2, 3}
+print(len(s), 2 in s)
+
+# Expected Output
+3 True</code></pre>
+          </div>
+
+          <div class="booster-card">
+            <h4>6) Dictionaries</h4>
+            <p><strong>Common mistake:</strong> Accessing missing key with <code>[]</code> and getting KeyError.</p>
+            <p><strong>Interview one-liner:</strong> Dictionary maps keys to values for quick lookup.</p>
+            <pre><code># Task
+user = {"name": "Asha", "age": 22}
+print(user.get("city", "Not Available"))
+
+# Expected Output
+Not Available</code></pre>
+          </div>
+
+          <div class="booster-card">
+            <h4>7) If / Loops</h4>
+            <p><strong>Common mistake:</strong> Infinite while loop by missing counter update.</p>
+            <p><strong>Interview one-liner:</strong> Control flow allows condition-based and repeated execution.</p>
+            <pre><code># Task
+for i in range(1, 6):
+    if i == 3:
+        continue
+    print(i, end=" ")
+
+# Expected Output
+1 2 4 5</code></pre>
+          </div>
+
+          <div class="booster-card">
+            <h4>8) Functions</h4>
+            <p><strong>Common mistake:</strong> Forgetting return statement and getting None unexpectedly.</p>
+            <p><strong>Interview one-liner:</strong> Functions make code reusable, modular, and testable.</p>
+            <pre><code># Task
+def area_rect(w, h):
+    return w * h
+
+print(area_rect(4, 5))
+
+# Expected Output
+20</code></pre>
+          </div>
+
+          <div class="booster-card">
+            <h4>9) JSON</h4>
+            <p><strong>Common mistake:</strong> Confusing JSON string with Python dictionary object.</p>
+            <p><strong>Interview one-liner:</strong> JSON is standard text format for data exchange across systems.</p>
+            <pre><code># Task
+import json
+obj = {"id": 1, "name": "Ravi"}
+s = json.dumps(obj)
+print(type(s).__name__)
+
+# Expected Output
+str</code></pre>
+          </div>
+
+          <div class="booster-card">
+            <h4>10) Regex</h4>
+            <p><strong>Common mistake:</strong> Writing loose pattern without start/end anchors.</p>
+            <p><strong>Interview one-liner:</strong> Regex is used to validate, search, and extract text patterns.</p>
+            <pre><code># Task
+import re
+email = "test@example.com"
+print(bool(re.match(r"^[\w\.-]+@[\w\.-]+\.\w+$", email)))
+
+# Expected Output
+True</code></pre>
+          </div>
+
+          <div class="booster-card">
+            <h4>11) Try / Except</h4>
+            <p><strong>Common mistake:</strong> Catching broad exceptions without handling meaningfully.</p>
+            <p><strong>Interview one-liner:</strong> Exception handling keeps applications stable and user-friendly.</p>
+            <pre><code># Task
+try:
+    print(10 / 0)
+except ZeroDivisionError:
+    print("Cannot divide by zero")
+
+# Expected Output
+Cannot divide by zero</code></pre>
+          </div>
+
+          <div class="booster-card">
+            <h4>12) File Handling</h4>
+            <p><strong>Common mistake:</strong> Opening file without closing (resource leak risk).</p>
+            <p><strong>Interview one-liner:</strong> File handling is used for persistent storage beyond program runtime.</p>
+            <pre><code># Task
+with open("demo.txt", "w") as f:
+    f.write("Hello")
+with open("demo.txt", "r") as f:
+    print(f.read())
+
+# Expected Output
+Hello</code></pre>
+          </div>
+
+          <div class="booster-card">
+            <h4>13) OOP</h4>
+            <p><strong>Common mistake:</strong> Forgetting <code>self</code> in instance methods.</p>
+            <p><strong>Interview one-liner:</strong> OOP models real-world entities using classes and objects.</p>
+            <pre><code># Task
+class Car:
+    def __init__(self, name):
+        self.name = name
+    def info(self):
+        return self.name
+
+print(Car("Honda").info())
+
+# Expected Output
+Honda</code></pre>
+          </div>
+
+          <div class="booster-card">
+            <h4>14) Copy (Shallow vs Deep)</h4>
+            <p><strong>Common mistake:</strong> Assuming shallow copy duplicates nested objects.</p>
+            <p><strong>Interview one-liner:</strong> Shallow copy shares nested references, deep copy clones complete structure.</p>
+            <pre><code># Task
+import copy
+a = [[1], [2]]
+b = copy.copy(a)
+b[0][0] = 9
+print(a)
+
+# Expected Output
+[[9], [2]]</code></pre>
+          </div>
+        </div>
+      </article>
+    </section>
+    </section>
+
+    <section class="grid" id="study-plan">
+      <article class="card">
+        <span class="chip">Study Plan</span>
+        <h2>30-Day Python-Only Study Plan (Day Wise + Mini Task)</h2>
+        <table class="plan-table">
+          <thead>
+            <tr>
+              <th>Day</th>
+              <th>Topic</th>
+              <th>Mini Task</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>1</td><td>Intro, Syntax, Output</td><td>Print your name, city, and one quote.</td></tr>
+            <tr><td>2</td><td>Variables, Data Types</td><td>Store and print int, float, str, bool values.</td></tr>
+            <tr><td>3</td><td>Casting, Numbers</td><td>Convert string "25" to int and add 10.</td></tr>
+            <tr><td>4</td><td>Strings and Slicing</td><td>Extract first name from full name.</td></tr>
+            <tr><td>5</td><td>Operators and Booleans</td><td>Check pass/fail using marks condition.</td></tr>
+            <tr><td>6</td><td>Lists Basics</td><td>Add, remove, and sort fruits list.</td></tr>
+            <tr><td>7</td><td>Tuples and Sets</td><td>Remove duplicates from list using set.</td></tr>
+            <tr><td>8</td><td>Dictionaries</td><td>Create student profile dict and print keys.</td></tr>
+            <tr><td>9</td><td>If, Elif, Else</td><td>Number positive/negative/zero program.</td></tr>
+            <tr><td>10</td><td>Match-Case</td><td>Day number to day name converter.</td></tr>
+            <tr><td>11</td><td>For Loops</td><td>Print table of 7 using loop.</td></tr>
+            <tr><td>12</td><td>While Loops</td><td>Countdown from 10 to 1.</td></tr>
+            <tr><td>13</td><td>Break/Continue/Range</td><td>Skip multiples of 3 and print others.</td></tr>
+            <tr><td>14</td><td>Functions Basics</td><td>Write add(a,b) and largest(a,b,c).</td></tr>
+            <tr><td>15</td><td>Args, Kwargs, Lambda</td><td>Create a sum function using *args.</td></tr>
+            <tr><td>16</td><td>Scope and Recursion</td><td>Write factorial with recursion.</td></tr>
+            <tr><td>17</td><td>Modules and Imports</td><td>Create utils.py and import from it.</td></tr>
+            <tr><td>18</td><td>Math, Datetime, JSON</td><td>Save a small dict as JSON string.</td></tr>
+            <tr><td>19</td><td>Regex</td><td>Validate email and phone patterns.</td></tr>
+            <tr><td>20</td><td>Try/Except</td><td>Handle divide by zero safely.</td></tr>
+            <tr><td>21</td><td>User Input and Formatting</td><td>Take name and age input, print formatted sentence.</td></tr>
+            <tr><td>22</td><td>File Read/Write</td><td>Create file and append daily notes.</td></tr>
+            <tr><td>23</td><td>File Delete + Error Handling</td><td>Delete example.txt safely with try/except.</td></tr>
+            <tr><td>24</td><td>VirtualEnv and PIP</td><td>Create venv and install requests.</td></tr>
+            <tr><td>25</td><td>OOP: Class/Object/__init__/self</td><td>Create Car class with get_info method.</td></tr>
+            <tr><td>26</td><td>Class Methods/Properties</td><td>Use @classmethod and @property in one class.</td></tr>
+            <tr><td>27</td><td>Inheritance and Polymorphism</td><td>Animal, Dog, Cat with speak().</td></tr>
+            <tr><td>28</td><td>Encapsulation and Abstraction</td><td>BankAccount + Shape abstract class example.</td></tr>
+            <tr><td>29</td><td>NumPy/Pandas/Matplotlib Intro</td><td>Read sample data and create one plot.</td></tr>
+            <tr><td>30</td><td>Revision + Mock Interview</td><td>Answer 25 questions from interview section.</td></tr>
+          </tbody>
+        </table>
+      </article>
+    </section>
+
+    <section class="grid" id="mcq">
+      <article class="card">
+        <span class="chip">Chapter Quiz</span>
+        <h2>Chapter-End MCQ Quiz (Python Only)</h2>
+        <p>Try each question first, then check the answer chip.</p>
+        <div class="mcq-grid">
+          <div class="mcq-card">
+            <p>1) Correct variable declaration is:</p>
+            <ul><li>A. var x = 5</li><li>B. x = 5</li><li>C. $x = 5</li><li>D. int x = 5</li></ul>
+            <span class="answer-chip">Answer: B</span>
+          </div>
+          <div class="mcq-card">
+            <p>2) Which is immutable?</p>
+            <ul><li>A. list</li><li>B. set</li><li>C. tuple</li><li>D. dict</li></ul>
+            <span class="answer-chip">Answer: C</span>
+          </div>
+          <div class="mcq-card">
+            <p>3) Which keeps unique values?</p>
+            <ul><li>A. list</li><li>B. set</li><li>C. tuple</li><li>D. str</li></ul>
+            <span class="answer-chip">Answer: B</span>
+          </div>
+          <div class="mcq-card">
+            <p>4) <code>break</code> does what?</p>
+            <ul><li>A. skip current step</li><li>B. end loop fully</li><li>C. restart loop</li><li>D. throw error</li></ul>
+            <span class="answer-chip">Answer: B</span>
+          </div>
+          <div class="mcq-card">
+            <p>5) <code>continue</code> does what?</p>
+            <ul><li>A. end loop</li><li>B. skip current iteration</li><li>C. pause loop</li><li>D. reverse loop</li></ul>
+            <span class="answer-chip">Answer: B</span>
+          </div>
+          <div class="mcq-card">
+            <p>6) Which handles exceptions?</p>
+            <ul><li>A. if/else</li><li>B. for</li><li>C. try/except</li><li>D. lambda</li></ul>
+            <span class="answer-chip">Answer: C</span>
+          </div>
+          <div class="mcq-card">
+            <p>7) Better file handling style is:</p>
+            <ul><li>A. open() only</li><li>B. file.read() without close</li><li>C. with open()</li><li>D. del file</li></ul>
+            <span class="answer-chip">Answer: C</span>
+          </div>
+          <div class="mcq-card">
+            <p>8) Regex is mainly used for:</p>
+            <ul><li>A. loops</li><li>B. pattern matching</li><li>C. database join</li><li>D. plotting</li></ul>
+            <span class="answer-chip">Answer: B</span>
+          </div>
+          <div class="mcq-card">
+            <p>9) Class is:</p>
+            <ul><li>A. object instance</li><li>B. loop</li><li>C. blueprint</li><li>D. module</li></ul>
+            <span class="answer-chip">Answer: C</span>
+          </div>
+          <div class="mcq-card">
+            <p>10) Which copies nested objects independently?</p>
+            <ul><li>A. shallow copy</li><li>B. deep copy</li><li>C. list()</li><li>D. tuple()</li></ul>
+            <span class="answer-chip">Answer: B</span>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <section class="grid" id="answers-sheet">
+      <article class="card">
+        <span class="chip">One-Page Sheet</span>
+        <h2>Expected Interview Answers (Quick Revision Sheet)</h2>
+        <details open>
+          <summary>Basics and Collections</summary>
+          <p><strong>Python:</strong> High-level, readable, general-purpose language.</p>
+          <p><strong>List vs Tuple:</strong> List mutable, tuple immutable.</p>
+          <p><strong>Set:</strong> Unique values only.</p>
+          <p><strong>Dictionary:</strong> Key-value mapping.</p>
+        </details>
+        <details>
+          <summary>Control Flow and Functions</summary>
+          <p><strong>break:</strong> exits loop, <strong>continue:</strong> skips current iteration.</p>
+          <p><strong>Function:</strong> reusable block, <strong>lambda:</strong> short one-line function.</p>
+          <p><strong>*args / **kwargs:</strong> variable positional / keyword arguments.</p>
+        </details>
+        <details>
+          <summary>Error Handling, Files, and Regex</summary>
+          <p><strong>try/except:</strong> catches runtime errors safely.</p>
+          <p><strong>with open:</strong> automatic file close.</p>
+          <p><strong>Regex:</strong> validate, search, extract text patterns.</p>
+        </details>
+        <details>
+          <summary>OOP and Design Concepts</summary>
+          <p><strong>Class vs Object:</strong> blueprint vs instance.</p>
+          <p><strong>Inheritance:</strong> child reuses parent behavior.</p>
+          <p><strong>Polymorphism:</strong> same method, different behavior.</p>
+          <p><strong>Encapsulation:</strong> data hiding/control.</p>
+          <p><strong>Abstraction:</strong> show what, hide how.</p>
+        </details>
+        <details>
+          <summary>Advanced Quick Points</summary>
+          <p><strong>Shallow copy:</strong> nested objects shared.</p>
+          <p><strong>Deep copy:</strong> nested objects independent.</p>
+          <p><strong>Module vs Package:</strong> single .py file vs folder of modules.</p>
+          <p><strong>VirtualEnv:</strong> isolated project dependencies.</p>
+        </details>
+      </article>
+    </section>
+
+    <section class="grid" id="datatypes">
+      <article class="card w6">
+        <span class="chip">Core</span>
+        <h2>1) Data Types and Operators</h2>
+        <p>
+          Data type means what kind of value a variable stores. Common ones: <code>int</code>, <code>float</code>,
+          <code>str</code>, <code>bool</code>.
+        </p>
+        <pre><code>a = 10        # int
+b = 3.14      # float
+name = "Vinod" # str
+is_ok = True  # bool
+
+print(type(a), type(b), type(name), type(is_ok))</code></pre>
+        <div class="note">Tip: Do not use variable names like <code>int</code> or <code>list</code> because they hide built-in names.</div>
+      </article>
+
+      <article class="card w6" id="collections">
+        <span class="chip">Core</span>
+        <h2>2) List, Tuple, Set, Dictionary</h2>
+        <p><strong>List</strong>: ordered, changeable. <strong>Tuple</strong>: ordered, not changeable. <strong>Set</strong>: unique values, no order. <strong>Dictionary</strong>: key-value pairs.</p>
+        <pre><code>fruits = ["apple", "banana", "cherry"]
+point = (10, 20)
+unique_ids = {1, 2, 2, 3}
+student = {"name": "Ravi", "age": 21}
+
+print(fruits[0])
+print(point)
+print(unique_ids)        # {1,2,3}
+print(student["name"])</code></pre>
+        <div class="note">Real life idea: List is like a shopping list, Tuple is like Aadhaar number data (fixed), Set is like unique visitor IDs, Dictionary is like contact book (name -> phone).</div>
+      </article>
+
+      <article class="card" id="differences">
+        <span class="chip">Detailed</span>
+        <h2>2.1) Differences Between Common Concepts (Simple + Real Life)</h2>
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th>Concept</th>
+              <th>Main Difference</th>
+              <th>Simple Real-Life Example</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>List vs Tuple</td>
+              <td>List can change; Tuple cannot change after creation.</td>
+              <td>List: editable to-do list. Tuple: fixed date of birth record.</td>
+            </tr>
+            <tr>
+              <td>Set vs List</td>
+              <td>Set keeps only unique values and no order; List allows duplicates and keeps order.</td>
+              <td>Set: unique roll numbers. List: attendance order.</td>
+            </tr>
+            <tr>
+              <td>Dictionary vs List</td>
+              <td>Dictionary stores key-value pairs; List stores values by position.</td>
+              <td>Dictionary: student name -> marks. List: marks by index.</td>
+            </tr>
+            <tr>
+              <td>Break vs Continue</td>
+              <td>Break exits loop fully; Continue skips only current iteration.</td>
+              <td>Break: leave class early. Continue: skip one question and solve next.</td>
+            </tr>
+            <tr>
+              <td>Function vs Lambda</td>
+              <td>Function is full reusable block; Lambda is short one-line anonymous function.</td>
+              <td>Function: full recipe. Lambda: quick one-step shortcut.</td>
+            </tr>
+            <tr>
+              <td>Method vs Function</td>
+              <td>Method belongs to a class/object; function is independent.</td>
+              <td>Method: car.start(). Function: calculate_tax(amount).</td>
+            </tr>
+            <tr>
+              <td>Class vs Object</td>
+              <td>Class is blueprint; object is real instance.</td>
+              <td>Class: house design plan. Object: built house.</td>
+            </tr>
+            <tr>
+              <td>Inheritance vs Polymorphism</td>
+              <td>Inheritance gets properties from parent; Polymorphism gives same method different behavior.</td>
+              <td>Inheritance: child gets family traits. Polymorphism: speak() differs for Dog/Cat.</td>
+            </tr>
+          </tbody>
+        </table>
+      </article>
+
+      <article class="card w8" id="control">
+        <span class="chip">Flow</span>
+        <h2>3) If, Elif, Else and Loops</h2>
+        <p>Use <code>if</code> for decision making. Use <code>for</code> or <code>while</code> for repetition.</p>
+        <pre><code>num = -4
+if num &gt; 0:
+    print("Positive")
+elif num &lt; 0:
+    print("Negative")
+else:
+    print("Zero")
+
+for i in range(1, 6):
+    if i == 3:
+        continue
+    print(i)
+
+count = 0
+while count &lt; 3:
+    print("Count:", count)
+    count += 1</code></pre>
+      </article>
+
+      <article class="card w4">
+        <span class="chip">Flow</span>
+        <h2>Important Keywords</h2>
+        <p><code>break</code> stops the loop.</p>
+        <p><code>continue</code> skips current step and goes next.</p>
+        <p><code>range(start, stop, step)</code> gives number sequence.</p>
+      </article>
+
+      <article class="card w6" id="functions">
+        <span class="chip">Functions</span>
+        <h2>4) Functions, Args, Lambda, Scope</h2>
+        <p>Functions help us reuse code. Use <code>*args</code> for many values and <code>**kwargs</code> for named values.</p>
+        <pre><code>def add(a, b):
+    return a + b
+
+print(add(5, 3))
+
+def show(*args, **kwargs):
+    print(args)
+    print(kwargs)
+
+show(1, 2, name="Vinod")
+
+square = lambda x: x * x
+print(square(4))</code></pre>
+      </article>
+
+      <article class="card w6">
+        <span class="chip">Recursion</span>
+        <h2>5) Recursion in One Idea</h2>
+        <p>A function calling itself. Must have a base condition to stop.</p>
+        <pre><code>def factorial(n):
+    if n &lt;= 1:
+        return 1
+    return n * factorial(n - 1)
+
+print(factorial(5))  # 120</code></pre>
+      </article>
+
+      <article class="card w6" id="regex">
+        <span class="chip">Regex</span>
+        <h2>6) Regular Expressions (Simple)</h2>
+        <p>Regex is used for pattern matching, validation, and extraction from text.</p>
+        <pre><code>import re
+
+email = "test@example.com"
+pattern = r"^[\w\.-]+@[\w\.-]+\.\w+$"
+print(bool(re.match(pattern, email)))
+
+text = "Contact: info@example.com, 123-456-7890"
+print(re.findall(r"\d{3}-\d{3}-\d{4}", text))</code></pre>
+      </article>
+
+      <article class="card w6" id="files">
+        <span class="chip">File and Error</span>
+        <h2>7) File Handling and Try/Except</h2>
+        <p>Use <code>with open(...)</code> so file closes automatically. Use <code>try/except</code> to handle errors safely.</p>
+        <pre><code>try:
+    with open("example.txt", "w") as f:
+        f.write("Hello")
+
+    with open("example.txt", "r") as f:
+        print(f.read())
+except FileNotFoundError:
+    print("File not found")</code></pre>
+      <h3 style="margin-top: 14px;">Delete a File Safely (Requested Example)</h3>
+      <pre><code>#deleting a file
+import os
+try:
+    os.remove("example.txt")
+    print("File deleted successfully.")
+except FileNotFoundError:
+    print("Error: The file was not found.")</code></pre>
+      <div class="note">Real life idea: This is like trying to remove a paper from a folder. If paper is not there, show a message instead of crashing.</div>
+      </article>
+
+      <article class="card" id="oop">
+        <span class="chip">OOP</span>
+        <h2>8) OOP in Simple Words</h2>
+        <div class="columns">
+          <div>
+            <h3>Class and Object</h3>
+            <p>Class is blueprint. Object is real thing created from class.</p>
+            <pre><code>class Car:
+    def __init__(self, make):
+        self.make = make
+
+    def info(self):
+        return f"Car: {self.make}"
+
+c = Car("Toyota")
+print(c.info())</code></pre>
+          </div>
+          <div>
+            <h3>Inheritance and Polymorphism</h3>
+            <p>Child class uses parent features and can change behavior.</p>
+            <pre><code>class Animal:
+    def speak(self):
+        return "Sound"
+
+class Dog(Animal):
+    def speak(self):
+        return "Woof"
+
+print(Dog().speak())</code></pre>
+          </div>
+        </div>
+        <div class="columns" style="margin-top: 12px;">
+          <div>
+            <h3>Encapsulation</h3>
+            <p>Hide direct data access and expose methods.</p>
+            <pre><code>class BankAccount:
+    def __init__(self, bal):
+        self._balance = bal
+
+    def deposit(self, amt):
+        self._balance += amt</code></pre>
+          </div>
+          <div>
+            <h3>Abstraction</h3>
+            <p>Show only needed methods, hide internal logic.</p>
+            <pre><code>from abc import ABC, abstractmethod
+
+class Shape(ABC):
+    @abstractmethod
+    def area(self):
+        pass</code></pre>
+          </div>
+        </div>
+      </article>
+
+      <article class="card" id="oop-diff">
+        <span class="chip">Detailed OOP</span>
+        <h2>8.1) Abstraction vs Encapsulation (With Real-Life Example)</h2>
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th>Point</th>
+              <th>Abstraction</th>
+              <th>Encapsulation</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Meaning</td>
+              <td>Hides implementation details and shows only required features.</td>
+              <td>Bundles data + methods and controls direct access to data.</td>
+            </tr>
+            <tr>
+              <td>Focus</td>
+              <td>What an object does.</td>
+              <td>How data is protected.</td>
+            </tr>
+            <tr>
+              <td>Used with</td>
+              <td>Abstract classes, interfaces, abstract methods.</td>
+              <td>Private/protected attributes, getter/setter methods.</td>
+            </tr>
+            <tr>
+              <td>Real-life example</td>
+              <td>Car dashboard shows speed/fuel only. You do not see engine internals.</td>
+              <td>ATM hides account balance internals and allows changes only through valid operations.</td>
+            </tr>
+          </tbody>
+        </table>
+        <pre><code>from abc import ABC, abstractmethod
+
+class Payment(ABC):
+    @abstractmethod
+    def pay(self, amount):
+        pass
+
+class CardPayment(Payment):
+    def __init__(self, balance):
+        self._balance = balance  # encapsulation
+
+    def pay(self, amount):       # abstraction via common interface
+        if amount &lt;= self._balance:
+            self._balance -= amount
+            return "Payment success"
+        return "Insufficient balance"</code></pre>
+      </article>
+
+      <article class="card" id="copy-types">
+        <span class="chip">Detailed</span>
+        <h2>8.2) Shallow Copy vs Deep Copy (Simple)</h2>
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th>Concept</th>
+              <th>Shallow Copy</th>
+              <th>Deep Copy</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Nested objects</td>
+              <td>Inner objects are shared.</td>
+              <td>Everything is fully copied.</td>
+            </tr>
+            <tr>
+              <td>If inner list changes</td>
+              <td>Original can also change.</td>
+              <td>Original stays safe.</td>
+            </tr>
+            <tr>
+              <td>Real-life example</td>
+              <td>Photocopy of house key list but both point to same locker key.</td>
+              <td>Duplicate key set where even locker key is separately duplicated.</td>
+            </tr>
+          </tbody>
+        </table>
+        <pre><code>import copy
+
+original = [[1, 2], [3, 4]]
+shallow = copy.copy(original)
+deep = copy.deepcopy(original)
+
+shallow[0][0] = 999
+print("Original after shallow:", original)  # changed
+
+deep[1][1] = 777
+print("Original after deep:", original)     # unchanged by deep edit</code></pre>
+      </article>
+
+      <article class="card" id="interview">
+        <span class="chip">Interview</span>
+        <h2>8.3) 25 Interview Questions with Short Answers (Basic to Advanced)</h2>
+        <ol class="interview-list">
+          <li><strong>What is Python?</strong> Python is a high-level, readable, general-purpose programming language.</li>
+          <li><strong>Difference between list and tuple?</strong> List is mutable; tuple is immutable.</li>
+          <li><strong>What is a dictionary?</strong> A key-value data structure for fast lookups.</li>
+          <li><strong>What is a set used for?</strong> Storing unique values and removing duplicates.</li>
+          <li><strong>What is slicing?</strong> Extracting part of sequence using <code>[start:stop:step]</code>.</li>
+          <li><strong>What does <code>len()</code> do?</strong> Returns number of items in a collection.</li>
+          <li><strong>Difference between <code>append()</code> and <code>extend()</code>?</strong> <code>append()</code> adds one item; <code>extend()</code> adds many items from iterable.</li>
+          <li><strong>What is list comprehension?</strong> Short syntax to build lists in one line.</li>
+          <li><strong>What is function scope?</strong> Variables inside function are local to that function.</li>
+          <li><strong>Difference between <code>==</code> and <code>is</code>?</strong> <code>==</code> checks value equality; <code>is</code> checks object identity.</li>
+          <li><strong>What is exception handling?</strong> Using <code>try/except</code> to handle runtime errors safely.</li>
+          <li><strong>What is <code>finally</code> block?</strong> Block that runs always, whether error happens or not.</li>
+          <li><strong>Why use <code>with open()</code>?</strong> File auto-closes, safer resource handling.</li>
+          <li><strong>What is recursion?</strong> A function that calls itself with smaller input.</li>
+          <li><strong>What is base case?</strong> Stop condition in recursion.</li>
+          <li><strong>Difference between module and package?</strong> Module is one file; package is folder of modules.</li>
+          <li><strong>What is pip?</strong> Python package manager used to install libraries.</li>
+          <li><strong>What is OOP?</strong> Programming style using classes and objects.</li>
+          <li><strong>Class vs object?</strong> Class is blueprint; object is instance.</li>
+          <li><strong>What is inheritance?</strong> Child class reuses parent class properties/methods.</li>
+          <li><strong>What is polymorphism?</strong> Same method name with different behavior in different classes.</li>
+          <li><strong>What is encapsulation?</strong> Data hiding and controlled access through methods.</li>
+          <li><strong>What is abstraction?</strong> Showing only important behavior and hiding complexity.</li>
+          <li><strong>What is shallow copy?</strong> New outer object, shared nested objects.</li>
+          <li><strong>What is deep copy?</strong> Fully independent copy including nested objects.</li>
+        </ol>
+      </article>
+
+      <article class="card" id="qa">
+        <span class="chip">Revision</span>
+        <h2>9) Theory Questions with Answers</h2>
+        <details open>
+          <summary>Q1: Difference between list and tuple?</summary>
+          <p><strong>Answer:</strong> List is mutable (can change). Tuple is immutable (cannot change after creation).</p>
+        </details>
+        <details>
+          <summary>Q1.1: Difference between set and dictionary?</summary>
+          <p><strong>Answer:</strong> Set stores only unique values. Dictionary stores key-value pairs. Example: set for unique cities, dictionary for city-population.</p>
+        </details>
+        <details>
+          <summary>Q2: What is recursion?</summary>
+          <p><strong>Answer:</strong> A function calling itself. It must have a base case to stop infinite calls.</p>
+        </details>
+        <details>
+          <summary>Q2.1: Difference between function and method?</summary>
+          <p><strong>Answer:</strong> Function is independent; method is inside a class and called using object or class.</p>
+        </details>
+        <details>
+          <summary>Q3: Why use try/except?</summary>
+          <p><strong>Answer:</strong> To handle runtime errors gracefully and keep program from crashing.</p>
+        </details>
+        <details>
+          <summary>Q4: What is polymorphism?</summary>
+          <p><strong>Answer:</strong> Same method name, different behavior in different classes.</p>
+        </details>
+        <details>
+          <summary>Q5: Why use regex?</summary>
+          <p><strong>Answer:</strong> To validate, search, and extract text patterns like emails and phone numbers.</p>
+        </details>
+      </article>
+
+      <article class="card">
+        <span class="chip">Practice</span>
+        <h2>10) Practical Questions with Answers</h2>
+
+        <div class="qa-block">
+          <h4>Q1: Write a function to return even numbers from a list.</h4>
+          <p><strong>Answer:</strong></p>
+          <pre><code>def evens(nums):
+    return [n for n in nums if n % 2 == 0]
+
+print(evens([1, 2, 3, 4, 5, 6]))</code></pre>
+        </div>
+
+        <div class="qa-block" style="margin-top: 10px;">
+          <h4>Q2: Validate phone number format 123-456-7890 using regex.</h4>
+          <p><strong>Answer:</strong></p>
+          <pre><code>import re
+phone = "123-456-7890"
+ok = bool(re.match(r"^\d{3}-\d{3}-\d{4}$", phone))
+print(ok)</code></pre>
+        </div>
+
+        <div class="qa-block" style="margin-top: 10px;">
+          <h4>Q3: Create class Rectangle and print area.</h4>
+          <p><strong>Answer:</strong></p>
+          <pre><code>class Rectangle:
+    def __init__(self, w, h):
+        self.w = w
+        self.h = h
+
+    def area(self):
+        return self.w * self.h
+
+r = Rectangle(4, 6)
+print(r.area())</code></pre>
+        </div>
+
+        <div class="qa-block" style="margin-top: 10px;">
+          <h4>Q4: Read a file safely with exception handling.</h4>
+          <p><strong>Answer:</strong></p>
+          <pre><code>try:
+    with open("data.txt", "r") as f:
+        print(f.read())
+except FileNotFoundError:
+    print("File does not exist")</code></pre>
+        </div>
+
+        <div class="qa-block" style="margin-top: 10px;">
+          <h4>Q5: Write factorial using recursion.</h4>
+          <p><strong>Answer:</strong></p>
+          <pre><code>def fact(n):
+    return 1 if n &lt;= 1 else n * fact(n - 1)
+
+print(fact(5))</code></pre>
+        </div>
+
+        <div class="qa-block" style="margin-top: 10px;">
+          <h4>Q6: Delete a file safely with exception handling.</h4>
+          <p><strong>Answer:</strong></p>
+          <pre><code>#deleting a file
+import os
+try:
+    os.remove("example.txt")
+    print("File deleted successfully.")
+except FileNotFoundError:
+    print("Error: The file was not found.")</code></pre>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script>
+    function downloadNotesPDF() {
+      var target = document.querySelector("main");
+      if (!target) {
+        window.print();
+        return;
+      }
+
+      if (window.html2pdf) {
+        var options = {
+          margin: 8,
+          filename: "python_notes_detailed.pdf",
+          image: { type: "jpeg", quality: 0.98 },
+          html2canvas: { scale: 2, useCORS: true },
+          jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+          pagebreak: { mode: ["css", "legacy"] }
+        };
+        window.html2pdf().set(options).from(target).save();
+      } else {
+        window.print();
+      }
+    }
+  </script>
+
+  <footer>
+    Prepared as beginner-friendly notes from your notebook topics. Keep practicing small examples daily.
+  </footer>
+</body>
+</html>

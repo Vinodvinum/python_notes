@@ -1,0 +1,1349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Python Deep Notes — Vinu Edition v2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#f2f5f0;--bg2:#fffbf4;--ink:#17324a;--muted:#4f6477;
+  --brand:#007a78;--brand2:#f08a24;--card:rgba(255,255,255,.9);
+  --line:rgba(23,50,74,.12);--ok:#177245;--warn:#7e4f00;
+  --radius:18px;--shadow:0 12px 34px rgba(8,34,48,.1);
+  --mem:#6d28d9;--mem-bg:rgba(109,40,217,.08);--mem-border:rgba(109,40,217,.25);
+  --tip-bg:rgba(23,114,69,.07);--tip-border:#177245;
+  --danger-bg:rgba(220,38,38,.07);--danger-border:#dc2626;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;scroll-behavior:smooth;}
+body{font-family:"Sora",sans-serif;color:var(--ink);
+  background:radial-gradient(circle at 8% 10%,rgba(240,138,36,.15) 0,transparent 35%),
+  radial-gradient(circle at 92% 8%,rgba(0,122,120,.14) 0,transparent 32%),
+  linear-gradient(155deg,var(--bg) 0%,var(--bg2) 100%);
+  line-height:1.65;overflow-x:hidden;}
+.shape{position:fixed;border-radius:999px;z-index:-1;filter:blur(10px);opacity:.3;animation:drift 14s ease-in-out infinite alternate;}
+.s1{width:240px;height:240px;background:#9de5cf;left:-80px;top:18%;}
+.s2{width:300px;height:300px;background:#ffd1a0;right:-90px;top:54%;animation-delay:3s;}
+.wrap{width:min(1140px,93%);margin:0 auto;}
+
+/* HERO */
+.hero{padding:56px 0 28px;animation:rise .7s ease both;}
+.hero h1{margin:0;font-size:clamp(2rem,4.5vw,3.4rem);line-height:1.1;font-weight:800;}
+.hl{color:var(--brand);border-bottom:4px solid rgba(0,122,120,.22);}
+.hero p{margin:14px 0 0;max-width:780px;color:var(--muted);font-size:1rem;font-weight:300;}
+.nav-pills{margin:22px 0 10px;display:flex;flex-wrap:wrap;gap:8px;}
+.nav-pills a{text-decoration:none;color:var(--ink);background:#fff;border:1px solid var(--line);padding:7px 13px;border-radius:999px;font-size:.82rem;transition:all .18s;}
+.nav-pills a:hover{border-color:rgba(0,122,120,.45);transform:translateY(-2px);}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;}
+.btn{border:1px solid rgba(0,122,120,.4);background:#fff;color:var(--ink);border-radius:999px;padding:9px 16px;font-family:"Sora";font-size:.88rem;font-weight:600;cursor:pointer;text-decoration:none;transition:all .18s;}
+.btn:hover{border-color:var(--brand2);transform:translateY(-2px);}
+
+/* LAYOUT */
+.grid{display:grid;gap:16px;grid-template-columns:repeat(12,1fr);margin:16px 0 36px;}
+.card{grid-column:span 12;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:22px 26px;animation:rise .6s ease both;position:relative;overflow:hidden;}
+.card::after{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,var(--brand),transparent);opacity:0;transition:opacity .3s;}
+.card:hover::after{opacity:1;}
+@media(min-width:860px){.w6{grid-column:span 6;}.w8{grid-column:span 8;}.w4{grid-column:span 4;}}
+.section-label{font-size:.72rem;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;color:var(--muted);margin:36px 0 10px;}
+.card h2{margin:0 0 12px;font-size:1.2rem;line-height:1.25;}
+.card h3{margin:14px 0 6px;font-size:1.05rem;color:var(--brand);}
+.card h4{margin:12px 0 5px;font-size:.95rem;color:var(--warn);}
+
+/* CHIPS */
+.chip{display:inline-block;font-size:.72rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;border-radius:999px;padding:4px 10px;margin-bottom:10px;}
+.cg{color:var(--brand);background:rgba(0,122,120,.1);border:1px solid rgba(0,122,120,.28);}
+.co{color:#c2410c;background:rgba(194,65,12,.1);border:1px solid rgba(194,65,12,.28);}
+.cm2{color:var(--mem);background:var(--mem-bg);border:1px solid var(--mem-border);}
+.cy{color:var(--warn);background:rgba(126,79,0,.08);border:1px solid rgba(126,79,0,.25);}
+
+/* CODE */
+pre{margin:10px 0 0;border-radius:12px;background:#0c1f2e;color:#c9e8f4;border:1px solid rgba(201,232,244,.15);padding:14px 16px;overflow-x:auto;font-family:"IBM Plex Mono",monospace;font-size:.84rem;line-height:1.6;}
+code{font-family:"IBM Plex Mono",monospace;font-size:.88em;}
+p code,td code,li code{background:rgba(0,122,120,.1);color:var(--brand);padding:2px 6px;border-radius:5px;font-size:.84em;}
+.kw{color:#7dd3fc;}
+.fn{color:#86efac;}
+.st{color:#fde68a;}
+.cm{color:#4a7a8a;font-style:italic;}
+.dec{color:#f9a8d4;}
+
+/* CALLOUTS */
+.note{border-left:4px solid var(--brand2);background:rgba(240,138,36,.09);border-radius:0 10px 10px 0;padding:10px 14px;margin:10px 0;font-size:.9rem;}
+.memory{border-left:4px solid var(--mem);background:var(--mem-bg);border-radius:0 10px 10px 0;padding:10px 14px;margin:10px 0;font-size:.9rem;}
+.memory strong{color:var(--mem);}
+.tip2{border-left:4px solid var(--tip-border);background:var(--tip-bg);border-radius:0 10px 10px 0;padding:10px 14px;margin:10px 0;font-size:.9rem;}
+.tip2 strong{color:var(--ok);}
+.danger{border-left:4px solid var(--danger-border);background:var(--danger-bg);border-radius:0 10px 10px 0;padding:10px 14px;margin:10px 0;font-size:.9rem;}
+.danger strong{color:#dc2626;}
+
+/* TABLES */
+.t{width:100%;border-collapse:collapse;margin-top:10px;background:#fff;border-radius:12px;overflow:hidden;border:1px solid var(--line);}
+.t th,.t td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);font-size:.88rem;vertical-align:top;}
+.t th{background:rgba(0,122,120,.07);font-size:.83rem;font-weight:700;color:var(--brand);}
+.t tr:last-child td{border-bottom:none;}
+
+/* COLS */
+.cols2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.cols3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+
+/* BADGES */
+.badge{display:inline-block;padding:2px 8px;border-radius:6px;font-size:.75rem;font-weight:700;margin:0 2px;}
+.bm{background:#dcfce7;color:#15803d;}
+.bi{background:#fef3c7;color:#92400e;}
+.bo{background:#dbeafe;color:#1d4ed8;}
+
+/* DETAILS */
+details{border:1px solid var(--line);border-radius:12px;background:#fff;padding:10px 13px;}
+details+details{margin-top:8px;}
+summary{cursor:pointer;font-weight:600;font-size:.95rem;}
+summary::marker{color:var(--brand);}
+
+/* GRID MINI CARDS */
+.mini-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;margin-top:10px;}
+.mini-card{background:rgba(0,122,120,.05);border:1px solid rgba(0,122,120,.15);border-radius:12px;padding:12px 14px;}
+.mini-card h5{margin:0 0 4px;font-size:.88rem;color:var(--brand);}
+.mini-card p{margin:0;font-size:.8rem;color:var(--muted);}
+
+.interview-list{margin:10px 0 0;padding-left:18px;}
+.interview-list li{margin-bottom:9px;font-size:.9rem;}
+footer{text-align:center;padding:16px 0 36px;color:var(--muted);font-size:.88rem;}
+
+@media(max-width:780px){.cols2,.cols3{grid-template-columns:1fr;}.hero{padding-top:32px;}}
+@media print{body{background:#fff;}.shape{display:none;}.card{box-shadow:none;background:#fff;}}
+@keyframes rise{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+@keyframes drift{from{transform:translateY(-10px) translateX(-8px);}to{transform:translateY(10px) translateX(8px);}}
+</style>
+</head>
+<body>
+<div class="shape s1"></div>
+<div class="shape s2"></div>
+<div class="wrap">
+
+<!-- HERO -->
+<section class="hero">
+  <h1>Python Deep Notes<br><span class="hl">Vinu Edition — v2</span></h1>
+  <p>Expanded: Collections · OOP · Generators · Decorators · Comprehensions · Modules · Type Hints · Error Types · String Methods · File Handling · pip · Interview Ready</p>
+  <div class="actions">
+    <button class="btn" onclick="window.print()">🖨 Print / Save PDF</button>
+  </div>
+  <nav class="nav-pills">
+    <a href="#collections">📦 Collections Deep</a>
+    <a href="#strings">🔡 String Methods</a>
+    <a href="#comprehensions">⚡ Comprehensions</a>
+    <a href="#functions-deep">🔧 Functions Deep</a>
+    <a href="#generators">🔄 Generators</a>
+    <a href="#decorators">🎀 Decorators</a>
+    <a href="#oop-deep">🏛 OOP All Pillars</a>
+    <a href="#modules">📚 Modules</a>
+    <a href="#errors">⚠ Errors</a>
+    <a href="#files">📁 File Handling</a>
+    <a href="#typehints">📝 Type Hints</a>
+    <a href="#pip">📦 pip</a>
+    <a href="#interview">🎯 Interview 60</a>
+  </nav>
+</section>
+
+<!-- ═══════════════════════
+     COLLECTIONS DEEP
+════════════════════════ -->
+<p class="section-label">Section 1 — Data Collections — Deep Dive</p>
+<section class="grid" id="collections">
+
+  <div class="card">
+    <span class="chip cg">Collections</span>
+    <h2>All List Methods — Complete Reference</h2>
+    <div class="cols2">
+      <div>
+        <pre><span class="cm"># LIST — All methods with examples</span>
+fruits = [<span class="st">"banana"</span>, <span class="st">"apple"</span>, <span class="st">"mango"</span>]
+
+<span class="cm"># Add items</span>
+fruits.append(<span class="st">"grape"</span>)        <span class="cm"># Add to end</span>
+fruits.insert(1, <span class="st">"cherry"</span>)    <span class="cm"># Add at index 1</span>
+fruits.extend([<span class="st">"kiwi"</span>, <span class="st">"plum"</span>]) <span class="cm"># Add multiple</span>
+
+<span class="cm"># Remove items</span>
+fruits.remove(<span class="st">"apple"</span>)        <span class="cm"># Remove by value</span>
+popped = fruits.pop()          <span class="cm"># Remove & return last</span>
+popped = fruits.pop(0)         <span class="cm"># Remove & return index 0</span>
+del fruits[2]                  <span class="cm"># Delete by index</span>
+fruits.clear()                 <span class="cm"># Empty the list</span>
+
+<span class="cm"># Search</span>
+idx = fruits.index(<span class="st">"mango"</span>)    <span class="cm"># First index of value</span>
+cnt = fruits.count(<span class="st">"apple"</span>)   <span class="cm"># How many times value appears</span>
+<span class="st">"banana"</span> <span class="kw">in</span> fruits             <span class="cm"># True/False membership check</span>
+
+<span class="cm"># Order</span>
+fruits.sort()                  <span class="cm"># Sort ascending (in-place)</span>
+fruits.sort(reverse=<span class="kw">True</span>)     <span class="cm"># Sort descending</span>
+fruits.reverse()               <span class="cm"># Reverse order in-place</span>
+s = sorted(fruits)             <span class="cm"># Returns NEW sorted list</span>
+
+<span class="cm"># Copy</span>
+copy1 = fruits.copy()          <span class="cm"># Shallow copy</span>
+copy2 = fruits[:]              <span class="cm"># Slice copy</span>
+<span class="kw">import</span> copy
+deep = copy.deepcopy(fruits)   <span class="cm"># Deep copy (for nested)</span></pre>
+      </div>
+      <div>
+        <pre><span class="cm"># SLICING — very important!</span>
+nums = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+nums[2:5]      <span class="cm"># [2, 3, 4]         — index 2 to 4</span>
+nums[:4]       <span class="cm"># [0, 1, 2, 3]      — from start to 3</span>
+nums[6:]       <span class="cm"># [6, 7, 8, 9]      — from 6 to end</span>
+nums[-3:]      <span class="cm"># [7, 8, 9]         — last 3 items</span>
+nums[::2]      <span class="cm"># [0, 2, 4, 6, 8]   — every 2nd</span>
+nums[::-1]     <span class="cm"># [9,8,7...0]       — REVERSED!</span>
+nums[1:8:2]    <span class="cm"># [1, 3, 5, 7]      — step 2 from 1 to 7</span>
+
+<span class="cm"># UNPACKING</span>
+a, b, c = [10, 20, 30]
+first, *rest = [1, 2, 3, 4, 5]
+<span class="cm"># first = 1, rest = [2, 3, 4, 5]</span>
+*init, last = [1, 2, 3, 4, 5]
+<span class="cm"># init = [1,2,3,4], last = 5</span>
+
+<span class="cm"># ENUMERATE and ZIP</span>
+names = [<span class="st">"Vinu"</span>, <span class="st">"Ravi"</span>, <span class="st">"Arun"</span>]
+<span class="kw">for</span> i, name <span class="kw">in</span> enumerate(names, start=1):
+    print(f<span class="st">"{i}. {name}"</span>)
+    
+marks = [92, 78, 85]
+<span class="kw">for</span> name, mark <span class="kw">in</span> zip(names, marks):
+    print(f<span class="st">"{name}: {mark}"</span>)</pre>
+        <div class="memory">
+          <strong>🧠 Slice Trick:</strong> Think of index as fence posts.<br>
+          <code>nums[2:5]</code> = "from post 2, up to but NOT including post 5"<br>
+          <code>[::-1]</code> = "go backwards" — easiest way to reverse anything.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card w6">
+    <span class="chip cg">Dictionary</span>
+    <h2>All Dictionary Methods — Deep</h2>
+    <pre><span class="cm"># CREATE</span>
+student = {<span class="st">"name"</span>: <span class="st">"Vinu"</span>, <span class="st">"age"</span>: 24, <span class="st">"marks"</span>: 92}
+empty = dict()
+from_keys = dict.fromkeys([<span class="st">"a"</span>,<span class="st">"b"</span>,<span class="st">"c"</span>], 0)  <span class="cm"># {'a':0,'b':0,'c':0}</span>
+
+<span class="cm"># ACCESS</span>
+student[<span class="st">"name"</span>]            <span class="cm"># "Vinu" — KeyError if missing</span>
+student.get(<span class="st">"city"</span>)        <span class="cm"># None — safe, no error</span>
+student.get(<span class="st">"city"</span>, <span class="st">"N/A"</span>) <span class="cm"># "N/A" — default value</span>
+
+<span class="cm"># ITERATE</span>
+student.keys()              <span class="cm"># dict_keys(['name', 'age', 'marks'])</span>
+student.values()            <span class="cm"># dict_values(['Vinu', 24, 92])</span>
+student.items()             <span class="cm"># dict_items([('name','Vinu'), ...])</span>
+
+<span class="kw">for</span> key, val <span class="kw">in</span> student.items():
+    print(f<span class="st">"{key}: {val}"</span>)
+
+<span class="cm"># MODIFY</span>
+student[<span class="st">"city"</span>] = <span class="st">"Mysuru"</span>  <span class="cm"># Add or update</span>
+student.update({<span class="st">"age"</span>:25, <span class="st">"gpa"</span>:9.1}) <span class="cm"># Merge another dict</span>
+removed = student.pop(<span class="st">"age"</span>)       <span class="cm"># Remove + return value</span>
+student.pop(<span class="st">"unknown"</span>, <span class="st">"default"</span>) <span class="cm"># Safe pop with default</span>
+last_pair = student.popitem()        <span class="cm"># Remove & return last pair</span>
+
+<span class="cm"># COPY & MERGE (Python 3.9+)</span>
+merged = {**dict1, **dict2}   <span class="cm"># Unpack merge</span>
+merged = dict1 | dict2        <span class="cm"># | operator (Python 3.9+)</span>
+dict1 |= dict2                <span class="cm"># In-place merge</span>
+
+<span class="cm"># setdefault</span>
+student.setdefault(<span class="st">"gpa"</span>, 0) <span class="cm"># Sets only if key doesn't exist</span>
+
+<span class="cm"># defaultdict — auto creates missing keys</span>
+<span class="kw">from</span> collections <span class="kw">import</span> defaultdict
+freq = defaultdict(int)
+<span class="kw">for</span> word <span class="kw">in</span> <span class="st">"hello world hello"</span>.split():
+    freq[word] += 1   <span class="cm"># No KeyError — starts at 0</span></pre>
+  </div>
+
+  <div class="card w6">
+    <span class="chip cg">Set</span>
+    <h2>Set Methods + Set Operations</h2>
+    <pre><span class="cm"># SET CREATION</span>
+s1 = {1, 2, 3, 4, 5}
+s2 = {3, 4, 5, 6, 7}
+empty_set = set()    <span class="cm"># NOT {} — that creates empty dict!</span>
+
+<span class="cm"># ADD / REMOVE</span>
+s1.add(10)
+s1.discard(99)   <span class="cm"># No error if not found</span>
+s1.remove(99)    <span class="cm"># KeyError if not found</span>
+s1.pop()         <span class="cm"># Remove random element</span>
+s1.clear()
+
+<span class="cm"># SET OPERATIONS — most important!</span>
+s1 | s2           <span class="cm"># Union: all elements from both {1,2,3,4,5,6,7}</span>
+s1.union(s2)      <span class="cm"># Same as |</span>
+
+s1 & s2           <span class="cm"># Intersection: common only {3,4,5}</span>
+s1.intersection(s2)
+
+s1 - s2           <span class="cm"># Difference: in s1 but NOT in s2 {1,2}</span>
+s1.difference(s2)
+
+s1 ^ s2           <span class="cm"># Symmetric diff: in either but NOT both {1,2,6,7}</span>
+s1.symmetric_difference(s2)
+
+s1.issubset(s2)   <span class="cm"># Is s1 inside s2?</span>
+s1.issuperset(s2) <span class="cm"># Does s1 contain all of s2?</span>
+s1.isdisjoint(s2) <span class="cm"># No common elements?</span>
+
+<span class="cm"># PRACTICAL: Remove duplicates preserving order</span>
+nums = [3,1,4,1,5,9,2,6,5,3]
+seen = set()
+unique = [x <span class="kw">for</span> x <span class="kw">in</span> nums <span class="kw">if</span> x <span class="kw">not in</span> seen <span class="kw">and not</span> seen.add(x)]</pre>
+    <div class="memory">
+      <strong>🧠 Set Operations Mnemonic:</strong><br>
+      | = Union → "U" shape → both sides<br>
+      & = Intersection → "∩" → middle only<br>
+      - = Difference → "minus what they share"<br>
+      ^ = XOR → "exclusive, not shared"
+    </div>
+  </div>
+</section>
+
+<!-- ═════════════════
+     STRING METHODS
+═════════════════ -->
+<p class="section-label">Section 2 — String Methods — Complete</p>
+<section class="grid" id="strings">
+  <div class="card">
+    <span class="chip cg">Strings</span>
+    <h2>All String Methods — With Examples</h2>
+    <div class="cols2">
+      <div>
+        <h3>Case & Search</h3>
+        <pre>s = <span class="st">"  Hello World Python  "</span>
+
+<span class="cm"># Case</span>
+s.upper()        <span class="cm"># "  HELLO WORLD PYTHON  "</span>
+s.lower()        <span class="cm"># "  hello world python  "</span>
+s.title()        <span class="cm"># "  Hello World Python  "</span>
+s.capitalize()   <span class="cm"># Caps only first char of whole string</span>
+s.swapcase()     <span class="cm"># Toggle case of each char</span>
+
+<span class="cm"># Whitespace</span>
+s.strip()        <span class="cm"># Remove leading+trailing spaces</span>
+s.lstrip()       <span class="cm"># Remove left spaces only</span>
+s.rstrip()       <span class="cm"># Remove right spaces only</span>
+
+<span class="cm"># Search & Check</span>
+s.find(<span class="st">"World"</span>)   <span class="cm"># Returns index 8 or -1 if not found</span>
+s.index(<span class="st">"World"</span>)  <span class="cm"># Returns index 8 or raises ValueError</span>
+s.count(<span class="st">"l"</span>)      <span class="cm"># Count occurrences of "l"</span>
+s.startswith(<span class="st">"He"</span>) <span class="cm"># False (has leading spaces)</span>
+s.endswith(<span class="st">"on"</span>)   <span class="cm"># False (has trailing spaces)</span>
+<span class="st">"123"</span>.isdigit()    <span class="cm"># True</span>
+<span class="st">"abc"</span>.isalpha()    <span class="cm"># True</span>
+<span class="st">"abc123"</span>.isalnum() <span class="cm"># True (alpha + numeric)</span>
+<span class="st">"  "</span>.isspace()     <span class="cm"># True</span></pre>
+      </div>
+      <div>
+        <h3>Replace, Split & Format</h3>
+        <pre><span class="cm"># Replace & Split</span>
+s.replace(<span class="st">"World"</span>, <span class="st">"Python"</span>)  <span class="cm"># Replace all occurrences</span>
+s.replace(<span class="st">"l"</span>, <span class="st">"L"</span>, 2)       <span class="cm"># Replace max 2 times</span>
+
+<span class="st">"a,b,c,d"</span>.split(<span class="st">","</span>)     <span class="cm"># ['a', 'b', 'c', 'd']</span>
+<span class="st">"a,b,c"</span>.split(<span class="st">","</span>, 1)    <span class="cm"># ['a', 'b,c'] — max 1 split</span>
+<span class="st">"hello world"</span>.split()    <span class="cm"># ['hello', 'world'] — split by space</span>
+<span class="st">"\n"</span>.join([<span class="st">"a"</span>,<span class="st">"b"</span>,<span class="st">"c"</span>])  <span class="cm"># "a\nb\nc"</span>
+<span class="st">","</span>.join([<span class="st">"Vinu"</span>,<span class="st">"Mysuru"</span>]) <span class="cm"># "Vinu,Mysuru"</span>
+
+<span class="cm"># Substring extraction</span>
+s = <span class="st">"Hello World"</span>
+s[0:5]           <span class="cm"># "Hello"</span>
+s[-5:]           <span class="cm"># "World"</span>
+
+<span class="cm"># F-Strings (Best way to format)</span>
+name = <span class="st">"Vinu"</span>
+marks = 92.567
+print(f<span class="st">"Name: {name}"</span>)
+print(f<span class="st">"Marks: {marks:.2f}"</span>)       <span class="cm"># 92.57</span>
+print(f<span class="st">"{'centered':^20}"</span>)          <span class="cm"># center in 20 chars</span>
+print(f<span class="st">"{1000000:,}"</span>)                <span class="cm"># 1,000,000</span>
+print(f<span class="st">"{0.753:.1%}"</span>)                <span class="cm"># 75.3%</span>
+print(f<span class="st">"{42:08b}"</span>)                   <span class="cm"># 00101010 (binary)</span>
+
+<span class="cm"># zfill, ljust, rjust, center</span>
+<span class="st">"42"</span>.zfill(5)     <span class="cm"># "00042"</span>
+<span class="st">"hi"</span>.ljust(10, <span class="st">"-"</span>) <span class="cm"># "hi--------"</span>
+<span class="st">"hi"</span>.center(10, <span class="st">"*"</span>) <span class="cm"># "****hi****"</span></pre>
+      </div>
+    </div>
+    <div class="memory">
+      <strong>🧠 String Immutability Trick:</strong> Every string method RETURNS a NEW string — it never changes the original. So always assign the result: <code>s = s.strip()</code> not just <code>s.strip()</code>.
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════
+     COMPREHENSIONS
+═══════════════════════ -->
+<p class="section-label">Section 3 — Comprehensions — All Types</p>
+<section class="grid" id="comprehensions">
+  <div class="card">
+    <span class="chip cg">Comprehensions</span>
+    <h2>List, Dict, Set & Generator Comprehensions</h2>
+    <div class="cols2">
+      <div>
+        <h3>List Comprehension</h3>
+        <pre><span class="cm"># Basic: [expression FOR item IN iterable IF condition]</span>
+squares = [x**2 <span class="kw">for</span> x <span class="kw">in</span> range(1, 11)]
+evens   = [x <span class="kw">for</span> x <span class="kw">in</span> range(20) <span class="kw">if</span> x % 2 == 0]
+upper   = [s.upper() <span class="kw">for</span> s <span class="kw">in</span> [<span class="st">"a"</span>,<span class="st">"b"</span>,<span class="st">"c"</span>]]
+
+<span class="cm"># With if-else (ternary in expression)</span>
+labels = [<span class="st">"Pass"</span> <span class="kw">if</span> m >= 40 <span class="kw">else</span> <span class="st">"Fail"</span> <span class="kw">for</span> m <span class="kw">in</span> marks]
+
+<span class="cm"># Nested comprehension (flatten 2D list)</span>
+matrix = [[1,2,3],[4,5,6],[7,8,9]]
+flat = [num <span class="kw">for</span> row <span class="kw">in</span> matrix <span class="kw">for</span> num <span class="kw">in</span> row]
+<span class="cm"># [1, 2, 3, 4, 5, 6, 7, 8, 9]</span>
+
+<span class="cm"># Filter + transform</span>
+names = [<span class="st">"Vinu"</span>, <span class="st">"ravi"</span>, <span class="st">"ARUN"</span>, <span class="st">"priya"</span>]
+cleaned = [n.strip().title() <span class="kw">for</span> n <span class="kw">in</span> names <span class="kw">if</span> n.strip()]</pre>
+
+        <h3>Dict Comprehension</h3>
+        <pre><span class="cm"># {key: value FOR item IN iterable IF condition}</span>
+sq_dict = {x: x**2 <span class="kw">for</span> x <span class="kw">in</span> range(1, 6)}
+<span class="cm"># {1: 1, 2: 4, 3: 9, 4: 16, 5: 25}</span>
+
+<span class="cm"># Swap keys and values</span>
+original = {<span class="st">"a"</span>: 1, <span class="st">"b"</span>: 2, <span class="st">"c"</span>: 3}
+swapped = {v: k <span class="kw">for</span> k, v <span class="kw">in</span> original.items()}
+
+<span class="cm"># Filter dict by value</span>
+scores = {<span class="st">"Vinu"</span>:92, <span class="st">"Ravi"</span>:55, <span class="st">"Arun"</span>:78}
+toppers = {k:v <span class="kw">for</span> k,v <span class="kw">in</span> scores.items() <span class="kw">if</span> v >= 75}</pre>
+      </div>
+      <div>
+        <h3>Set Comprehension</h3>
+        <pre><span class="cm"># {expression FOR item IN iterable}</span>
+unique_lengths = {len(word) <span class="kw">for</span> word <span class="kw">in</span> [<span class="st">"cat"</span>,<span class="st">"dog"</span>,<span class="st">"elephant"</span>]}
+<span class="cm"># {3, 8} — only unique lengths</span>
+
+unique_first = {word[0].upper() <span class="kw">for</span> word <span class="kw">in</span> [<span class="st">"apple"</span>,<span class="st">"avocado"</span>,<span class="st">"banana"</span>]}
+<span class="cm"># {'A', 'B'}</span></pre>
+
+        <h3>Generator Expression (Memory-Efficient)</h3>
+        <pre><span class="cm"># Same as list comprehension but uses () not []
+# Does NOT create the full list in memory</span>
+gen = (x**2 <span class="kw">for</span> x <span class="kw">in</span> range(1_000_000))
+<span class="cm"># Creates a generator object instantly (tiny memory)</span>
+print(next(gen))    <span class="cm"># 0  — produces one at a time</span>
+print(next(gen))    <span class="cm"># 1</span>
+print(sum(gen))     <span class="cm"># sum all remaining efficiently</span>
+
+<span class="cm"># Use in functions directly</span>
+total = sum(x*x <span class="kw">for</span> x <span class="kw">in</span> range(1000))
+longest = max(len(w) <span class="kw">for</span> w <span class="kw">in</span> words)
+any_pass = any(m >= 40 <span class="kw">for</span> m <span class="kw">in</span> marks)</pre>
+        <div class="memory">
+          <strong>🧠 Comprehension Pattern:</strong><br>
+          <code>[do THIS | for EACH | if CONDITION]</code><br>
+          Read right to left: "For each item, if condition is true, do this transformation."<br>
+          <code>[]</code> = list, <code>{}</code> = set/dict, <code>()</code> = generator
+        </div>
+        <div class="tip2">
+          <strong>✅ Use comprehension when:</strong> Simple, single transformation. One condition. Less than 3 lines.<br>
+          <strong>Use regular loop when:</strong> Complex logic, multiple operations per item, nested actions.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════
+     FUNCTIONS DEEP
+═════════════════════ -->
+<p class="section-label">Section 4 — Functions — Advanced</p>
+<section class="grid" id="functions-deep">
+  <div class="card w6">
+    <span class="chip cg">Functions</span>
+    <h2>All Argument Types + Lambda + Higher-Order</h2>
+    <pre><span class="cm"># 1. POSITIONAL arguments</span>
+<span class="kw">def</span> <span class="fn">add</span>(a, b):
+    <span class="kw">return</span> a + b
+add(3, 4)       <span class="cm"># 7</span>
+
+<span class="cm"># 2. DEFAULT arguments</span>
+<span class="kw">def</span> <span class="fn">greet</span>(name, msg=<span class="st">"Hello"</span>):
+    <span class="kw">return</span> f<span class="st">"{msg}, {name}!"</span>
+greet(<span class="st">"Vinu"</span>)           <span class="cm"># "Hello, Vinu!"</span>
+greet(<span class="st">"Vinu"</span>, <span class="st">"Hi"</span>)     <span class="cm"># "Hi, Vinu!"</span>
+
+<span class="cm"># 3. KEYWORD arguments</span>
+greet(msg=<span class="st">"Hey"</span>, name=<span class="st">"Ravi"</span>)
+
+<span class="cm"># 4. *args — variable positional (tuple)</span>
+<span class="kw">def</span> <span class="fn">total</span>(*nums):
+    <span class="kw">return</span> sum(nums)
+total(1, 2, 3, 4, 5)   <span class="cm"># 15</span>
+
+<span class="cm"># 5. **kwargs — variable keyword (dict)</span>
+<span class="kw">def</span> <span class="fn">build_profile</span>(**info):
+    <span class="kw">return</span> info
+build_profile(name=<span class="st">"Vinu"</span>, city=<span class="st">"Mysuru"</span>)
+
+<span class="cm"># 6. Combined order (must follow this order!)</span>
+<span class="kw">def</span> <span class="fn">func</span>(pos1, pos2, default=0, *args, **kwargs):
+    pass
+
+<span class="cm"># 7. LAMBDA — anonymous one-line function</span>
+square = <span class="kw">lambda</span> x: x ** 2
+add = <span class="kw">lambda</span> x, y: x + y
+
+<span class="cm"># 8. map, filter, reduce</span>
+nums = [1, 2, 3, 4, 5]
+doubled = list(map(<span class="kw">lambda</span> x: x*2, nums))
+evens   = list(filter(<span class="kw">lambda</span> x: x%2==0, nums))
+
+<span class="kw">from</span> functools <span class="kw">import</span> reduce
+product = reduce(<span class="kw">lambda</span> a, b: a*b, nums)  <span class="cm"># 120 (1*2*3*4*5)</span></pre>
+  </div>
+
+  <div class="card w6">
+    <span class="chip cg">Functions</span>
+    <h2>Closures, First-Class Functions, Recursion</h2>
+    <pre><span class="cm"># FIRST-CLASS FUNCTIONS — pass function as argument</span>
+<span class="kw">def</span> <span class="fn">apply</span>(func, value):
+    <span class="kw">return</span> func(value)
+
+apply(str.upper, <span class="st">"hello"</span>)   <span class="cm"># "HELLO"</span>
+apply(<span class="kw">lambda</span> x: x**2, 5)    <span class="cm"># 25</span>
+
+<span class="cm"># CLOSURE — inner function remembers outer variable</span>
+<span class="kw">def</span> <span class="fn">multiplier</span>(factor):
+    <span class="kw">def</span> <span class="fn">multiply</span>(number):
+        <span class="kw">return</span> number * factor   <span class="cm"># 'factor' is remembered</span>
+    <span class="kw">return</span> multiply
+
+triple = multiplier(3)
+print(triple(5))   <span class="cm"># 15</span>
+print(triple(10))  <span class="cm"># 30</span>
+
+<span class="cm"># RECURSION — function calls itself</span>
+<span class="kw">def</span> <span class="fn">factorial</span>(n):
+    <span class="kw">if</span> n <= 1:               <span class="cm"># BASE CASE — stops recursion</span>
+        <span class="kw">return</span> 1
+    <span class="kw">return</span> n * factorial(n-1) <span class="cm"># RECURSIVE CASE</span>
+
+factorial(5)  <span class="cm"># 5*4*3*2*1 = 120</span>
+
+<span class="cm"># FIBONACCI — classic recursion</span>
+<span class="kw">def</span> <span class="fn">fib</span>(n):
+    <span class="kw">if</span> n <= 1:
+        <span class="kw">return</span> n
+    <span class="kw">return</span> fib(n-1) + fib(n-2)
+
+<span class="cm"># GLOBAL / NONLOCAL keywords</span>
+count = 0
+<span class="kw">def</span> <span class="fn">increment</span>():
+    <span class="kw">global</span> count      <span class="cm"># allows modifying outer variable</span>
+    count += 1
+
+<span class="kw">def</span> <span class="fn">outer</span>():
+    x = 10
+    <span class="kw">def</span> <span class="fn">inner</span>():
+        <span class="kw">nonlocal</span> x     <span class="cm"># allows modifying enclosing var</span>
+        x += 5
+    inner()
+    <span class="kw">return</span> x    <span class="cm"># 15</span></pre>
+    <div class="memory">
+      <strong>🧠 Recursion Rule:</strong> Every recursive function needs TWO things:<br>
+      1. <strong>Base case</strong> — stop condition (if n==0: return 1)<br>
+      2. <strong>Recursive case</strong> — call itself with SMALLER input<br>
+      Without base case = infinite loop = RecursionError!
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════
+     GENERATORS
+═══════════════ -->
+<p class="section-label">Section 5 — Generators & Iterators</p>
+<section class="grid" id="generators">
+  <div class="card">
+    <span class="chip cy">Advanced</span>
+    <h2>Generators — Memory-Efficient Iteration</h2>
+    <div class="cols2">
+      <div>
+        <pre><span class="cm"># GENERATOR FUNCTION — uses yield instead of return</span>
+<span class="kw">def</span> <span class="fn">count_up</span>(start, stop):
+    <span class="kw">while</span> start <= stop:
+        <span class="kw">yield</span> start         <span class="cm"># Pauses here, returns value</span>
+        start += 1           <span class="cm"># Resumes from here next time</span>
+
+gen = count_up(1, 5)
+print(next(gen))   <span class="cm"># 1</span>
+print(next(gen))   <span class="cm"># 2</span>
+<span class="kw">for</span> n <span class="kw">in</span> gen:
+    print(n)        <span class="cm"># 3, 4, 5</span>
+
+<span class="cm"># PRACTICAL: Reading large file line by line</span>
+<span class="kw">def</span> <span class="fn">read_lines</span>(filename):
+    <span class="kw">with</span> open(filename) <span class="kw">as</span> f:
+        <span class="kw">for</span> line <span class="kw">in</span> f:
+            <span class="kw">yield</span> line.strip()   <span class="cm"># Only one line in memory!</span>
+
+<span class="cm"># Process 10GB file without memory issues:</span>
+<span class="kw">for</span> line <span class="kw">in</span> read_lines(<span class="st">"huge_data.csv"</span>):
+    process(line)
+
+<span class="cm"># INFINITE generator — no end!</span>
+<span class="kw">def</span> <span class="fn">fibonacci</span>():
+    a, b = 0, 1
+    <span class="kw">while True</span>:
+        <span class="kw">yield</span> a
+        a, b = b, a + b
+
+fib = fibonacci()
+[next(fib) <span class="kw">for</span> _ <span class="kw">in</span> range(10)]
+<span class="cm"># [0, 1, 1, 2, 3, 5, 8, 13, 21, 34]</span></pre>
+      </div>
+      <div>
+        <pre><span class="cm"># Generator vs List — memory comparison</span>
+<span class="kw">import</span> sys
+
+<span class="cm"># List — allocates all at once</span>
+my_list = [x**2 <span class="kw">for</span> x <span class="kw">in</span> range(100_000)]
+print(sys.getsizeof(my_list))  <span class="cm"># ~800KB</span>
+
+<span class="cm"># Generator — lazy, allocates almost nothing</span>
+my_gen = (x**2 <span class="kw">for</span> x <span class="kw">in</span> range(100_000))
+print(sys.getsizeof(my_gen))   <span class="cm"># ~120 bytes!</span>
+
+<span class="cm"># ITERATOR PROTOCOL — make any object iterable</span>
+<span class="kw">class</span> <span class="fn">CountDown</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, start):
+        self.start = start
+
+    <span class="kw">def</span> <span class="fn">__iter__</span>(self):   <span class="cm"># Makes it iterable</span>
+        self.current = self.start
+        <span class="kw">return</span> self
+
+    <span class="kw">def</span> <span class="fn">__next__</span>(self):   <span class="cm"># Called each iteration</span>
+        <span class="kw">if</span> self.current <= 0:
+            <span class="kw">raise</span> StopIteration
+        val = self.current
+        self.current -= 1
+        <span class="kw">return</span> val
+
+<span class="kw">for</span> n <span class="kw">in</span> CountDown(5):
+    print(n)   <span class="cm"># 5, 4, 3, 2, 1</span></pre>
+        <div class="memory">
+          <strong>🧠 Generator Trick:</strong> <code>yield</code> = "pause and hand back value". The function FREEZES at yield, waits for <code>next()</code>, then continues from that exact spot. Think: YouTube buffering — loads one chunk at a time.
+        </div>
+        <table class="t" style="margin-top:10px;">
+          <tr><th></th><th>List <code>[]</code></th><th>Generator <code>()</code></th></tr>
+          <tr><td>Memory</td><td>All at once</td><td>One at a time</td></tr>
+          <tr><td>Speed</td><td>Fast access</td><td>Slower per item</td></tr>
+          <tr><td>Reusable</td><td>✅ Yes</td><td>❌ One-use</td></tr>
+          <tr><td>Infinite</td><td>❌ No</td><td>✅ Yes</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═════════════════
+     DECORATORS
+═════════════════ -->
+<p class="section-label">Section 6 — Decorators</p>
+<section class="grid" id="decorators">
+  <div class="card">
+    <span class="chip cy">Advanced</span>
+    <h2>Decorators — Add Behavior Without Changing Functions</h2>
+    <p style="color:var(--muted);margin-bottom:12px;">A decorator is a function that <strong>wraps another function</strong> to add extra behavior (logging, timing, validation etc.) — without modifying the original function's code.</p>
+    <div class="cols2">
+      <div>
+        <pre><span class="cm"># HOW DECORATORS WORK — step by step</span>
+<span class="cm"># Step 1: Basic wrapper pattern</span>
+<span class="kw">def</span> <span class="fn">my_decorator</span>(func):
+    <span class="kw">def</span> <span class="fn">wrapper</span>(*args, **kwargs):
+        print(<span class="st">"Before function"</span>)
+        result = func(*args, **kwargs)  <span class="cm"># Run original</span>
+        print(<span class="st">"After function"</span>)
+        <span class="kw">return</span> result
+    <span class="kw">return</span> wrapper
+
+<span class="cm"># Step 2: Apply with @ syntax</span>
+<span class="dec">@my_decorator</span>
+<span class="kw">def</span> <span class="fn">say_hello</span>(name):
+    print(f<span class="st">"Hello, {name}!"</span>)
+
+say_hello(<span class="st">"Vinu"</span>)
+<span class="cm"># Before function
+# Hello, Vinu!
+# After function</span>
+
+<span class="cm"># ── TIMER DECORATOR ──</span>
+<span class="kw">import</span> time
+<span class="kw">def</span> <span class="fn">timer</span>(func):
+    <span class="kw">def</span> <span class="fn">wrapper</span>(*args, **kwargs):
+        start = time.time()
+        result = func(*args, **kwargs)
+        end = time.time()
+        print(f<span class="st">"{func.__name__} took {end-start:.4f}s"</span>)
+        <span class="kw">return</span> result
+    <span class="kw">return</span> wrapper
+
+<span class="dec">@timer</span>
+<span class="kw">def</span> <span class="fn">heavy_task</span>():
+    time.sleep(1)
+    print(<span class="st">"Done!"</span>)
+
+heavy_task()  <span class="cm"># "heavy_task took 1.0012s"</span></pre>
+      </div>
+      <div>
+        <pre><span class="cm"># ── LOGGER DECORATOR ──</span>
+<span class="kw">def</span> <span class="fn">logger</span>(func):
+    <span class="kw">def</span> <span class="fn">wrapper</span>(*args, **kwargs):
+        print(f<span class="st">"Calling {func.__name__}({args}, {kwargs})"</span>)
+        result = func(*args, **kwargs)
+        print(f<span class="st">"Returned: {result}"</span>)
+        <span class="kw">return</span> result
+    <span class="kw">return</span> wrapper
+
+<span class="dec">@logger</span>
+<span class="kw">def</span> <span class="fn">add</span>(a, b):
+    <span class="kw">return</span> a + b
+
+add(3, 4)
+
+<span class="cm"># ── RETRY DECORATOR ──</span>
+<span class="kw">def</span> <span class="fn">retry</span>(max_attempts=3):
+    <span class="kw">def</span> <span class="fn">decorator</span>(func):
+        <span class="kw">def</span> <span class="fn">wrapper</span>(*args, **kwargs):
+            <span class="kw">for</span> attempt <span class="kw">in</span> range(1, max_attempts + 1):
+                <span class="kw">try</span>:
+                    <span class="kw">return</span> func(*args, **kwargs)
+                <span class="kw">except</span> Exception <span class="kw">as</span> e:
+                    print(f<span class="st">"Attempt {attempt} failed: {e}"</span>)
+            <span class="kw">raise</span> Exception(<span class="st">"All attempts failed"</span>)
+        <span class="kw">return</span> wrapper
+    <span class="kw">return</span> decorator
+
+<span class="dec">@retry(max_attempts=3)</span>
+<span class="kw">def</span> <span class="fn">call_api</span>():
+    <span class="kw">import</span> random
+    <span class="kw">if</span> random.random() < 0.7:
+        <span class="kw">raise</span> ConnectionError(<span class="st">"API down"</span>)
+    <span class="kw">return</span> <span class="st">"Success"</span>
+
+<span class="cm"># ── BUILT-IN DECORATORS ──</span>
+<span class="kw">class</span> <span class="fn">MyClass</span>:
+    <span class="dec">@classmethod</span>
+    <span class="kw">def</span> <span class="fn">class_method</span>(cls): ...
+
+    <span class="dec">@staticmethod</span>
+    <span class="kw">def</span> <span class="fn">static_method</span>(): ...
+
+    <span class="dec">@property</span>
+    <span class="kw">def</span> <span class="fn">name</span>(self): ...    <span class="cm"># access as attribute not method</span></pre>
+        <div class="memory">
+          <strong>🧠 Decorator Trick:</strong> Think of a gift wrap 🎁<br>
+          The gift = original function. The wrapper = decorator.<br>
+          <code>@decorator</code> is exactly the same as: <code>func = decorator(func)</code>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════
+     OOP DEEP
+════════════════ -->
+<p class="section-label">Section 7 — OOP — All Four Pillars + Advanced</p>
+<section class="grid" id="oop-deep">
+
+  <div class="card">
+    <span class="chip co">OOP</span>
+    <h2>Class Theory — Complete + @property</h2>
+    <div class="cols2">
+      <div>
+        <pre><span class="kw">class</span> <span class="fn">Employee</span>:
+    company = <span class="st">"VisionVerse"</span>   <span class="cm"># class variable</span>
+
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, name, salary):
+        self.name = name         <span class="cm"># public</span>
+        self._department = <span class="st">"IT"</span> <span class="cm"># protected (convention)</span>
+        self.__salary = salary   <span class="cm"># private (name-mangled)</span>
+
+    <span class="dec">@property</span>
+    <span class="kw">def</span> <span class="fn">salary</span>(self):           <span class="cm"># Getter via property</span>
+        <span class="kw">return</span> self.__salary
+
+    <span class="dec">@salary.setter</span>
+    <span class="kw">def</span> <span class="fn">salary</span>(self, amount):   <span class="cm"># Setter — validates!</span>
+        <span class="kw">if</span> amount < 0:
+            <span class="kw">raise</span> ValueError(<span class="st">"Salary cannot be negative"</span>)
+        self.__salary = amount
+
+    <span class="dec">@property</span>
+    <span class="kw">def</span> <span class="fn">annual_salary</span>(self):    <span class="cm"># Computed property</span>
+        <span class="kw">return</span> self.__salary * 12
+
+    <span class="kw">def</span> <span class="fn">__str__</span>(self):
+        <span class="kw">return</span> f<span class="st">"{self.name} @ {Employee.company}"</span>
+
+    <span class="kw">def</span> <span class="fn">__repr__</span>(self):
+        <span class="kw">return</span> f<span class="st">"Employee('{self.name}', {self.__salary})"</span>
+
+    <span class="kw">def</span> <span class="fn">__eq__</span>(self, other):
+        <span class="kw">return</span> self.name == other.name
+
+    <span class="kw">def</span> <span class="fn">__lt__</span>(self, other):    <span class="cm"># Enables sorting!</span>
+        <span class="kw">return</span> self.__salary < other.__salary
+
+    <span class="dec">@classmethod</span>
+    <span class="kw">def</span> <span class="fn">change_company</span>(cls, name):
+        cls.company = name
+
+    <span class="dec">@staticmethod</span>
+    <span class="kw">def</span> <span class="fn">validate_name</span>(name):
+        <span class="kw">return</span> len(name.strip()) > 0</pre>
+      </div>
+      <div>
+        <pre><span class="cm"># Using @property — clean encapsulation</span>
+e1 = Employee(<span class="st">"Vinu"</span>, 45000)
+e2 = Employee(<span class="st">"Ravi"</span>, 60000)
+
+<span class="cm"># Access salary like an attribute (not a method!)</span>
+print(e1.salary)          <span class="cm"># 45000 — calls getter</span>
+e1.salary = 50000          <span class="cm"># calls setter — validates!</span>
+print(e1.annual_salary)   <span class="cm"># 600000 — computed</span>
+
+<span class="cm"># Dunder methods in action</span>
+print(e1)          <span class="cm"># "Vinu @ VisionVerse" (__str__)</span>
+print(repr(e1))    <span class="cm"># "Employee('Vinu', 50000)" (__repr__)</span>
+print(e1 == e2)    <span class="cm"># False (__eq__)</span>
+
+<span class="cm"># Sort employees by salary (__lt__)</span>
+employees = [e2, e1]
+sorted_emp = sorted(employees)    <span class="cm"># Works because __lt__ defined</span>
+
+<span class="cm"># ── INHERITANCE + MRO ──</span>
+<span class="kw">class</span> <span class="fn">Manager</span>(Employee):
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, name, salary, team_size):
+        <span class="kw">super</span>().__init__(name, salary)
+        self.team_size = team_size
+
+    <span class="kw">def</span> <span class="fn">__str__</span>(self):
+        base = <span class="kw">super</span>().__str__()    <span class="cm"># reuse parent __str__</span>
+        <span class="kw">return</span> f<span class="st">"{base}, Team: {self.team_size}"</span>
+
+<span class="cm"># Method Resolution Order (MRO)</span>
+print(Manager.__mro__)
+<span class="cm"># Manager → Employee → object</span>
+<span class="cm"># Python searches this order for methods</span></pre>
+        <div class="memory">
+          <strong>🧠 @property Trick:</strong> Use @property when you want to add validation or computation to an attribute access — without changing how it's called.<br>
+          Without: <code>e.get_salary()</code> — looks like a method call<br>
+          With: <code>e.salary</code> — looks like attribute access (cleaner!)
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card w6">
+    <span class="chip co">OOP — Inheritance</span>
+    <h2>Multiple Inheritance + MRO</h2>
+    <pre><span class="kw">class</span> <span class="fn">Flyable</span>:
+    <span class="kw">def</span> <span class="fn">fly</span>(self):
+        <span class="kw">return</span> <span class="st">"I can fly!"</span>
+
+<span class="kw">class</span> <span class="fn">Swimmable</span>:
+    <span class="kw">def</span> <span class="fn">swim</span>(self):
+        <span class="kw">return</span> <span class="st">"I can swim!"</span>
+
+<span class="kw">class</span> <span class="fn">Duck</span>(Flyable, Swimmable):   <span class="cm"># Multiple inheritance</span>
+    <span class="kw">def</span> <span class="fn">quack</span>(self):
+        <span class="kw">return</span> <span class="st">"Quack!"</span>
+
+d = Duck()
+print(d.fly())    <span class="cm"># "I can fly!"</span>
+print(d.swim())   <span class="cm"># "I can swim!"</span>
+
+<span class="cm"># Mixin pattern — add behavior without full inheritance</span>
+<span class="kw">class</span> <span class="fn">JSONMixin</span>:
+    <span class="kw">def</span> <span class="fn">to_json</span>(self):
+        <span class="kw">import</span> json
+        <span class="kw">return</span> json.dumps(self.__dict__)
+
+<span class="kw">class</span> <span class="fn">LogMixin</span>:
+    <span class="kw">def</span> <span class="fn">log</span>(self):
+        print(f<span class="st">"LOG: {self.__class__.__name__}: {self.__dict__}"</span>)
+
+<span class="kw">class</span> <span class="fn">Product</span>(JSONMixin, LogMixin):
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, name, price):
+        self.name = name
+        self.price = price
+
+p = Product(<span class="st">"Laptop"</span>, 65000)
+print(p.to_json())  <span class="cm"># '{"name": "Laptop", "price": 65000}'</span>
+p.log()             <span class="cm"># LOG: Product: {'name': 'Laptop', 'price': 65000}</span></pre>
+  </div>
+
+  <div class="card w6">
+    <span class="chip co">OOP — Abstraction</span>
+    <h2>Abstract Classes + Interface Pattern</h2>
+    <pre><span class="kw">from</span> abc <span class="kw">import</span> ABC, abstractmethod
+
+<span class="kw">class</span> <span class="fn">DataSource</span>(ABC):    <span class="cm"># Cannot be instantiated!</span>
+    <span class="dec">@abstractmethod</span>
+    <span class="kw">def</span> <span class="fn">connect</span>(self): <span class="kw">pass</span>
+
+    <span class="dec">@abstractmethod</span>
+    <span class="kw">def</span> <span class="fn">fetch_data</span>(self, query): <span class="kw">pass</span>
+
+    <span class="dec">@abstractmethod</span>
+    <span class="kw">def</span> <span class="fn">close</span>(self): <span class="kw">pass</span>
+
+    <span class="kw">def</span> <span class="fn">run_query</span>(self, query):    <span class="cm"># Concrete method</span>
+        self.connect()
+        data = self.fetch_data(query)
+        self.close()
+        <span class="kw">return</span> data
+
+<span class="kw">class</span> <span class="fn">MySQLSource</span>(DataSource):
+    <span class="kw">def</span> <span class="fn">connect</span>(self):
+        print(<span class="st">"MySQL: Connected"</span>)
+    <span class="kw">def</span> <span class="fn">fetch_data</span>(self, query):
+        print(f<span class="st">"MySQL: Running {query}"</span>)
+        <span class="kw">return</span> [<span class="st">"row1"</span>, <span class="st">"row2"</span>]
+    <span class="kw">def</span> <span class="fn">close</span>(self):
+        print(<span class="st">"MySQL: Disconnected"</span>)
+
+<span class="kw">class</span> <span class="fn">CSVSource</span>(DataSource):
+    <span class="kw">def</span> <span class="fn">connect</span>(self): print(<span class="st">"CSV: File opened"</span>)
+    <span class="kw">def</span> <span class="fn">fetch_data</span>(self, q): <span class="kw">return</span> [<span class="st">"csv_row1"</span>]
+    <span class="kw">def</span> <span class="fn">close</span>(self): print(<span class="st">"CSV: File closed"</span>)
+
+<span class="cm"># Polymorphism via abstraction!</span>
+<span class="kw">for</span> source <span class="kw">in</span> [MySQLSource(), CSVSource()]:
+    source.run_query(<span class="st">"SELECT *"</span>)</pre>
+  </div>
+</section>
+
+<!-- ════════════
+     MODULES
+═════════════ -->
+<p class="section-label">Section 8 — Modules & Standard Library</p>
+<section class="grid" id="modules">
+  <div class="card">
+    <span class="chip cg">Modules</span>
+    <h2>Python Standard Library — Key Modules for DA</h2>
+    <div class="cols3">
+      <div>
+        <h3>os & sys</h3>
+        <pre><span class="kw">import</span> os
+os.getcwd()             <span class="cm"># current directory</span>
+os.listdir(<span class="st">"."</span>)          <span class="cm"># files in folder</span>
+os.path.exists(<span class="st">"f.txt"</span>) <span class="cm"># file exists?</span>
+os.path.join(<span class="st">"a"</span>,<span class="st">"b.txt"</span>) <span class="cm"># safe path join</span>
+os.makedirs(<span class="st">"folder"</span>)   <span class="cm"># create folder</span>
+os.remove(<span class="st">"file.txt"</span>)   <span class="cm"># delete file</span>
+os.rename(<span class="st">"old"</span>,<span class="st">"new"</span>)  <span class="cm"># rename file</span>
+
+<span class="kw">import</span> sys
+sys.argv            <span class="cm"># command-line args</span>
+sys.exit(0)         <span class="cm"># exit program</span>
+sys.path            <span class="cm"># where Python looks for modules</span></pre>
+
+        <h3>datetime</h3>
+        <pre><span class="kw">from</span> datetime <span class="kw">import</span> datetime, date, timedelta
+now = datetime.now()
+today = date.today()
+d = datetime(2024, 4, 1, 10, 30)
+d.strftime(<span class="st">"%d-%m-%Y %H:%M"</span>)  <span class="cm"># format</span>
+datetime.strptime(<span class="st">"01-04-2024"</span>, <span class="st">"%d-%m-%Y"</span>) <span class="cm"># parse</span>
+tomorrow = today + timedelta(days=1)
+delta = datetime(2025,1,1) - now
+delta.days   <span class="cm"># days until 2025</span></pre>
+      </div>
+      <div>
+        <h3>collections</h3>
+        <pre><span class="kw">from</span> collections <span class="kw">import</span> Counter, defaultdict, OrderedDict, namedtuple, deque
+
+<span class="cm"># Counter — count occurrences</span>
+c = Counter([<span class="st">"a"</span>,<span class="st">"b"</span>,<span class="st">"a"</span>,<span class="st">"c"</span>,<span class="st">"a"</span>])
+<span class="cm"># Counter({'a': 3, 'b': 1, 'c': 1})</span>
+c.most_common(2)   <span class="cm"># [('a',3), ('b',1)]</span>
+
+<span class="cm"># namedtuple — tuple with field names</span>
+Point = namedtuple(<span class="st">"Point"</span>, [<span class="st">"x"</span>, <span class="st">"y"</span>])
+p = Point(3, 4)
+p.x   <span class="cm"># 3</span>
+
+<span class="cm"># deque — fast append/pop both ends</span>
+q = deque([1, 2, 3])
+q.appendleft(0)   <span class="cm"># [0,1,2,3]</span>
+q.popleft()       <span class="cm"># 0</span>
+q.rotate(1)       <span class="cm"># rotate right</span></pre>
+
+        <h3>itertools</h3>
+        <pre><span class="kw">import</span> itertools <span class="kw">as</span> it
+list(it.chain([1,2],[3,4]))  <span class="cm"># [1,2,3,4]</span>
+list(it.combinations([1,2,3],2)) <span class="cm"># [(1,2),(1,3),(2,3)]</span>
+list(it.permutations([1,2,3],2)) <span class="cm"># all 2-perms</span>
+list(it.product([1,2],[3,4]))    <span class="cm"># cartesian product</span>
+list(it.islice(range(100),5))    <span class="cm"># first 5</span>
+groups = it.groupby(sorted_data, key=<span class="kw">lambda</span> x: x[<span class="st">"dept"</span>])</pre>
+      </div>
+      <div>
+        <h3>json</h3>
+        <pre><span class="kw">import</span> json
+<span class="cm"># dict → JSON string</span>
+json.dumps({<span class="st">"a"</span>:1}, indent=2)
+<span class="cm"># JSON string → dict</span>
+json.loads(<span class="st">'{"a":1}'</span>)
+<span class="cm"># Write to file</span>
+<span class="kw">with</span> open(<span class="st">"f.json"</span>,<span class="st">"w"</span>) <span class="kw">as</span> f:
+    json.dump(data, f, indent=2)
+<span class="cm"># Read from file</span>
+<span class="kw">with</span> open(<span class="st">"f.json"</span>) <span class="kw">as</span> f:
+    d = json.load(f)</pre>
+
+        <h3>re (regex)</h3>
+        <pre><span class="kw">import</span> re
+re.match(r<span class="st">"^\d+"</span>, <span class="st">"123abc"</span>)   <span class="cm"># match at START</span>
+re.search(r<span class="st">"\d+"</span>, <span class="st">"abc123"</span>)   <span class="cm"># match ANYWHERE</span>
+re.findall(r<span class="st">"\d+"</span>, <span class="st">"a1b2c3"</span>) <span class="cm"># ['1','2','3']</span>
+re.sub(r<span class="st">"\s+"</span>, <span class="st">"_"</span>, <span class="st">"hello world"</span>) <span class="cm"># "hello_world"</span>
+
+<span class="cm"># Email validation</span>
+pattern = r<span class="st">"^[\w.-]+@[\w.-]+\.\w{2,}$"</span>
+bool(re.match(pattern, <span class="st">"vinu@gmail.com"</span>))  <span class="cm"># True</span></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════
+     ERROR TYPES
+═════════════ -->
+<p class="section-label">Section 9 — Exception Handling — Deep</p>
+<section class="grid" id="errors">
+  <div class="card w6">
+    <span class="chip cg">Exceptions</span>
+    <h2>All Python Built-in Error Types</h2>
+    <table class="t">
+      <thead><tr><th>Error Type</th><th>When it happens</th><th>Example</th></tr></thead>
+      <tbody>
+        <tr><td><code>SyntaxError</code></td><td>Invalid Python syntax</td><td><code>if True print("x")</code></td></tr>
+        <tr><td><code>IndentationError</code></td><td>Wrong indentation</td><td>Missing spaces inside def</td></tr>
+        <tr><td><code>TypeError</code></td><td>Wrong type for operation</td><td><code>"3" + 3</code></td></tr>
+        <tr><td><code>ValueError</code></td><td>Right type, wrong value</td><td><code>int("abc")</code></td></tr>
+        <tr><td><code>NameError</code></td><td>Variable not defined</td><td><code>print(undefined_var)</code></td></tr>
+        <tr><td><code>IndexError</code></td><td>List index out of range</td><td><code>[1,2,3][10]</code></td></tr>
+        <tr><td><code>KeyError</code></td><td>Dict key not found</td><td><code>d["missing"]</code></td></tr>
+        <tr><td><code>AttributeError</code></td><td>Object has no attribute</td><td><code>"str".append()</code></td></tr>
+        <tr><td><code>FileNotFoundError</code></td><td>File doesn't exist</td><td><code>open("x.txt")</code></td></tr>
+        <tr><td><code>PermissionError</code></td><td>No access to file</td><td>Writing to read-only file</td></tr>
+        <tr><td><code>ZeroDivisionError</code></td><td>Division by zero</td><td><code>10 / 0</code></td></tr>
+        <tr><td><code>OverflowError</code></td><td>Number too large for float</td><td>Very large float math</td></tr>
+        <tr><td><code>RecursionError</code></td><td>Too deep recursion</td><td>Recursion without base case</td></tr>
+        <tr><td><code>StopIteration</code></td><td>Iterator has no more items</td><td><code>next()</code> on exhausted iter</td></tr>
+        <tr><td><code>ImportError</code></td><td>Module not found</td><td><code>import nonexistent</code></td></tr>
+        <tr><td><code>ModuleNotFoundError</code></td><td>Specific module missing</td><td><code>import pandas</code> (not installed)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card w6">
+    <span class="chip cg">Exceptions</span>
+    <h2>Raising Custom Exceptions + Exception Hierarchy</h2>
+    <pre><span class="cm"># ── COMPLETE try/except pattern ──</span>
+<span class="kw">def</span> <span class="fn">safe_divide</span>(a, b):
+    <span class="kw">try</span>:
+        result = a / b
+    <span class="kw">except</span> ZeroDivisionError:
+        print(<span class="st">"Cannot divide by zero!"</span>)
+        <span class="kw">return None</span>
+    <span class="kw">except</span> TypeError <span class="kw">as</span> e:
+        print(f<span class="st">"Type error: {e}"</span>)
+        <span class="kw">return None</span>
+    <span class="kw">except</span> (ValueError, OverflowError) <span class="kw">as</span> e:  <span class="cm"># Multiple</span>
+        print(f<span class="st">"Math error: {e}"</span>)
+        <span class="kw">return None</span>
+    <span class="kw">except</span> Exception <span class="kw">as</span> e:   <span class="cm"># Catch-all</span>
+        print(f<span class="st">"Unexpected: {e}"</span>)
+        <span class="kw">raise</span>                 <span class="cm"># re-raise same error</span>
+    <span class="kw">else</span>:
+        print(<span class="st">"Success!"</span>)      <span class="cm"># Only if NO error</span>
+        <span class="kw">return</span> result
+    <span class="kw">finally</span>:
+        print(<span class="st">"Always runs"</span>)  <span class="cm"># Cleanup: close file, DB, etc.</span>
+
+<span class="cm"># ── CUSTOM EXCEPTION ──</span>
+<span class="kw">class</span> <span class="fn">ValidationError</span>(Exception):
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, field, message):
+        self.field = field
+        super().__init__(f<span class="st">"[{field}] {message}"</span>)
+
+<span class="kw">def</span> <span class="fn">validate_age</span>(age):
+    <span class="kw">if not isinstance</span>(age, int):
+        <span class="kw">raise</span> ValidationError(<span class="st">"age"</span>, <span class="st">"Must be integer"</span>)
+    <span class="kw">if not</span> 0 <= age <= 150:
+        <span class="kw">raise</span> ValidationError(<span class="st">"age"</span>, <span class="st">"Must be 0–150"</span>)
+    <span class="kw">return True</span>
+
+<span class="kw">try</span>:
+    validate_age(<span class="st">"twenty"</span>)
+<span class="kw">except</span> ValidationError <span class="kw">as</span> e:
+    print(e)   <span class="cm"># [age] Must be integer</span></pre>
+  </div>
+</section>
+
+<!-- ═══════════
+     TYPE HINTS
+════════════ -->
+<p class="section-label">Section 10 — Type Hints (Python 3.5+)</p>
+<section class="grid" id="typehints">
+  <div class="card">
+    <span class="chip cg">Modern Python</span>
+    <h2>Type Hints — Write Clearer Code</h2>
+    <div class="cols2">
+      <div>
+        <pre><span class="kw">from</span> typing <span class="kw">import</span> List, Dict, Tuple, Optional, Union, Any
+
+<span class="cm"># Basic type hints</span>
+name: str = <span class="st">"Vinu"</span>
+age: int = 24
+marks: float = 92.5
+active: bool = <span class="kw">True</span>
+
+<span class="cm"># Function type hints</span>
+<span class="kw">def</span> <span class="fn">add</span>(a: int, b: int) -> int:
+    <span class="kw">return</span> a + b
+
+<span class="kw">def</span> <span class="fn">greet</span>(name: str, times: int = 1) -> str:
+    <span class="kw">return</span> f<span class="st">"Hello {name}"</span> * times
+
+<span class="cm"># Optional — value or None</span>
+<span class="kw">def</span> <span class="fn">find_user</span>(user_id: int) -> Optional[str]:
+    <span class="kw">return None</span>   <span class="cm"># could be None</span>
+
+<span class="cm"># Union — one of multiple types</span>
+<span class="kw">def</span> <span class="fn">process</span>(data: Union[str, int, float]) -> str:
+    <span class="kw">return</span> str(data)
+
+<span class="cm"># Python 3.10+ simpler union with |</span>
+<span class="kw">def</span> <span class="fn">show</span>(x: str | int | None) -> None:
+    print(x)</pre>
+      </div>
+      <div>
+        <pre><span class="cm"># Collection types</span>
+<span class="kw">def</span> <span class="fn">get_names</span>() -> List[str]:
+    <span class="kw">return</span> [<span class="st">"Vinu"</span>, <span class="st">"Ravi"</span>]
+
+<span class="kw">def</span> <span class="fn">score_dict</span>() -> Dict[str, float]:
+    <span class="kw">return</span> {<span class="st">"Vinu"</span>: 92.5}
+
+<span class="kw">def</span> <span class="fn">get_point</span>() -> Tuple[float, float]:
+    <span class="kw">return</span> (12.9, 77.5)
+
+<span class="cm"># Python 3.9+ — use built-in types directly</span>
+<span class="kw">def</span> <span class="fn">modern</span>(names: list[str], data: dict[str, int]) -> None:
+    pass
+
+<span class="cm"># Type hints in class</span>
+<span class="kw">class</span> <span class="fn">Student</span>:
+    name: str
+    marks: float
+    courses: list[str]
+
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, name: str, marks: float) -> <span class="kw">None</span>:
+        self.name = name
+        self.marks = marks
+
+<span class="cm"># Note: Python does NOT enforce type hints at runtime.
+# They are only for documentation and tools like mypy.</span></pre>
+        <div class="tip2">
+          <strong>✅ Why Type Hints:</strong><br>
+          1. Makes code self-documenting<br>
+          2. Better IDE autocomplete<br>
+          3. Static analysis with <code>mypy</code><br>
+          4. Reduces bugs in team projects
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════
+     PIP
+════════ -->
+<p class="section-label">Section 11 — pip & Virtual Environments</p>
+<section class="grid" id="pip">
+  <div class="card w6">
+    <span class="chip cg">pip</span>
+    <h2>pip — All Commands</h2>
+    <pre><span class="cm"># ── INSTALL ──</span>
+pip install pandas                    <span class="cm"># Latest version</span>
+pip install pandas==2.0.3             <span class="cm"># Specific version</span>
+pip install "pandas>=2.0,<3.0"        <span class="cm"># Version range</span>
+pip install -r requirements.txt       <span class="cm"># Install from file</span>
+pip install --upgrade pandas          <span class="cm"># Upgrade existing</span>
+pip install --upgrade pip             <span class="cm"># Upgrade pip itself</span>
+
+<span class="cm"># ── UNINSTALL ──</span>
+pip uninstall pandas                  <span class="cm"># With confirmation</span>
+pip uninstall pandas -y               <span class="cm"># Skip confirmation</span>
+pip uninstall -r requirements.txt     <span class="cm"># Uninstall all in file</span>
+
+<span class="cm"># ── LIST & INFO ──</span>
+pip list                              <span class="cm"># All installed packages</span>
+pip list --outdated                   <span class="cm"># Which packages need upgrade</span>
+pip show pandas                       <span class="cm"># Info about a package</span>
+pip check                             <span class="cm"># Check for incompatibilities</span>
+
+<span class="cm"># ── FREEZE (save to requirements.txt) ──</span>
+pip freeze > requirements.txt         <span class="cm"># Export all packages</span>
+pip freeze | grep pandas              <span class="cm"># Check one package version</span>
+
+<span class="cm"># ── SEARCH ──</span>
+pip index versions pandas             <span class="cm"># All available versions</span>
+
+<span class="cm"># ── INSTALL FROM GITHUB ──</span>
+pip install git+https://github.com/user/repo.git</pre>
+  </div>
+
+  <div class="card w6">
+    <span class="chip cg">Virtual Env</span>
+    <h2>Virtual Environment — Best Practices</h2>
+    <pre><span class="cm"># ── CREATE ──</span>
+python -m venv myenv             <span class="cm"># Create env named 'myenv'</span>
+python -m venv .venv             <span class="cm"># Convention: hidden folder .venv</span>
+
+<span class="cm"># ── ACTIVATE ──</span>
+<span class="cm"># Windows (Command Prompt):</span>
+myenv\Scripts\activate.bat
+<span class="cm"># Windows (PowerShell):</span>
+myenv\Scripts\Activate.ps1
+<span class="cm"># Mac / Linux:</span>
+source myenv/bin/activate
+<span class="cm"># You'll see (myenv) in your terminal prompt</span>
+
+<span class="cm"># ── USE — install inside env ──</span>
+(myenv) pip install pandas
+(myenv) pip install -r requirements.txt
+
+<span class="cm"># ── DEACTIVATE ──</span>
+deactivate
+
+<span class="cm"># ── WORKFLOW for new project ──</span>
+mkdir my_project && cd my_project
+python -m venv .venv
+source .venv/bin/activate         <span class="cm"># activate</span>
+pip install pandas streamlit      <span class="cm"># install what you need</span>
+pip freeze > requirements.txt     <span class="cm"># save for others</span>
+<span class="cm"># add .venv/ to .gitignore!</span>
+
+<span class="cm"># ── WHY virtual env? ──</span>
+<span class="cm"># Project A needs pandas 1.5, Project B needs pandas 2.0
+# Without venv: conflict! With venv: each project isolated.</span></pre>
+    <div class="memory">
+      <strong>🧠 venv Rule:</strong> Always create a fresh venv for every project. Always add <code>.venv/</code> to <code>.gitignore</code>. Always save dependencies with <code>pip freeze > requirements.txt</code> before sharing.
+    </div>
+  </div>
+</section>
+
+<!-- ════════════
+     INTERVIEW
+═════════════ -->
+<p class="section-label">Section 12 — Interview Questions — 60 Deep</p>
+<section class="grid" id="interview">
+  <div class="card">
+    <span class="chip cg">Interview</span>
+    <h2>60 Python Interview Questions — Deep Answers</h2>
+    <div class="cols2">
+      <div>
+        <ol class="interview-list">
+          <li><strong>What is Python's GIL?</strong> Global Interpreter Lock — only one thread executes Python bytecode at a time. Limits CPU multithreading but not I/O.</li>
+          <li><strong>Mutable vs Immutable?</strong> Mutable: list, dict, set (can change). Immutable: int, str, tuple, frozenset (cannot change). Immutables are hashable (usable as dict keys).</li>
+          <li><strong>How is dict ordered in Python 3.7+?</strong> Python dicts maintain insertion order (as implementation detail from 3.6, guaranteed from 3.7).</li>
+          <li><strong>Deep copy vs Shallow copy?</strong> Shallow: new outer object, shared inner objects. Deep: everything fully independent. Use <code>copy.deepcopy()</code> for nested structures.</li>
+          <li><strong>List comprehension vs generator?</strong> List = creates full list in memory. Generator = lazy, produces values one at a time. Generator uses <code>()</code> not <code>[]</code>.</li>
+          <li><strong>What is *args?</strong> Collects variable positional arguments as a tuple. Allows function to accept any number of positional args.</li>
+          <li><strong>What is **kwargs?</strong> Collects variable keyword arguments as a dictionary. Allows function to accept any named arguments.</li>
+          <li><strong>What is a closure?</strong> Inner function that remembers variables from its enclosing scope even after the outer function returns.</li>
+          <li><strong>What is a decorator?</strong> Function that wraps another function to add behavior. Uses <code>@decorator_name</code> syntax. Equivalent to <code>func = decorator(func)</code>.</li>
+          <li><strong>What is yield?</strong> Pauses function execution and returns value. Makes the function a generator. Resumes from that point on next <code>next()</code> call.</li>
+          <li><strong>What is __init__?</strong> Constructor — automatically called when object is created. Used to initialize instance attributes with <code>self</code>.</li>
+          <li><strong>self vs cls?</strong> <code>self</code> = instance reference in instance methods. <code>cls</code> = class reference in class methods (<code>@classmethod</code>).</li>
+          <li><strong>What is name mangling?</strong> <code>__attr</code> becomes <code>_ClassName__attr</code> internally — provides real privacy. <code>_attr</code> is just convention-protected.</li>
+          <li><strong>What is @property?</strong> Decorator that lets you call a method like an attribute. Enables getter/setter with validation without changing access syntax.</li>
+          <li><strong>What is MRO?</strong> Method Resolution Order — the order Python searches classes for methods. Follows C3 linearization. Check with <code>ClassName.__mro__</code>.</li>
+          <li><strong>Abstract class vs Interface?</strong> Python: abstract class via ABC. Can have concrete + abstract methods. Interface = all abstract (convention only, Python has no strict interface).</li>
+          <li><strong>What is duck typing?</strong> Python doesn't check type — just behavior. "If it quacks like a duck, it is a duck." An object just needs the right method, not the right type.</li>
+          <li><strong>is vs ==?</strong> <code>==</code> checks value equality. <code>is</code> checks identity (same memory address). Use <code>is None</code>, not <code>== None</code>.</li>
+          <li><strong>What is list slicing?</strong> <code>lst[start:stop:step]</code>. Start inclusive, stop exclusive. Negative step reverses. <code>lst[::-1]</code> = reversed copy.</li>
+          <li><strong>enumerate() purpose?</strong> Adds counter to iterable. <code>for i, val in enumerate(lst):</code> — avoids manual counter variable.</li>
+          <li><strong>zip() purpose?</strong> Pairs elements from multiple iterables. <code>zip([1,2],[a,b])</code> → <code>[(1,a),(2,b)]</code>. Stops at shortest.</li>
+          <li><strong>map() vs list comprehension?</strong> Both apply function to each item. Comprehension is more Pythonic and readable. <code>map()</code> returns iterator (lazy).</li>
+          <li><strong>What is functools.reduce?</strong> Applies a function cumulatively to sequence items. <code>reduce(lambda a,b: a+b, [1,2,3,4])</code> = 10.</li>
+          <li><strong>What is pass statement?</strong> Placeholder — does nothing. Used in empty class/function bodies to prevent syntax error during development.</li>
+          <li><strong>What are dunder methods?</strong> Double-underscore special methods like <code>__str__</code>, <code>__len__</code>, <code>__eq__</code>. Enable operator overloading and built-in function integration.</li>
+          <li><strong>What is a namedtuple?</strong> Tuple with named fields. <code>Point = namedtuple('Point',['x','y'])</code>. Immutable but fields accessible by name.</li>
+          <li><strong>Counter use case?</strong> Fast frequency counting. <code>Counter(list)</code> returns dict-like with counts. <code>.most_common(n)</code> returns n most frequent.</li>
+          <li><strong>defaultdict vs dict?</strong> defaultdict auto-creates a default value for missing keys (no KeyError). <code>defaultdict(int)</code> = missing keys return 0.</li>
+          <li><strong>What is deque?</strong> Double-ended queue. O(1) append/pop on both ends (unlike list which is O(n) for left operations).</li>
+          <li><strong>What is a context manager?</strong> Manages resource lifecycle. <code>with</code> statement uses <code>__enter__</code> and <code>__exit__</code>. Guarantees cleanup even if error occurs.</li>
+        </ol>
+      </div>
+      <div>
+        <ol class="interview-list" start="31">
+          <li><strong>File modes r, w, a, x?</strong> r=read (error if missing), w=write (overwrites), a=append (adds to end), x=create (error if exists). Add b for binary.</li>
+          <li><strong>Why with open() preferred?</strong> Auto-closes file when block exits — even if exception occurs. Prevents resource leak.</li>
+          <li><strong>What is JSON in Python?</strong> <code>json.dumps()</code> converts dict→string. <code>json.loads()</code> converts string→dict. <code>json.dump/load</code> for files.</li>
+          <li><strong>What is regex?</strong> Pattern matching for text. Python uses <code>re</code> module. <code>re.search()</code> finds anywhere, <code>re.match()</code> from start, <code>re.findall()</code> all matches.</li>
+          <li><strong>What is pip?</strong> Package installer for Python. Downloads from PyPI. <code>pip install package</code>, <code>pip freeze > requirements.txt</code>.</li>
+          <li><strong>Why use virtual environments?</strong> Isolates project dependencies. Prevents version conflicts between projects. Each project gets its own package versions.</li>
+          <li><strong>Module vs Package?</strong> Module = single .py file. Package = directory with <code>__init__.py</code> containing multiple modules.</li>
+          <li><strong>__name__ == "__main__"?</strong> Guards code that should run only when file is executed directly — not when imported as module.</li>
+          <li><strong>What is type hinting?</strong> Annotations like <code>def add(a: int, b: int) -> int</code>. Not enforced at runtime but helps tools and documentation.</li>
+          <li><strong>What is Optional in typing?</strong> <code>Optional[str]</code> = <code>Union[str, None]</code>. Means the value can be that type or None.</li>
+          <li><strong>What is frozenset?</strong> Immutable version of set. Can be used as dict key or inside another set (unlike mutable set).</li>
+          <li><strong>Difference list.sort() vs sorted()?</strong> <code>list.sort()</code> modifies in-place, returns None. <code>sorted()</code> returns new list, works on any iterable.</li>
+          <li><strong>What is key parameter in sort?</strong> Function to extract comparison key. <code>sorted(names, key=len)</code> sorts by string length.</li>
+          <li><strong>What is walrus operator :=?</strong> Python 3.8+ assignment expression. <code>while chunk := f.read(1024):</code> — assigns AND checks in one step.</li>
+          <li><strong>What is f-string?</strong> Format string with <code>f"..."</code> syntax. <code>f"{value:.2f}"</code> for formatting. Faster and cleaner than .format() or %.</li>
+          <li><strong>What is string immutability?</strong> Strings cannot be modified after creation. Every string method returns a NEW string. Must reassign to keep changes.</li>
+          <li><strong>What is recursion limit?</strong> Python default recursion limit is ~1000. Check: <code>sys.getrecursionlimit()</code>. Change: <code>sys.setrecursionlimit(n)</code>.</li>
+          <li><strong>What is try/except/else/finally?</strong> try = attempt. except = catch error. else = runs ONLY if no error. finally = ALWAYS runs (cleanup).</li>
+          <li><strong>How to raise an exception?</strong> <code>raise ValueError("message")</code>. Re-raise caught: just <code>raise</code> inside except block (no argument).</li>
+          <li><strong>Custom exception creation?</strong> Class inheriting from <code>Exception</code>. Call <code>super().__init__(message)</code>. Use to create domain-specific errors.</li>
+          <li><strong>What is __all__ in module?</strong> List of names exported when <code>from module import *</code> is used. Controls public API of a module.</li>
+          <li><strong>What is a mixin?</strong> Class providing reusable methods without being a full parent class. Typically no <code>__init__</code>. Used with multiple inheritance for feature injection.</li>
+          <li><strong>What is @staticmethod vs @classmethod?</strong> static: no automatic arg, pure utility. classmethod: receives <code>cls</code> as first arg — can access/modify class state.</li>
+          <li><strong>What is Python's LEGB rule?</strong> Variable lookup order: Local → Enclosing → Global → Built-in. Python searches in this order for variable names.</li>
+          <li><strong>What is __slots__?</strong> Restricts allowed attributes in a class. Reduces memory by avoiding per-instance __dict__. <code>__slots__ = ['name','age']</code>.</li>
+          <li><strong>What is a dataclass?</strong> Python 3.7+ — <code>@dataclass</code> decorator auto-generates __init__, __repr__, __eq__ from class fields. Reduces boilerplate.</li>
+          <li><strong>What is Enum?</strong> <code>from enum import Enum</code>. Creates named constants. <code>Status.ACTIVE</code> is cleaner than using raw strings/numbers.</li>
+          <li><strong>What is pathlib?</strong> Object-oriented file path handling. <code>Path("folder/file.txt")</code>. Better than <code>os.path</code> — cleaner syntax.</li>
+          <li><strong>What is PEP 8?</strong> Python's official style guide. 4-space indentation, snake_case for variables, PascalCase for classes, 79-char line limit.</li>
+          <li><strong>What is a docstring?</strong> Triple-quoted string right after def/class — documents what it does. Accessed via <code>func.__doc__</code>. Used by help() and documentation generators.</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>Python Deep Notes — Vinu Edition v2 · Built for Interviews & Real-World Data Engineering</footer>
+</div>
+</body>
+</html>
