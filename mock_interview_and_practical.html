@@ -70,6 +70,27 @@
       gap: 8px;
     }
 
+    .toolbar {
+      margin-top: 10px;
+    }
+
+    .toggle-btn {
+      border: 1px solid rgba(15, 111, 97, 0.35);
+      background: #fff;
+      color: var(--ink);
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-size: 0.83rem;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+    }
+
+    .toggle-btn.active {
+      background: rgba(15, 111, 97, 0.12);
+      border-color: rgba(15, 111, 97, 0.7);
+    }
+
     .quick a {
       text-decoration: none;
       color: var(--ink);
@@ -232,6 +253,14 @@
       border-top: 1px solid var(--line);
     }
 
+    body.examples-only .qa p:not(.example-line) {
+      display: none;
+    }
+
+    body.examples-only .table-script-col {
+      display: none;
+    }
+
     @media (min-width: 860px) {
       .w6 { grid-column: span 6; }
     }
@@ -242,6 +271,9 @@
     <section class="hero">
       <h1>New Section: Mock Interview + Practical End-to-End</h1>
       <p class="sub">This section is built after analyzing your complete note set. It gives realistic interview scripts and a full practical pipeline with data, actions, outputs, and visualizations.</p>
+      <div class="toolbar">
+        <button class="toggle-btn" id="exampleToggle" type="button">Show only examples</button>
+      </div>
       <nav class="quick" aria-label="Quick links">
         <a href="#mock">Mock Interview Script</a>
         <a href="#practical">Practical Walkthrough</a>
@@ -478,5 +510,43 @@ plt.show()</code></pre>
       </article>
     </section>
   </main>
+  <script>
+    (function () {
+      const btn = document.getElementById("exampleToggle");
+      if (!btn) return;
+
+      document.querySelectorAll(".qa p").forEach((p) => {
+        const text = p.textContent.trim().toLowerCase();
+        if (text.startsWith("simple example:")) {
+          p.classList.add("example-line");
+        }
+      });
+
+      document.querySelectorAll("table").forEach((table) => {
+        const headerCells = table.querySelectorAll("thead th");
+        if (!headerCells.length) return;
+        let scriptColIndex = -1;
+        headerCells.forEach((th, idx) => {
+          const h = th.textContent.trim().toLowerCase();
+          if (h === "short answer script" || h === "scripted answer") {
+            scriptColIndex = idx;
+          }
+        });
+        if (scriptColIndex < 0) return;
+
+        headerCells[scriptColIndex].classList.add("table-script-col");
+        table.querySelectorAll("tbody tr").forEach((tr) => {
+          const td = tr.children[scriptColIndex];
+          if (td) td.classList.add("table-script-col");
+        });
+      });
+
+      btn.addEventListener("click", () => {
+        const examplesOnly = document.body.classList.toggle("examples-only");
+        btn.classList.toggle("active", examplesOnly);
+        btn.textContent = examplesOnly ? "Show full content" : "Show only examples";
+      });
+    })();
+  </script>
 </body>
 </html>
