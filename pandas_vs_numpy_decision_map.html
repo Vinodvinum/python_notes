@@ -1,0 +1,372 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pandas vs NumPy Decision Map</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f7f2e8;
+      --surface: #fffdf8;
+      --ink: #182c24;
+      --muted: #4e655b;
+      --line: #d9d0bf;
+      --pandas: #0e6d60;
+      --numpy: #1b5fbf;
+      --accent: #b45a2a;
+      --ok: #116d33;
+      --warn: #a14f10;
+      --radius: 14px;
+      --shadow: 0 12px 30px rgba(24, 44, 36, 0.08);
+      --code-bg: #0f233d;
+      --code-ink: #d8edff;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Manrope", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 8% 10%, rgba(180, 90, 42, 0.12), transparent 36%),
+        radial-gradient(circle at 92% 12%, rgba(14, 109, 96, 0.11), transparent 35%),
+        var(--bg);
+      line-height: 1.64;
+    }
+
+    .wrap {
+      width: min(1160px, 92%);
+      margin: 0 auto;
+      padding: 24px 0 40px;
+    }
+
+    .hero, .card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .hero { padding: 18px; }
+    h1 { margin: 0; font-size: clamp(1.6rem, 3.2vw, 2.3rem); line-height: 1.2; }
+    .sub { margin: 8px 0 0; color: var(--muted); font-size: 0.98rem; max-width: 980px; }
+
+    .quick {
+      margin-top: 12px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .quick a {
+      text-decoration: none;
+      color: var(--ink);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 7px 12px;
+      font-size: 0.84rem;
+      background: #fff;
+      transition: transform 0.16s ease, border-color 0.16s ease;
+    }
+
+    .quick a:hover {
+      transform: translateY(-1px);
+      border-color: rgba(14, 109, 96, 0.6);
+    }
+
+    .chip {
+      display: inline-block;
+      font-size: 0.74rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      border-radius: 999px;
+      padding: 4px 10px;
+      margin-bottom: 8px;
+    }
+
+    .chip.pandas {
+      color: var(--pandas);
+      background: rgba(14, 109, 96, 0.11);
+      border: 1px solid rgba(14, 109, 96, 0.28);
+    }
+
+    .chip.numpy {
+      color: var(--numpy);
+      background: rgba(27, 95, 191, 0.11);
+      border: 1px solid rgba(27, 95, 191, 0.28);
+    }
+
+    .chip.mix {
+      color: var(--accent);
+      background: rgba(180, 90, 42, 0.1);
+      border: 1px solid rgba(180, 90, 42, 0.28);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 14px;
+      margin-top: 16px;
+    }
+
+    .card { grid-column: span 12; padding: 16px; }
+    .w6 { grid-column: span 12; }
+
+    h2, h3 { margin: 0 0 8px; line-height: 1.25; }
+    h2 { font-size: 1.22rem; }
+    h3 { font-size: 1rem; margin-top: 10px; }
+
+    p { margin: 0 0 10px; }
+    ul, ol { margin: 8px 0 0; padding-left: 20px; }
+    li { margin-bottom: 6px; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      overflow: hidden;
+      background: #fff;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 10px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+      font-size: 0.9rem;
+    }
+
+    th {
+      background: rgba(180, 90, 42, 0.08);
+      font-size: 0.82rem;
+      font-weight: 800;
+    }
+
+    tr:last-child td { border-bottom: none; }
+
+    .box {
+      margin-top: 10px;
+      border-left: 4px solid var(--ok);
+      border-radius: 10px;
+      background: rgba(17, 109, 51, 0.09);
+      padding: 10px 12px;
+      font-size: 0.92rem;
+    }
+
+    .warn {
+      border-left-color: var(--warn);
+      background: rgba(161, 79, 16, 0.1);
+    }
+
+    .step {
+      margin-top: 10px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px;
+      background: #fff;
+    }
+
+    .step h4 {
+      margin: 0 0 6px;
+      color: var(--accent);
+      font-size: 0.95rem;
+    }
+
+    code {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.92em;
+      background: rgba(14, 109, 96, 0.09);
+      color: var(--pandas);
+      padding: 2px 6px;
+      border-radius: 6px;
+    }
+
+    pre {
+      margin: 10px 0 0;
+      border-radius: 10px;
+      background: var(--code-bg);
+      color: var(--code-ink);
+      border: 1px solid rgba(216, 237, 255, 0.24);
+      padding: 12px;
+      overflow-x: auto;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.83rem;
+      line-height: 1.55;
+    }
+
+    @media (min-width: 920px) {
+      .w6 { grid-column: span 6; }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="hero">
+      <h1>Pandas vs NumPy: Decision Map for Data Analysts</h1>
+      <p class="sub">Use this map to decide quickly: Pandas, NumPy, or both. The goal is practical analyst flow, not just syntax memory.</p>
+      <nav class="quick" aria-label="Quick links">
+        <a href="#map">Decision Map</a>
+        <a href="#cases">Use Cases</a>
+        <a href="#pipeline">Combined Pipeline</a>
+        <a href="#mistakes">Common Mistakes</a>
+        <a href="#interview">Interview Answers</a>
+      </nav>
+    </section>
+
+    <section class="grid" id="map">
+      <article class="card">
+        <span class="chip mix">Core Decision</span>
+        <h2>Fast Rule: Which Tool First?</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Situation</th>
+              <th>Choose</th>
+              <th>Why this is right</th>
+              <th>What you get</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>CSV/Excel with labeled columns</td><td><span class="chip pandas">Pandas</span></td><td>Column names, mixed types, missing handling are native.</td><td>Fast cleaning + grouping + joins.</td></tr>
+            <tr><td>Heavy numeric computation at scale</td><td><span class="chip numpy">NumPy</span></td><td>Vectorized array math is faster and memory-efficient.</td><td>Quick mathematical transformations.</td></tr>
+            <tr><td>Business reporting + KPIs</td><td><span class="chip pandas">Pandas</span></td><td>Groupby/pivot/time operations are easier to explain.</td><td>Readable tables for stakeholders.</td></tr>
+            <tr><td>Linear algebra/stat simulation</td><td><span class="chip numpy">NumPy</span></td><td>Built for matrix, random sampling, distributions.</td><td>Model-ready numeric outputs.</td></tr>
+            <tr><td>End-to-end analysis project</td><td><span class="chip mix">Both</span></td><td>Pandas for shaping data, NumPy for core math.</td><td>Reliable and performant pipeline.</td></tr>
+          </tbody>
+        </table>
+
+        <div class="box">
+          <strong>Analyst principle:</strong> Start where the data is understandable (usually Pandas), then switch to NumPy when numerical workload becomes the bottleneck.
+        </div>
+      </article>
+
+      <article class="card w6">
+        <span class="chip pandas">Pandas Zone</span>
+        <h2>When Pandas Is Better</h2>
+        <ul>
+          <li>You need column-wise transformations with business-friendly labels.</li>
+          <li>You must merge, join, aggregate, and build reporting tables.</li>
+          <li>You need direct date-time indexing and resampling.</li>
+          <li>You need fast exploratory checks with <code>info()</code>, <code>describe()</code>, <code>value_counts()</code>.</li>
+        </ul>
+      </article>
+
+      <article class="card w6">
+        <span class="chip numpy">NumPy Zone</span>
+        <h2>When NumPy Is Better</h2>
+        <ul>
+          <li>You need repeated arithmetic on large numeric arrays.</li>
+          <li>You need broadcasting and matrix operations.</li>
+          <li>You need fast condition logic on numeric vectors.</li>
+          <li>You need random simulation and low-level numeric control.</li>
+        </ul>
+      </article>
+    </section>
+
+    <section class="grid" id="cases">
+      <article class="card">
+        <span class="chip mix">Real Cases</span>
+        <h2>Case-by-Case Decision Table</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Business task</th>
+              <th>Best stack</th>
+              <th>Why not the other alone?</th>
+              <th>Analyst output</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Monthly sales dashboard table</td><td>Pandas</td><td>NumPy alone has no labeled columns/groupby convenience.</td><td>Region/product KPI table.</td></tr>
+            <tr><td>Price elasticity simulation</td><td>NumPy + Pandas</td><td>Pandas alone is slower for heavy numeric loops.</td><td>Scenario sensitivity matrix.</td></tr>
+            <tr><td>Customer churn feature engineering</td><td>Pandas + NumPy</td><td>NumPy alone loses easy joins and feature labeling.</td><td>Model-ready feature dataset.</td></tr>
+            <tr><td>Inventory reorder threshold rules</td><td>Pandas + NumPy</td><td>Need both readable business logic and fast vector flags.</td><td>Actionable reorder flags.</td></tr>
+            <tr><td>Ad spend return decomposition</td><td>Pandas</td><td>Data shape/joins dominate before heavy math appears.</td><td>Channel-wise ROI explanation.</td></tr>
+          </tbody>
+        </table>
+      </article>
+    </section>
+
+    <section class="grid" id="pipeline">
+      <article class="card">
+        <span class="chip mix">Combined Pipeline</span>
+        <h2>Practical Pattern: Pandas -> NumPy -> Pandas -> Visualization</h2>
+        <pre><code>import pandas as pd
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# 1) Pandas: read and clean
+sales = pd.read_csv("sales.csv")
+sales["date"] = pd.to_datetime(sales["date"])
+sales = sales.drop_duplicates()
+
+# 2) NumPy: fast numeric logic
+revenue = sales["quantity"].to_numpy() * sales["price"].to_numpy()
+cost = sales["cost"].to_numpy()
+margin_pct = ((revenue - cost) / revenue) * 100
+risk_flag = np.where(margin_pct < 15, "Low Margin", "Healthy")
+
+# 3) Pandas: attach business labels
+sales["margin_pct"] = np.round(margin_pct, 2)
+sales["risk_flag"] = risk_flag
+summary = sales.groupby("region", as_index=False).agg(
+    total_revenue=("price", "sum"),
+    avg_margin=("margin_pct", "mean")
+)
+
+# 4) Visualization: communicate decision
+sns.barplot(data=summary, x="region", y="avg_margin")
+plt.title("Average Margin by Region")
+plt.show()</code></pre>
+
+        <div class="box">
+          <strong>Why this sequence works:</strong> Pandas keeps business context, NumPy accelerates numeric decisions, and visualization turns analysis into management action.
+        </div>
+      </article>
+    </section>
+
+    <section class="grid" id="mistakes">
+      <article class="card w6">
+        <span class="chip mix">Mistake</span>
+        <h2>Using only NumPy for reporting tables</h2>
+        <p>Without labels, merges, and groupby ergonomics, stakeholder reporting becomes painful and error-prone.</p>
+        <div class="step">
+          <h4>Fix</h4>
+          <p>Do table logic in Pandas, convert to NumPy only for dense numeric operations.</p>
+        </div>
+      </article>
+
+      <article class="card w6">
+        <span class="chip mix">Mistake</span>
+        <h2>Using only Pandas for heavy numeric loops</h2>
+        <p>Large-scale repeated math can become slow and memory-heavy when kept entirely in high-level operations.</p>
+        <div class="step">
+          <h4>Fix</h4>
+          <p>Pull numeric arrays with <code>to_numpy()</code>, compute in NumPy, then push results back to DataFrame.</p>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="box warn">
+          <strong>Incomplete analysis warning:</strong> If you stop at tables and never show charts/dashboard, most stakeholders will not absorb the insight. Analysis is complete only when patterns are visible and decision-ready.
+        </div>
+      </article>
+    </section>
+
+    <section class="grid" id="interview">
+      <article class="card">
+        <span class="chip mix">Interview Ready</span>
+        <h2>Strong Answer: "Pandas vs NumPy?"</h2>
+        <p><strong>Best answer:</strong> "I use Pandas for business-structured data operations like cleaning, joins, grouping, and reporting. I use NumPy for high-performance numerical computation, vectorization, and simulation. In real analyst projects I use both: Pandas for context, NumPy for speed, then visualization for decision communication."</p>
+      </article>
+    </section>
+  </main>
+</body>
+</html>
