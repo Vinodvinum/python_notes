@@ -183,7 +183,7 @@
   <main class="wrap">
     <section class="hero">
       <h1>Domain-Specific Mock Interview Practice Sets</h1>
-      <p class="sub">Use this for 30, 60, and 90 minute prep sessions. Each domain contains scripted questions, model answers, and a compact practical challenge prompt.</p>
+      <p class="sub">Use this for 30, 60, and 90 minute prep sessions. Each domain contains scripted questions, model answers, simple examples, and a compact practical challenge prompt.</p>
       <nav class="quick" aria-label="Quick links">
         <a href="#da">Data Analyst</a>
         <a href="#pdev">Python Developer</a>
@@ -201,16 +201,19 @@
         <div class="qa">
           <h4>Q1. How do you approach a new dataset?</h4>
           <p><strong>Script:</strong> I inspect schema and nulls first using <code>head()</code>, <code>info()</code>, and <code>isnull().sum()</code>. Then I clean types, handle missing values with business logic, validate row counts after filters, and only then start KPI and trend analysis.</p>
+          <p><strong>Simple example:</strong> If <code>sales</code> is loaded as text, I convert it with <code>pd.to_numeric()</code> before calculating total revenue.</p>
         </div>
 
         <div class="qa">
           <h4>Q2. How do you explain insights to business users?</h4>
           <p><strong>Script:</strong> I lead with the decision impact, not code. Example: "North contributes 42% of revenue but margin is dropping month over month, so pricing and shipping should be reviewed." Then I show one chart per decision.</p>
+          <p><strong>Simple example:</strong> I show a bar chart for region sales and say, "South is high volume but lower margin, so optimize discount policy there first."</p>
         </div>
 
         <div class="qa">
           <h4>Q3. Difference between descriptive and diagnostic analysis?</h4>
           <p><strong>Script:</strong> Descriptive tells what happened, like monthly sales trend. Diagnostic tells why it happened, like category mix, discount shifts, or return rates causing margin decline.</p>
+          <p><strong>Simple example:</strong> "Sales dropped in March" is descriptive; "Sales dropped because electronics returns increased by 18%" is diagnostic.</p>
         </div>
       </article>
 
@@ -238,16 +241,19 @@ and converted findings into business actions with measurable impact."</code></pr
         <div class="qa">
           <h4>Q1. What is the difference between list and tuple?</h4>
           <p><strong>Script:</strong> List is mutable and best for frequently changing data. Tuple is immutable and safer for fixed records like coordinates or constant config values.</p>
+          <p><strong>Simple example:</strong> Monthly sales targets can be a list because values can change, but GPS coordinates are better stored as a tuple.</p>
         </div>
 
         <div class="qa">
           <h4>Q2. Explain shallow copy vs deep copy.</h4>
           <p><strong>Script:</strong> Shallow copy duplicates only the outer container but nested objects remain shared references. Deep copy recursively clones nested objects so updates do not affect original structures.</p>
+          <p><strong>Simple example:</strong> With a shallow copy of <code>[[1,2],[3,4]]</code>, changing inner list value in copy can also change original.</p>
         </div>
 
         <div class="qa">
           <h4>Q3. How do you structure reusable Python code?</h4>
           <p><strong>Script:</strong> I split code into modules by responsibility, write pure functions where possible, add docstrings and type hints, and keep entry logic under <code>if __name__ == "__main__":</code>.</p>
+          <p><strong>Simple example:</strong> I keep cleaning functions in <code>cleaning.py</code> and plotting functions in <code>viz.py</code>, then call both from <code>main.py</code>.</p>
         </div>
       </article>
 
@@ -278,14 +284,14 @@ and converted findings into business actions with measurable impact."</code></pr
         <h2>Entry-Level Interview Script Set</h2>
         <table>
           <thead>
-            <tr><th>Question</th><th>Scripted answer</th></tr>
+            <tr><th>Question</th><th>Scripted answer</th><th>Simple example</th></tr>
           </thead>
           <tbody>
-            <tr><td>Introduce yourself</td><td>I am building strong fundamentals in Python, data analysis, and practical problem-solving. I focus on writing clean code and validating outputs before presenting insights.</td></tr>
-            <tr><td>Why should we hire you?</td><td>I learn quickly, I can convert unclear tasks into structured solutions, and I document my work clearly so teams can maintain and extend it.</td></tr>
-            <tr><td>What are your strengths?</td><td>Consistency, attention to detail, and ability to explain technical work in simple language.</td></tr>
-            <tr><td>What is one weakness?</td><td>I used to spend too long polishing visuals; now I time-box and prioritize correctness first, then presentation improvements.</td></tr>
-            <tr><td>How do you handle pressure?</td><td>I break tasks into small deliverables, validate each output quickly, and communicate status early if risks appear.</td></tr>
+            <tr><td>Introduce yourself</td><td>I am building strong fundamentals in Python, data analysis, and practical problem-solving. I focus on writing clean code and validating outputs before presenting insights.</td><td>I completed a mini sales dashboard project from raw CSV to final charts.</td></tr>
+            <tr><td>Why should we hire you?</td><td>I learn quickly, I can convert unclear tasks into structured solutions, and I document my work clearly so teams can maintain and extend it.</td><td>In one assignment, I turned a messy spreadsheet into a reusable script with clear steps.</td></tr>
+            <tr><td>What are your strengths?</td><td>Consistency, attention to detail, and ability to explain technical work in simple language.</td><td>I always verify row counts before and after cleaning, then explain the impact in plain terms.</td></tr>
+            <tr><td>What is one weakness?</td><td>I used to spend too long polishing visuals; now I time-box and prioritize correctness first, then presentation improvements.</td><td>I set a 30-minute chart limit so I can finish analysis before style tuning.</td></tr>
+            <tr><td>How do you handle pressure?</td><td>I break tasks into small deliverables, validate each output quickly, and communicate status early if risks appear.</td><td>For a same-day report, I delivered KPI table first, then visuals, then recommendations.</td></tr>
           </tbody>
         </table>
 

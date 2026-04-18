@@ -254,44 +254,49 @@
       <article class="card">
         <span class="chip">Interview Script</span>
         <h2>A) Mock Interview Questions and Answer Script</h2>
-        <p>Use this as role-play. Read question first, answer aloud in your own words, then compare with the script.</p>
+        <p>Use this as role-play. Read question first, answer aloud in your own words, then compare with the script and simple example.</p>
 
         <div class="qa">
           <h4>Q1. Tell me about yourself for a Python Data Analyst role.</h4>
           <p><strong>Answer Script:</strong> I use Python mainly for data analysis workflows: loading data from CSV, Excel, and SQL, cleaning with Pandas, transforming features, validating with statistics, and building visual reports using Matplotlib and Seaborn. I focus on business questions first, then translate them into reproducible scripts.</p>
+          <p><strong>Simple example:</strong> In one project, I cleaned duplicate orders, calculated monthly profit, and presented the top 3 loss-making categories.</p>
         </div>
 
         <div class="qa">
           <h4>Q2. Difference between <code>loc</code> and <code>iloc</code>?</h4>
           <p><strong>Answer Script:</strong> <code>loc</code> is label-based, so I select rows and columns by name. <code>iloc</code> is integer-position-based, so I select by index position. Also, slicing behavior differs: <code>loc</code> includes end label but <code>iloc</code> excludes end index.</p>
+          <p><strong>Simple example:</strong> <code>df.loc[0, "sales"]</code> picks by column name, while <code>df.iloc[0, 2]</code> picks by third column position.</p>
         </div>
 
         <div class="qa">
           <h4>Q3. How do you handle missing values in real projects?</h4>
           <p><strong>Answer Script:</strong> I first profile null percentages using <code>isnull().sum()</code> and business impact. For critical numeric columns, I use median or group-wise imputation; for categorical, I use mode or explicit labels like "Unknown". If a column has very high nulls and low business value, I drop it with justification.</p>
+          <p><strong>Simple example:</strong> If <code>city</code> has 3% missing values, I fill with <code>"Unknown"</code>; if a column has 85% nulls and low relevance, I remove it.</p>
         </div>
 
         <div class="qa">
           <h4>Q4. Explain a full analysis pipeline in short.</h4>
           <p><strong>Answer Script:</strong> My flow is inspect, clean, transform, analyze, visualize, and summarize actionable insights. I validate each stage with output checks so the final dashboard and conclusions are traceable to actual data operations.</p>
+          <p><strong>Simple example:</strong> I load orders, compute <code>profit = sales - cost</code>, group by region, plot sales trend, then write three actions for the business team.</p>
         </div>
 
         <div class="qa">
           <h4>Q5. What are your top 3 Python interview strengths?</h4>
           <p><strong>Answer Script:</strong> Pandas operations for business analysis, clean and reusable function design, and visualization choices aligned with decision-making rather than decorative charting.</p>
+          <p><strong>Simple example:</strong> I can build a reusable KPI function once and use it for weekly, monthly, and regional reports with small parameter changes.</p>
         </div>
 
         <h3>HR + Technical mixed rapid-fire round</h3>
         <table>
           <thead>
-            <tr><th>Question</th><th>Short answer script</th></tr>
+            <tr><th>Question</th><th>Short answer script</th><th>Simple example</th></tr>
           </thead>
           <tbody>
-            <tr><td>Why Python over Excel only?</td><td>Python scales better, is reproducible, and supports automation, APIs, and ML workflows.</td></tr>
-            <tr><td>What is <code>groupby</code>?</td><td>Split-apply-combine for grouped aggregation like total sales by region.</td></tr>
-            <tr><td>One mistake you avoid?</td><td>I never run complex analysis before checking data types and null patterns.</td></tr>
-            <tr><td>How do you explain an outlier?</td><td>I quantify it with IQR or z-score, then connect with business context before removal.</td></tr>
-            <tr><td>How do you present to non-technical users?</td><td>I use plain language, KPI summary first, and 2-3 focused visuals with action points.</td></tr>
+            <tr><td>Why Python over Excel only?</td><td>Python scales better, is reproducible, and supports automation, APIs, and ML workflows.</td><td>I can rerun the same script for 12 files in seconds instead of manual Excel steps.</td></tr>
+            <tr><td>What is <code>groupby</code>?</td><td>Split-apply-combine for grouped aggregation like total sales by region.</td><td><code>df.groupby("region")["sales"].sum()</code> gives region totals quickly.</td></tr>
+            <tr><td>One mistake you avoid?</td><td>I never run complex analysis before checking data types and null patterns.</td><td>If <code>sales</code> is object type, I fix it before calculations to avoid wrong outputs.</td></tr>
+            <tr><td>How do you explain an outlier?</td><td>I quantify it with IQR or z-score, then connect with business context before removal.</td><td>A festival week with unusually high sales may be valid, so I tag it instead of deleting.</td></tr>
+            <tr><td>How do you present to non-technical users?</td><td>I use plain language, KPI summary first, and 2-3 focused visuals with action points.</td><td>I say, "South sales are high but margin is low," then show one bar chart and one action.</td></tr>
           </tbody>
         </table>
       </article>
