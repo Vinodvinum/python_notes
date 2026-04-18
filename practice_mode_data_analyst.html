@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Data Analyst Practice Mode</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f7f2e8;
+      --surface: #fffdf8;
+      --ink: #182c24;
+      --muted: #4e655b;
+      --line: #d9d0bf;
+      --brand: #0e6d60;
+      --brand2: #1b5fbf;
+      --accent: #b45a2a;
+      --ok: #116d33;
+      --warn: #a14f10;
+      --code-bg: #0f233d;
+      --code-ink: #d8edff;
+      --radius: 14px;
+      --shadow: 0 12px 30px rgba(24, 44, 36, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Manrope", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 8% 10%, rgba(180, 90, 42, 0.12), transparent 36%),
+        radial-gradient(circle at 92% 12%, rgba(14, 109, 96, 0.12), transparent 35%),
+        var(--bg);
+      line-height: 1.64;
+    }
+
+    .wrap { width: min(1180px, 92%); margin: 0 auto; padding: 24px 0 40px; }
+    .hero, .card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); }
+    .hero { padding: 18px; }
+    h1 { margin: 0; font-size: clamp(1.6rem, 3.2vw, 2.3rem); line-height: 1.2; }
+    .sub { margin: 8px 0 0; color: var(--muted); font-size: 0.98rem; max-width: 1040px; }
+    .quick { margin-top: 12px; display: flex; flex-wrap: wrap; gap: 8px; }
+    .quick a { text-decoration: none; color: var(--ink); border: 1px solid var(--line); border-radius: 999px; padding: 7px 12px; font-size: 0.84rem; background: #fff; transition: transform 0.16s ease, border-color 0.16s ease; }
+    .quick a:hover { transform: translateY(-1px); border-color: rgba(14, 109, 96, 0.6); }
+    .grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 14px; margin-top: 16px; }
+    .card { grid-column: span 12; padding: 16px; }
+    .w6 { grid-column: span 12; }
+    .chip { display: inline-block; font-size: 0.74rem; font-weight: 800; text-transform: uppercase; color: var(--brand); background: rgba(14, 109, 96, 0.1); border: 1px solid rgba(14, 109, 96, 0.28); border-radius: 999px; padding: 4px 10px; margin-bottom: 8px; }
+    h2, h3 { margin: 0 0 8px; line-height: 1.25; }
+    h2 { font-size: 1.22rem; }
+    h3 { font-size: 1rem; margin-top: 10px; }
+    p { margin: 0 0 10px; }
+    ul, ol { margin: 8px 0 0; padding-left: 20px; }
+    li { margin-bottom: 6px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: #fff; }
+    th, td { text-align: left; padding: 10px; border-bottom: 1px solid var(--line); vertical-align: top; font-size: 0.9rem; }
+    th { background: rgba(14, 109, 96, 0.08); font-size: 0.82rem; font-weight: 800; }
+    tr:last-child td { border-bottom: none; }
+    .block { margin-top: 10px; border-left: 4px solid var(--ok); border-radius: 10px; background: rgba(17, 109, 51, 0.09); padding: 10px 12px; font-size: 0.92rem; }
+    .warn { border-left-color: var(--warn); background: rgba(161, 79, 16, 0.1); }
+    .step { margin-top: 10px; border: 1px solid var(--line); border-radius: 12px; padding: 12px; background: #fff; }
+    .step h4 { margin: 0 0 6px; color: var(--accent); font-size: 0.95rem; }
+    code { font-family: "JetBrains Mono", monospace; font-size: 0.92em; background: rgba(14, 109, 96, 0.1); color: var(--brand); padding: 2px 6px; border-radius: 6px; }
+    pre { margin: 10px 0 0; border-radius: 10px; background: var(--code-bg); color: var(--code-ink); border: 1px solid rgba(216, 237, 255, 0.24); padding: 12px; overflow-x: auto; font-family: "JetBrains Mono", monospace; font-size: 0.83rem; line-height: 1.55; }
+    @media (min-width: 920px) { .w6 { grid-column: span 6; } }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="hero">
+      <h1>Data Analyst Practice Mode</h1>
+      <p class="sub">Use this tab when you want fast revision. It merges the main interview logic, chart choice rules, dashboard structure, and business-style answers into one compact practice flow.</p>
+      <nav class="quick" aria-label="Quick links">
+        <a href="#flow">Practice Flow</a>
+        <a href="#tool">Pandas vs NumPy</a>
+        <a href="#chart">Chart Choice</a>
+        <a href="#dashboard">Dashboard</a>
+        <a href="#answers">Ready Answers</a>
+      </nav>
+    </section>
+
+    <section class="grid" id="flow">
+      <article class="card">
+        <span class="chip">Practice Flow</span>
+        <h2>How to answer like a data analyst</h2>
+        <ol>
+          <li>State the business question.</li>
+          <li>Pick the right tool: Pandas, NumPy, or both.</li>
+          <li>Choose the chart that matches the question.</li>
+          <li>Explain the output in business language.</li>
+          <li>End with a next action.</li>
+        </ol>
+        <div class="block">
+          <strong>Short rule:</strong> question -> data -> tool -> chart -> insight -> action.
+        </div>
+      </article>
+    </section>
+
+    <section class="grid" id="tool">
+      <article class="card w6">
+        <span class="chip">Tool choice</span>
+        <h2>Pandas vs NumPy in one line</h2>
+        <p><strong>Say this:</strong> I use Pandas for labeled data operations like cleaning, joins, and reporting, and NumPy for fast numeric calculation and simulation. In real work I combine both.</p>
+      </article>
+
+      <article class="card w6">
+        <span class="chip">Decision check</span>
+        <h2>What to use first?</h2>
+        <ul>
+          <li>Business table data -> Pandas</li>
+          <li>Numeric array math -> NumPy</li>
+          <li>Need both structure and speed -> Both</li>
+        </ul>
+      </article>
+    </section>
+
+    <section class="grid" id="chart">
+      <article class="card">
+        <span class="chip">Chart choice</span>
+        <h2>Chart quick map</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Need</th>
+              <th>Best chart</th>
+              <th>Why this chart</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Trend over time</td><td>Line</td><td>Shows continuity and change clearly.</td></tr>
+            <tr><td>Category comparison</td><td>Bar</td><td>Makes ranking and gap easy to read.</td></tr>
+            <tr><td>Distribution</td><td>Histogram / box plot</td><td>Shows spread, skew, and outliers.</td></tr>
+            <tr><td>Relationship</td><td>Scatter</td><td>Shows how two variables move together.</td></tr>
+            <tr><td>Many variables</td><td>Heatmap</td><td>Lets you scan intensity and correlation fast.</td></tr>
+          </tbody>
+        </table>
+        <div class="step">
+          <h4>Why not random chart picking?</h4>
+          <p>Because every chart hides some things and reveals others. Choose the chart that best matches the question.</p>
+        </div>
+      </article>
+    </section>
+
+    <section class="grid" id="dashboard">
+      <article class="card">
+        <span class="chip">Dashboard</span>
+        <h2>Dashboard structure to remember</h2>
+        <ol>
+          <li>KPI cards at the top.</li>
+          <li>Trend chart next.</li>
+          <li>Comparison and distribution charts in the middle.</li>
+          <li>Relationship and diagnostic charts at the end.</li>
+          <li>Action notes below or beside the charts.</li>
+        </ol>
+        <div class="block warn">
+          <strong>Interview line:</strong> A good dashboard makes the business state, the drivers, and the next action visible in one screen.
+        </div>
+      </article>
+    </section>
+
+    <section class="grid" id="answers">
+      <article class="card w6">
+        <span class="chip">Ready answer</span>
+        <h2>If asked "How do you decide the chart?"</h2>
+        <p>I first define the business question. If I need a time trend, I use a line chart. If I need category comparison, I use a bar chart. If I need distribution or outliers, I use histogram or box plot. If I need relationships, I use scatter or heatmap. I also explain why that chart is better than other options for that exact question.</p>
+      </article>
+
+      <article class="card w6">
+        <span class="chip">Ready answer</span>
+        <h2>If asked "What makes analysis complete?"</h2>
+        <p>Analysis is complete when the data is cleaned, the right tool is used, the chart tells the story, and the final recommendation is clear enough for business action.</p>
+      </article>
+
+      <article class="card">
+        <span class="chip">One-minute revision</span>
+        <h2>Say this fast before interview</h2>
+        <p>I use Pandas for data structure and reporting, NumPy for speed and numeric logic, and visualization for communicating trend, comparison, spread, and relationship. I choose each chart based on the question, not on habit. I end with a clear business action.</p>
+      </article>
+    </section>
+  </main>
+</body>
+</html>
