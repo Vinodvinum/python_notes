@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Domain Mock Interviews</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f7f2e8;
+      --surface: #fffdf8;
+      --ink: #1a2b22;
+      --muted: #4d6358;
+      --line: #d9d0bf;
+      --brand: #0f6f61;
+      --brand2: #b65b2b;
+      --code-bg: #10243d;
+      --code-ink: #d9ecff;
+      --radius: 14px;
+      --shadow: 0 12px 30px rgba(26, 43, 34, 0.09);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Manrope", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 8% 8%, rgba(182, 91, 43, 0.12), transparent 35%),
+        radial-gradient(circle at 90% 10%, rgba(15, 111, 97, 0.11), transparent 34%),
+        var(--bg);
+      line-height: 1.62;
+    }
+
+    .wrap {
+      width: min(1120px, 92%);
+      margin: 0 auto;
+      padding: 24px 0 40px;
+    }
+
+    .hero, .card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .hero { padding: 18px; }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.5rem, 3.2vw, 2.25rem);
+      line-height: 1.18;
+    }
+
+    .sub {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 0.98rem;
+      max-width: 900px;
+    }
+
+    .quick {
+      margin-top: 12px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .quick a {
+      text-decoration: none;
+      color: var(--ink);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 7px 12px;
+      font-size: 0.84rem;
+      background: #fff;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 14px;
+      margin-top: 16px;
+    }
+
+    .card { grid-column: span 12; padding: 16px; }
+
+    .w6 { grid-column: span 12; }
+
+    .chip {
+      display: inline-block;
+      font-size: 0.74rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      color: var(--brand);
+      background: rgba(15, 111, 97, 0.1);
+      border: 1px solid rgba(15, 111, 97, 0.26);
+      border-radius: 999px;
+      padding: 4px 10px;
+      margin-bottom: 8px;
+    }
+
+    h2, h3 { margin: 0 0 8px; line-height: 1.25; }
+    h2 { font-size: 1.22rem; }
+    h3 { font-size: 1rem; margin-top: 12px; }
+
+    p { margin: 0 0 10px; }
+
+    ul, ol { margin: 8px 0 0; padding-left: 20px; }
+    li { margin-bottom: 6px; }
+
+    .qa {
+      margin-top: 10px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px;
+      background: #fff;
+    }
+
+    .qa h4 {
+      margin: 0 0 6px;
+      font-size: 0.95rem;
+      color: var(--brand2);
+    }
+
+    pre {
+      margin: 10px 0 0;
+      border-radius: 10px;
+      background: var(--code-bg);
+      color: var(--code-ink);
+      border: 1px solid rgba(217, 236, 255, 0.24);
+      padding: 12px;
+      overflow-x: auto;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.83rem;
+      line-height: 1.55;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      overflow: hidden;
+      background: #fff;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 9px 10px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+      font-size: 0.9rem;
+    }
+
+    th {
+      font-size: 0.82rem;
+      background: rgba(15, 111, 97, 0.08);
+      font-weight: 800;
+    }
+
+    tr:last-child td { border-bottom: none; }
+
+    .plan {
+      margin-top: 10px;
+      border-left: 4px solid var(--brand);
+      border-radius: 10px;
+      background: rgba(15, 111, 97, 0.09);
+      padding: 10px 12px;
+    }
+
+    @media (min-width: 900px) {
+      .w6 { grid-column: span 6; }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="hero">
+      <h1>Domain-Specific Mock Interview Practice Sets</h1>
+      <p class="sub">Use this for 30, 60, and 90 minute prep sessions. Each domain contains scripted questions, model answers, and a compact practical challenge prompt.</p>
+      <nav class="quick" aria-label="Quick links">
+        <a href="#da">Data Analyst</a>
+        <a href="#pdev">Python Developer</a>
+        <a href="#fresher">Fresher Round</a>
+        <a href="#timebox">30/60/90 Plans</a>
+      </nav>
+    </section>
+
+    <section class="grid" id="da">
+      <article class="card w6">
+        <span class="chip">Data Analyst Track</span>
+        <h2>Top Mock Questions with Answer Scripts</h2>
+
+        <div class="qa">
+          <h4>Q1. How do you approach a new dataset?</h4>
+          <p><strong>Script:</strong> I inspect schema and nulls first using <code>head()</code>, <code>info()</code>, and <code>isnull().sum()</code>. Then I clean types, handle missing values with business logic, validate row counts after filters, and only then start KPI and trend analysis.</p>
+        </div>
+
+        <div class="qa">
+          <h4>Q2. How do you explain insights to business users?</h4>
+          <p><strong>Script:</strong> I lead with the decision impact, not code. Example: "North contributes 42% of revenue but margin is dropping month over month, so pricing and shipping should be reviewed." Then I show one chart per decision.</p>
+        </div>
+
+        <div class="qa">
+          <h4>Q3. Difference between descriptive and diagnostic analysis?</h4>
+          <p><strong>Script:</strong> Descriptive tells what happened, like monthly sales trend. Diagnostic tells why it happened, like category mix, discount shifts, or return rates causing margin decline.</p>
+        </div>
+      </article>
+
+      <article class="card w6">
+        <span class="chip">Data Analyst Practical</span>
+        <h2>Mini Practical Challenge Prompt</h2>
+        <p>You are given order-level data. Do all below in one notebook:</p>
+        <ol>
+          <li>Create KPI summary: total sales, total profit, margin, avg order value.</li>
+          <li>Find top 3 regions and top 5 categories by revenue.</li>
+          <li>Build one trend line and one category comparison chart.</li>
+          <li>Write 3 action recommendations from your findings.</li>
+        </ol>
+        <pre><code># Interview closing line after solving:
+"I validated data quality first, computed KPIs, built aligned visualizations,
+and converted findings into business actions with measurable impact."</code></pre>
+      </article>
+    </section>
+
+    <section class="grid" id="pdev">
+      <article class="card w6">
+        <span class="chip">Python Developer Track</span>
+        <h2>Core Technical Q&A Scripts</h2>
+
+        <div class="qa">
+          <h4>Q1. What is the difference between list and tuple?</h4>
+          <p><strong>Script:</strong> List is mutable and best for frequently changing data. Tuple is immutable and safer for fixed records like coordinates or constant config values.</p>
+        </div>
+
+        <div class="qa">
+          <h4>Q2. Explain shallow copy vs deep copy.</h4>
+          <p><strong>Script:</strong> Shallow copy duplicates only the outer container but nested objects remain shared references. Deep copy recursively clones nested objects so updates do not affect original structures.</p>
+        </div>
+
+        <div class="qa">
+          <h4>Q3. How do you structure reusable Python code?</h4>
+          <p><strong>Script:</strong> I split code into modules by responsibility, write pure functions where possible, add docstrings and type hints, and keep entry logic under <code>if __name__ == "__main__":</code>.</p>
+        </div>
+      </article>
+
+      <article class="card w6">
+        <span class="chip">Python Developer Practical</span>
+        <h2>Live Coding Prompt (15-20 mins)</h2>
+        <p>Build a function that reads a list of sales dictionaries and returns a sorted summary by region with error-safe handling.</p>
+        <pre><code>def summarize_sales(records):
+    """Return total sales by region in descending order."""
+    summary = {}
+    for row in records:
+      region = row.get("region", "Unknown")
+      sales = float(row.get("sales", 0) or 0)
+      summary[region] = summary.get(region, 0) + sales
+    return sorted(summary.items(), key=lambda x: x[1], reverse=True)</code></pre>
+        <p>Follow-up questions expected:</p>
+        <ul>
+          <li>What is time complexity?</li>
+          <li>How will you test edge cases?</li>
+          <li>How will you extend for monthly aggregation?</li>
+        </ul>
+      </article>
+    </section>
+
+    <section class="grid" id="fresher">
+      <article class="card">
+        <span class="chip">Fresher Round</span>
+        <h2>Entry-Level Interview Script Set</h2>
+        <table>
+          <thead>
+            <tr><th>Question</th><th>Scripted answer</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Introduce yourself</td><td>I am building strong fundamentals in Python, data analysis, and practical problem-solving. I focus on writing clean code and validating outputs before presenting insights.</td></tr>
+            <tr><td>Why should we hire you?</td><td>I learn quickly, I can convert unclear tasks into structured solutions, and I document my work clearly so teams can maintain and extend it.</td></tr>
+            <tr><td>What are your strengths?</td><td>Consistency, attention to detail, and ability to explain technical work in simple language.</td></tr>
+            <tr><td>What is one weakness?</td><td>I used to spend too long polishing visuals; now I time-box and prioritize correctness first, then presentation improvements.</td></tr>
+            <tr><td>How do you handle pressure?</td><td>I break tasks into small deliverables, validate each output quickly, and communicate status early if risks appear.</td></tr>
+          </tbody>
+        </table>
+
+        <div class="plan" id="timebox">
+          <h3>30/60/90 minute mock plans</h3>
+          <ul>
+            <li><strong>30 min:</strong> 8 rapid-fire Q&A + 1 mini coding prompt.</li>
+            <li><strong>60 min:</strong> 15 Q&A + 1 practical dataset task + 2 visual explanation questions.</li>
+            <li><strong>90 min:</strong> full interview loop: intro, technical round, practical round, business communication round, and final feedback review.</li>
+          </ul>
+        </div>
+      </article>
+    </section>
+  </main>
+</body>
+</html>
