@@ -1,0 +1,452 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pandas for Data Analyst Mindset</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f7f2e8;
+      --surface: #fffdf8;
+      --ink: #182c24;
+      --muted: #4e655b;
+      --line: #d9d0bf;
+      --brand: #0e6d60;
+      --brand2: #b45a2a;
+      --ok: #116d33;
+      --warn: #a14f10;
+      --code-bg: #0f233d;
+      --code-ink: #d8edff;
+      --radius: 14px;
+      --shadow: 0 12px 30px rgba(24, 44, 36, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Manrope", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 8% 10%, rgba(180, 90, 42, 0.12), transparent 36%),
+        radial-gradient(circle at 92% 12%, rgba(14, 109, 96, 0.12), transparent 35%),
+        var(--bg);
+      line-height: 1.64;
+    }
+
+    .wrap {
+      width: min(1160px, 92%);
+      margin: 0 auto;
+      padding: 24px 0 40px;
+    }
+
+    .hero, .card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .hero { padding: 18px; }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.6rem, 3.2vw, 2.3rem);
+      line-height: 1.2;
+    }
+
+    .sub {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 0.98rem;
+      max-width: 960px;
+    }
+
+    .quick {
+      margin-top: 12px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .quick a {
+      text-decoration: none;
+      color: var(--ink);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 7px 12px;
+      font-size: 0.84rem;
+      background: #fff;
+      transition: transform 0.16s ease, border-color 0.16s ease;
+    }
+
+    .quick a:hover {
+      transform: translateY(-1px);
+      border-color: rgba(14, 109, 96, 0.6);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 14px;
+      margin-top: 16px;
+    }
+
+    .card {
+      grid-column: span 12;
+      padding: 16px;
+    }
+
+    .w6 { grid-column: span 12; }
+
+    .chip {
+      display: inline-block;
+      font-size: 0.74rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      color: var(--brand);
+      background: rgba(14, 109, 96, 0.1);
+      border: 1px solid rgba(14, 109, 96, 0.28);
+      border-radius: 999px;
+      padding: 4px 10px;
+      margin-bottom: 8px;
+    }
+
+    h2, h3 {
+      margin: 0 0 8px;
+      line-height: 1.25;
+    }
+
+    h2 { font-size: 1.22rem; }
+    h3 { font-size: 1rem; margin-top: 12px; }
+
+    p { margin: 0 0 10px; }
+
+    ul, ol { margin: 8px 0 0; padding-left: 20px; }
+    li { margin-bottom: 6px; }
+
+    .step {
+      margin-top: 10px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px;
+      background: #fff;
+    }
+
+    .step h4 {
+      margin: 0 0 6px;
+      color: var(--brand2);
+      font-size: 0.95rem;
+    }
+
+    pre {
+      margin: 10px 0 0;
+      border-radius: 10px;
+      background: var(--code-bg);
+      color: var(--code-ink);
+      border: 1px solid rgba(216, 237, 255, 0.24);
+      padding: 12px;
+      overflow-x: auto;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.83rem;
+      line-height: 1.55;
+    }
+
+    code {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.92em;
+      background: rgba(14, 109, 96, 0.08);
+      color: var(--brand);
+      padding: 2px 6px;
+      border-radius: 6px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      overflow: hidden;
+      background: #fff;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 10px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+      font-size: 0.9rem;
+    }
+
+    th {
+      background: rgba(14, 109, 96, 0.08);
+      font-size: 0.82rem;
+      font-weight: 800;
+    }
+
+    tr:last-child td { border-bottom: none; }
+
+    .out {
+      margin-top: 10px;
+      border-left: 4px solid var(--ok);
+      border-radius: 10px;
+      background: rgba(17, 109, 51, 0.09);
+      padding: 10px 12px;
+      font-size: 0.92rem;
+    }
+
+    .warn {
+      border-left-color: var(--warn);
+      background: rgba(161, 79, 16, 0.1);
+    }
+
+    .mind {
+      margin-top: 10px;
+      border-left: 4px solid var(--brand);
+      border-radius: 10px;
+      background: rgba(14, 109, 96, 0.09);
+      padding: 10px 12px;
+    }
+
+    @media (min-width: 920px) {
+      .w6 { grid-column: span 6; }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="hero">
+      <h1>Pandas Master Section: Data Analyst Thinking Mode</h1>
+      <p class="sub">This section focuses only on Pandas for data analysis. For each important keyword you get: what it is, what output it gives, and what decision/action you should take as a data analyst.</p>
+      <nav class="quick" aria-label="Quick links">
+        <a href="#flow">Analyst Workflow</a>
+        <a href="#keywords">Pandas Keywords</a>
+        <a href="#deep">Deep Examples</a>
+        <a href="#mindset">Analyst Mindset</a>
+        <a href="#checklist">Ready Checklist</a>
+      </nav>
+    </section>
+
+    <section class="grid" id="flow">
+      <article class="card">
+        <span class="chip">Workflow</span>
+        <h2>How a Data Analyst Should Think Before Any Pandas Code</h2>
+        <ol>
+          <li>What business question am I solving?</li>
+          <li>What columns and date range matter for that question?</li>
+          <li>Can I trust this data? (types, missing values, duplicates)</li>
+          <li>Which KPI proves the answer? (sum, mean, conversion, trend)</li>
+          <li>What action should business take based on output?</li>
+        </ol>
+        <div class="mind">
+          <strong>Rule:</strong> Never start with charts. Start with data quality + KPI truth, then visualize.
+        </div>
+      </article>
+    </section>
+
+    <section class="grid" id="keywords">
+      <article class="card">
+        <span class="chip">Keyword Dictionary</span>
+        <h2>Pandas Keywords: Meaning -> Output -> What To Do Next</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Keyword</th>
+              <th>What it is</th>
+              <th>What output it gives</th>
+              <th>What you should do from that output</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><code>head()</code></td><td>First rows preview</td><td>Top 5 rows by default</td><td>Check column names and sample values quickly.</td></tr>
+            <tr><td><code>tail()</code></td><td>Last rows preview</td><td>Bottom 5 rows</td><td>Spot trailing garbage rows, summaries, or export issues.</td></tr>
+            <tr><td><code>shape</code></td><td>Dataset dimensions</td><td>(rows, columns)</td><td>Validate expected data volume before analysis.</td></tr>
+            <tr><td><code>columns</code></td><td>List of column names</td><td>Index of names</td><td>Confirm naming consistency and fix spelling/case.</td></tr>
+            <tr><td><code>dtypes</code></td><td>Type of each column</td><td>Series of types</td><td>Convert wrong numeric/date types before calculations.</td></tr>
+            <tr><td><code>info()</code></td><td>Structure summary</td><td>Non-null count + dtype + memory</td><td>Identify missing values and wrong types immediately.</td></tr>
+            <tr><td><code>describe()</code></td><td>Numeric summary stats</td><td>count, mean, std, min, quartiles, max</td><td>Detect outliers and unrealistic value ranges.</td></tr>
+            <tr><td><code>isnull().sum()</code></td><td>Missing values count</td><td>Null count per column</td><td>Decide fill/drop strategy column-wise.</td></tr>
+            <tr><td><code>duplicated().sum()</code></td><td>Duplicate row count</td><td>Number of duplicates</td><td>Drop duplicates for clean KPI accuracy.</td></tr>
+            <tr><td><code>value_counts()</code></td><td>Category frequency</td><td>Count of each unique value</td><td>Find dominant categories and data imbalance.</td></tr>
+            <tr><td><code>nunique()</code></td><td>Unique count</td><td>Number of distinct values</td><td>Check cardinality and segmentation options.</td></tr>
+            <tr><td><code>loc[]</code></td><td>Label-based selection</td><td>Selected rows/cols by label</td><td>Filter business subsets clearly by names.</td></tr>
+            <tr><td><code>iloc[]</code></td><td>Position-based selection</td><td>Selected rows/cols by index position</td><td>Use for quick index slicing in exploration.</td></tr>
+            <tr><td><code>query()</code></td><td>Readable filtering syntax</td><td>Filtered DataFrame</td><td>Build clean, auditable filter conditions.</td></tr>
+            <tr><td><code>sort_values()</code></td><td>Sort by column</td><td>Ordered DataFrame</td><td>Find top/bottom performers.</td></tr>
+            <tr><td><code>groupby()</code></td><td>Grouped aggregation engine</td><td>Aggregated result by key(s)</td><td>Answer KPI by region/category/time.</td></tr>
+            <tr><td><code>agg()</code></td><td>Multiple aggregations</td><td>sum/mean/count/etc. together</td><td>Create summary report table in one step.</td></tr>
+            <tr><td><code>transform()</code></td><td>Group metric back to each row</td><td>Same length column with group stat</td><td>Compute share of total, z-score, group comparison.</td></tr>
+            <tr><td><code>pivot_table()</code></td><td>Report-style matrix summary</td><td>Cross-tab result</td><td>Build manager-ready quick report views.</td></tr>
+            <tr><td><code>merge()</code></td><td>Join DataFrames</td><td>Combined table</td><td>Integrate customers/orders/products safely.</td></tr>
+            <tr><td><code>concat()</code></td><td>Stack frames vertically/horizontally</td><td>Appended DataFrame</td><td>Combine monthly files into one dataset.</td></tr>
+            <tr><td><code>fillna()</code></td><td>Fill missing values</td><td>DataFrame with replacements</td><td>Impute missing data based on business logic.</td></tr>
+            <tr><td><code>dropna()</code></td><td>Remove missing rows/cols</td><td>Reduced DataFrame</td><td>Remove unusable records carefully.</td></tr>
+            <tr><td><code>astype()</code></td><td>Convert data type</td><td>Column with new dtype</td><td>Fix numeric and category types.</td></tr>
+            <tr><td><code>to_datetime()</code></td><td>Convert to date-time</td><td>Datetime typed column</td><td>Enable monthly/weekly trend analysis.</td></tr>
+            <tr><td><code>sample()</code></td><td>Random sample rows</td><td>Random subset</td><td>Fast validation without scanning full dataset.</td></tr>
+            <tr><td><code>corr()</code></td><td>Correlation matrix</td><td>Numeric relation coefficients</td><td>Find features moving together.</td></tr>
+            <tr><td><code>rolling()</code></td><td>Moving window stats</td><td>Rolling mean/sum/etc.</td><td>Smooth noisy trends for decision clarity.</td></tr>
+            <tr><td><code>resample()</code></td><td>Time frequency conversion</td><td>Weekly/monthly/quarterly summaries</td><td>Standardize timeline reporting.</td></tr>
+          </tbody>
+        </table>
+      </article>
+    </section>
+
+    <section class="grid" id="deep">
+      <article class="card w6">
+        <span class="chip">Deep Example</span>
+        <h2><code>info()</code> Explained for Analysts</h2>
+        <pre><code>import pandas as pd
+
+df = pd.read_csv("orders.csv")
+print(df.info())</code></pre>
+        <div class="out">
+          <strong>Typical output meaning:</strong>
+          <ul>
+            <li><code>RangeIndex: 10000 entries</code> -> dataset has 10,000 rows</li>
+            <li><code>sales 9980 non-null</code> -> 20 missing in <code>sales</code></li>
+            <li><code>order_date object</code> -> date is text, not datetime yet</li>
+          </ul>
+        </div>
+        <div class="step">
+          <h4>What to do next from this output</h4>
+          <ol>
+            <li>Handle missing sales rows: fill or drop based on business rules.</li>
+            <li>Convert <code>order_date</code> using <code>pd.to_datetime()</code>.</li>
+            <li>Re-run <code>info()</code> and confirm fixes before KPI creation.</li>
+          </ol>
+        </div>
+      </article>
+
+      <article class="card w6">
+        <span class="chip">Deep Example</span>
+        <h2><code>describe()</code> Explained for Analysts</h2>
+        <pre><code>print(df[["sales", "profit"]].describe())</code></pre>
+        <div class="out">
+          <strong>Typical output meaning:</strong>
+          <ul>
+            <li><code>mean</code> -> average sales/profit</li>
+            <li><code>50%</code> -> median, often more stable than mean</li>
+            <li><code>max</code> much larger than <code>75%</code> -> possible outlier</li>
+          </ul>
+        </div>
+        <div class="step">
+          <h4>What to do next from this output</h4>
+          <ol>
+            <li>Use median if outliers are extreme.</li>
+            <li>Investigate top records using <code>nlargest()</code>.</li>
+            <li>Add boxplot/histogram to validate distribution shape.</li>
+          </ol>
+        </div>
+      </article>
+
+      <article class="card">
+        <span class="chip">Mini Notebook Flow</span>
+        <h2>From Raw Data to Insight in 12 Pandas Steps</h2>
+        <pre><code># 1) Load
+import pandas as pd
+df = pd.read_csv("orders.csv")
+
+# 2) First look
+df.head(); df.shape; df.info()
+
+# 3) Quality checks
+df.isnull().sum(); df.duplicated().sum()
+
+# 4) Fixes
+df["order_date"] = pd.to_datetime(df["order_date"], errors="coerce")
+df["sales"] = pd.to_numeric(df["sales"], errors="coerce")
+df = df.drop_duplicates()
+
+# 5) Missing strategy
+df["sales"] = df["sales"].fillna(df["sales"].median())
+
+# 6) Features
+df["profit"] = df["sales"] - df["cost"]
+df["month"] = df["order_date"].dt.to_period("M")
+
+# 7) KPI
+total_sales = df["sales"].sum()
+profit_margin = (df["profit"].sum() / total_sales) * 100
+
+# 8) Segment result
+state_sales = df.groupby("state")["sales"].sum().sort_values(ascending=False)
+
+# 9) Trend
+monthly_sales = df.groupby("month")["sales"].sum()
+
+# 10) Validate
+df.describe()
+
+# 11) Visualize
+# (matplotlib or seaborn)
+
+# 12) Action summary
+# top region, weak margin category, recommended action</code></pre>
+      </article>
+    </section>
+
+    <section class="grid" id="mindset">
+      <article class="card">
+        <span class="chip">Mindset Training</span>
+        <h2>Data Analyst Mindset: How You Should Think</h2>
+
+        <div class="step">
+          <h4>1) Business-first mindset</h4>
+          <p>Always translate question into metric. Not "run pandas", but "measure conversion drop by channel in Q2".</p>
+        </div>
+
+        <div class="step">
+          <h4>2) Data quality before dashboard</h4>
+          <p>Never trust first output. Check nulls, duplicates, type mismatch, and date parsing before any KPI or chart.</p>
+        </div>
+
+        <div class="step">
+          <h4>3) Explainability mindset</h4>
+          <p>Every chart must answer one question. If it looks pretty but does not drive a decision, remove it.</p>
+        </div>
+
+        <div class="step">
+          <h4>4) Validation mindset</h4>
+          <p>Cross-check one KPI manually each run. Example: compare grouped sum with global total.</p>
+        </div>
+
+        <div class="step">
+          <h4>5) Action mindset</h4>
+          <p>End every analysis with: what happened, why, and what should be done next.</p>
+        </div>
+
+        <div class="mind">
+          <strong>Interview one-liner:</strong> I treat Pandas as a decision engine, not just a coding library. My output always maps to a business action.
+        </div>
+      </article>
+    </section>
+
+    <section class="grid" id="checklist">
+      <article class="card">
+        <span class="chip">Ready Checklist</span>
+        <h2>Are You Ready for a Data Analyst Role?</h2>
+        <table>
+          <thead>
+            <tr><th>Capability</th><th>Self check</th><th>Status</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>I can explain <code>info()</code> and act on it</td><td>Type fixes + missing handling</td><td>___</td></tr>
+            <tr><td>I can explain <code>describe()</code> and detect outliers</td><td>Median vs mean decision</td><td>___</td></tr>
+            <tr><td>I can do end-to-end Pandas flow</td><td>Load -> Clean -> KPI -> Visual -> Action</td><td>___</td></tr>
+            <tr><td>I can present insight in business language</td><td>One chart, one action sentence</td><td>___</td></tr>
+            <tr><td>I can answer interview scenarios</td><td>Problem + method + result + action</td><td>___</td></tr>
+          </tbody>
+        </table>
+        <div class="out warn">
+          <strong>Practice plan:</strong> Solve 1 small dataset daily for 14 days. Keep a notebook of mistakes and what you changed. This builds true analyst mindset fast.
+        </div>
+      </article>
+    </section>
+  </main>
+</body>
+</html>
