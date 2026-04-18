@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Data Analyst Dashboard Blueprint</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f7f2e8;
+      --surface: #fffdf8;
+      --ink: #182c24;
+      --muted: #4e655b;
+      --line: #d9d0bf;
+      --brand: #0e6d60;
+      --brand2: #1b5fbf;
+      --accent: #b45a2a;
+      --ok: #116d33;
+      --warn: #a14f10;
+      --code-bg: #0f233d;
+      --code-ink: #d8edff;
+      --radius: 14px;
+      --shadow: 0 12px 30px rgba(24, 44, 36, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Manrope", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 8% 10%, rgba(180, 90, 42, 0.12), transparent 36%),
+        radial-gradient(circle at 92% 12%, rgba(14, 109, 96, 0.12), transparent 35%),
+        var(--bg);
+      line-height: 1.64;
+    }
+
+    .wrap {
+      width: min(1180px, 92%);
+      margin: 0 auto;
+      padding: 24px 0 40px;
+    }
+
+    .hero, .card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .hero { padding: 18px; }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.6rem, 3.2vw, 2.3rem);
+      line-height: 1.2;
+    }
+
+    .sub {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 0.98rem;
+      max-width: 1020px;
+    }
+
+    .quick {
+      margin-top: 12px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .quick a {
+      text-decoration: none;
+      color: var(--ink);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 7px 12px;
+      font-size: 0.84rem;
+      background: #fff;
+      transition: transform 0.16s ease, border-color 0.16s ease;
+    }
+
+    .quick a:hover {
+      transform: translateY(-1px);
+      border-color: rgba(14, 109, 96, 0.6);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 14px;
+      margin-top: 16px;
+    }
+
+    .card { grid-column: span 12; padding: 16px; }
+    .w6 { grid-column: span 12; }
+
+    .chip {
+      display: inline-block;
+      font-size: 0.74rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      color: var(--brand);
+      background: rgba(14, 109, 96, 0.1);
+      border: 1px solid rgba(14, 109, 96, 0.28);
+      border-radius: 999px;
+      padding: 4px 10px;
+      margin-bottom: 8px;
+    }
+
+    h2, h3 { margin: 0 0 8px; line-height: 1.25; }
+    h2 { font-size: 1.22rem; }
+    h3 { font-size: 1rem; margin-top: 10px; }
+
+    p { margin: 0 0 10px; }
+    ul, ol { margin: 8px 0 0; padding-left: 20px; }
+    li { margin-bottom: 6px; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      overflow: hidden;
+      background: #fff;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 10px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+      font-size: 0.9rem;
+    }
+
+    th {
+      background: rgba(14, 109, 96, 0.08);
+      font-size: 0.82rem;
+      font-weight: 800;
+    }
+
+    tr:last-child td { border-bottom: none; }
+
+    .block {
+      margin-top: 10px;
+      border-left: 4px solid var(--ok);
+      border-radius: 10px;
+      background: rgba(17, 109, 51, 0.09);
+      padding: 10px 12px;
+      font-size: 0.92rem;
+    }
+
+    .warn {
+      border-left-color: var(--warn);
+      background: rgba(161, 79, 16, 0.1);
+    }
+
+    .step {
+      margin-top: 10px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px;
+      background: #fff;
+    }
+
+    .step h4 {
+      margin: 0 0 6px;
+      color: var(--accent);
+      font-size: 0.95rem;
+    }
+
+    code {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.92em;
+      background: rgba(14, 109, 96, 0.1);
+      color: var(--brand);
+      padding: 2px 6px;
+      border-radius: 6px;
+    }
+
+    pre {
+      margin: 10px 0 0;
+      border-radius: 10px;
+      background: var(--code-bg);
+      color: var(--code-ink);
+      border: 1px solid rgba(216, 237, 255, 0.24);
+      padding: 12px;
+      overflow-x: auto;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.83rem;
+      line-height: 1.55;
+    }
+
+    @media (min-width: 920px) {
+      .w6 { grid-column: span 6; }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="hero">
+      <h1>Dashboard Blueprint for Data Analysts</h1>
+      <p class="sub">A dashboard is not just a chart page. It is a decision surface: KPI summary, trend, comparison, distribution, relationship, and action notes in one place.</p>
+      <nav class="quick" aria-label="Quick links">
+        <a href="#why">Why dashboard</a>
+        <a href="#layout">Layout</a>
+        <a href="#components">Components</a>
+        <a href="#chart-logic">Chart logic</a>
+        <a href="#template">Template</a>
+      </nav>
+    </section>
+
+    <section class="grid" id="why">
+      <article class="card">
+        <span class="chip">Core Rule</span>
+        <h2>Why the dashboard matters</h2>
+        <p>Charts explain details. Dashboards explain the business story. If you only show tables or isolated plots, decision-makers must do extra work to connect the insight.</p>
+        <div class="block warn">
+          <strong>Analyst rule:</strong> A report is incomplete if it does not answer: what changed, where, how much, why, and what to do next.
+        </div>
+      </article>
+    </section>
+
+    <section class="grid" id="layout">
+      <article class="card w6">
+        <span class="chip">Layout</span>
+        <h2>Recommended one-page dashboard layout</h2>
+        <ol>
+          <li>Top row: KPI cards for the main business numbers.</li>
+          <li>Second row: trend chart for movement over time.</li>
+          <li>Third row: category comparison chart.</li>
+          <li>Fourth row: distribution or outlier chart.</li>
+          <li>Side panel or footer: short action notes and alerts.</li>
+        </ol>
+      </article>
+
+      <article class="card w6">
+        <span class="chip">Mindset</span>
+        <h2>What a good analyst asks first</h2>
+        <ul>
+          <li>What is the one decision this dashboard should support?</li>
+          <li>Which KPI should lead the page?</li>
+          <li>What is the best chart for each question?</li>
+          <li>How will the user consume it in 10 seconds?</li>
+        </ul>
+      </article>
+    </section>
+
+    <section class="grid" id="components">
+      <article class="card">
+        <span class="chip">Components</span>
+        <h2>Dashboard Components and Why They Exist</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Component</th>
+              <th>Purpose</th>
+              <th>What it gives</th>
+              <th>Why it belongs in a dashboard</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>KPI cards</td><td>Show headline metrics</td><td>Revenue, margin, conversion, churn</td><td>Instant executive summary.</td></tr>
+            <tr><td>Trend chart</td><td>Show movement over time</td><td>Direction, seasonality, inflection points</td><td>Answers whether business is improving or not.</td></tr>
+            <tr><td>Comparison chart</td><td>Compare groups</td><td>Best/worst region, channel, product</td><td>Supports prioritization.</td></tr>
+            <tr><td>Distribution chart</td><td>Show spread and risk</td><td>Skew, outliers, concentration</td><td>Reveals hidden volatility.</td></tr>
+            <tr><td>Relationship chart</td><td>Show driver links</td><td>Correlation, clusters, tradeoffs</td><td>Supports root-cause thinking.</td></tr>
+            <tr><td>Action notes</td><td>Convert insight to action</td><td>Recommended next steps</td><td>Turns analysis into decision-making.</td></tr>
+          </tbody>
+        </table>
+      </article>
+    </section>
+
+    <section class="grid" id="chart-logic">
+      <article class="card w6">
+        <span class="chip">Chart Logic</span>
+        <h2>Which chart goes where?</h2>
+        <ul>
+          <li><strong>Line chart:</strong> top-middle, because trend is usually the first business signal.</li>
+          <li><strong>Bar chart:</strong> middle section, because category comparison is easier after the trend.</li>
+          <li><strong>Histogram/box plot:</strong> lower section, because risk and spread support the headline numbers.</li>
+          <li><strong>Scatter/heatmap:</strong> lower-right or secondary panel, because relationships are supporting evidence.</li>
+        </ul>
+      </article>
+
+      <article class="card w6">
+        <span class="chip">Why not others</span>
+        <h2>Why this sequence is better than random chart mixing</h2>
+        <p>Random charts force the reader to interpret without structure. A good dashboard follows the logic: headline -> trend -> compare -> diagnose -> act.</p>
+      </article>
+    </section>
+
+    <section class="grid" id="template">
+      <article class="card">
+        <span class="chip">Template</span>
+        <h2>Practical dashboard template</h2>
+        <pre><code>import matplotlib.pyplot as plt
+import seaborn as sns
+
+fig, axes = plt.subplots(2, 2, figsize=(14, 9))
+fig.suptitle("Sales Dashboard", fontsize=18, fontweight="bold")
+
+# KPI style text area can be added in an extra figure block or top strip
+
+# 1) Trend
+axes[0, 0].plot(monthly["month"], monthly["sales"], marker="o")
+axes[0, 0].set_title("Sales Trend")
+axes[0, 0].set_xlabel("Month")
+axes[0, 0].set_ylabel("Sales")
+
+# 2) Comparison
+sns.barplot(data=region_summary, x="region", y="sales", ax=axes[0, 1])
+axes[0, 1].set_title("Sales by Region")
+
+# 3) Distribution
+sns.histplot(data=df, x="sales", bins=20, kde=True, ax=axes[1, 0])
+axes[1, 0].set_title("Sales Distribution")
+
+# 4) Relationship
+sns.scatterplot(data=df, x="discount", y="margin", ax=axes[1, 1])
+axes[1, 1].set_title("Discount vs Margin")
+
+plt.tight_layout()
+plt.show()</code></pre>
+
+        <div class="block">
+          <strong>How to present it:</strong> Start with the KPI card, then explain the trend, then the reason for the high/low area, then the segment comparison, and end with action.
+        </div>
+      </article>
+    </section>
+
+    <section class="grid">
+      <article class="card">
+        <span class="chip">Interview Line</span>
+        <h2>Best answer for dashboard questions</h2>
+        <p><strong>Answer:</strong> "A dashboard is a decision tool. I use it to place KPI cards, trend charts, comparison charts, and diagnostic charts together so the business can see what happened, where, why, and what action is needed. I choose each chart based on the question it answers best, not just on visual preference."</p>
+      </article>
+    </section>
+  </main>
+</body>
+</html>
