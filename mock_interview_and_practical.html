@@ -1,0 +1,477 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mock Interview + Practical Walkthrough</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f7f4ea;
+      --surface: #ffffff;
+      --ink: #10211b;
+      --muted: #4d6259;
+      --line: #d9d0c0;
+      --brand: #0f6f61;
+      --brand-2: #b8572a;
+      --ok: #0f6b2f;
+      --warn: #a14b06;
+      --code-bg: #0f1f34;
+      --code-ink: #d8ecff;
+      --radius: 14px;
+      --shadow: 0 12px 28px rgba(16, 33, 27, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Outfit", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 8% 8%, rgba(184, 87, 42, 0.12), transparent 35%),
+        radial-gradient(circle at 92% 12%, rgba(15, 111, 97, 0.12), transparent 33%),
+        var(--bg);
+      line-height: 1.62;
+    }
+
+    .container {
+      width: min(1100px, 92%);
+      margin: 0 auto;
+      padding: 24px 0 40px;
+    }
+
+    .hero {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 18px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.5rem, 3.2vw, 2.3rem);
+      line-height: 1.2;
+    }
+
+    .sub {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 0.98rem;
+    }
+
+    .quick {
+      margin-top: 12px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .quick a {
+      text-decoration: none;
+      color: var(--ink);
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 7px 12px;
+      font-size: 0.84rem;
+      transition: transform 0.16s ease, border-color 0.16s ease;
+    }
+
+    .quick a:hover {
+      transform: translateY(-1px);
+      border-color: rgba(15, 111, 97, 0.55);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 14px;
+      margin-top: 16px;
+    }
+
+    .card {
+      grid-column: span 12;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 16px;
+    }
+
+    .w6 { grid-column: span 12; }
+
+    .chip {
+      display: inline-block;
+      font-size: 0.74rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--brand);
+      background: rgba(15, 111, 97, 0.1);
+      border: 1px solid rgba(15, 111, 97, 0.26);
+      border-radius: 999px;
+      padding: 4px 10px;
+      margin-bottom: 8px;
+    }
+
+    h2, h3 {
+      margin: 0 0 8px;
+      line-height: 1.25;
+    }
+
+    h2 { font-size: 1.22rem; }
+    h3 { font-size: 1rem; margin-top: 12px; }
+
+    p { margin: 0 0 10px; }
+
+    ul, ol {
+      margin: 8px 0 0;
+      padding-left: 20px;
+    }
+
+    li { margin-bottom: 6px; }
+
+    .qa {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px;
+      background: #fff;
+      margin-top: 8px;
+    }
+
+    .qa h4 {
+      margin: 0 0 6px;
+      color: var(--brand-2);
+      font-size: 0.95rem;
+    }
+
+    pre {
+      margin: 10px 0 0;
+      border-radius: 10px;
+      background: var(--code-bg);
+      color: var(--code-ink);
+      border: 1px solid rgba(216, 236, 255, 0.25);
+      padding: 12px;
+      overflow-x: auto;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.84rem;
+      line-height: 1.55;
+    }
+
+    code {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.92em;
+      background: rgba(15, 111, 97, 0.08);
+      color: var(--brand);
+      padding: 2px 6px;
+      border-radius: 6px;
+    }
+
+    .out {
+      margin-top: 10px;
+      border-left: 4px solid var(--ok);
+      background: rgba(15, 107, 47, 0.09);
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 0.92rem;
+    }
+
+    .warn {
+      border-left-color: var(--warn);
+      background: rgba(161, 75, 6, 0.1);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 8px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      overflow: hidden;
+      background: #fff;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 9px 10px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+      font-size: 0.9rem;
+    }
+
+    th {
+      background: rgba(15, 111, 97, 0.08);
+      font-weight: 700;
+      font-size: 0.84rem;
+    }
+
+    tr:last-child td { border-bottom: none; }
+
+    .viz {
+      margin-top: 10px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      overflow: hidden;
+      background: #fff;
+    }
+
+    .viz svg {
+      display: block;
+      width: 100%;
+      height: auto;
+      background: linear-gradient(180deg, #f9fcfb, #ffffff);
+    }
+
+    .viz-caption {
+      font-size: 0.88rem;
+      color: var(--muted);
+      padding: 8px 10px;
+      border-top: 1px solid var(--line);
+    }
+
+    @media (min-width: 860px) {
+      .w6 { grid-column: span 6; }
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <section class="hero">
+      <h1>New Section: Mock Interview + Practical End-to-End</h1>
+      <p class="sub">This section is built after analyzing your complete note set. It gives realistic interview scripts and a full practical pipeline with data, actions, outputs, and visualizations.</p>
+      <nav class="quick" aria-label="Quick links">
+        <a href="#mock">Mock Interview Script</a>
+        <a href="#practical">Practical Walkthrough</a>
+        <a href="#viz">Visualization Build</a>
+        <a href="#revision">Final Revision Checklist</a>
+      </nav>
+    </section>
+
+    <section class="grid" id="mock">
+      <article class="card">
+        <span class="chip">Interview Script</span>
+        <h2>A) Mock Interview Questions and Answer Script</h2>
+        <p>Use this as role-play. Read question first, answer aloud in your own words, then compare with the script.</p>
+
+        <div class="qa">
+          <h4>Q1. Tell me about yourself for a Python Data Analyst role.</h4>
+          <p><strong>Answer Script:</strong> I use Python mainly for data analysis workflows: loading data from CSV, Excel, and SQL, cleaning with Pandas, transforming features, validating with statistics, and building visual reports using Matplotlib and Seaborn. I focus on business questions first, then translate them into reproducible scripts.</p>
+        </div>
+
+        <div class="qa">
+          <h4>Q2. Difference between <code>loc</code> and <code>iloc</code>?</h4>
+          <p><strong>Answer Script:</strong> <code>loc</code> is label-based, so I select rows and columns by name. <code>iloc</code> is integer-position-based, so I select by index position. Also, slicing behavior differs: <code>loc</code> includes end label but <code>iloc</code> excludes end index.</p>
+        </div>
+
+        <div class="qa">
+          <h4>Q3. How do you handle missing values in real projects?</h4>
+          <p><strong>Answer Script:</strong> I first profile null percentages using <code>isnull().sum()</code> and business impact. For critical numeric columns, I use median or group-wise imputation; for categorical, I use mode or explicit labels like "Unknown". If a column has very high nulls and low business value, I drop it with justification.</p>
+        </div>
+
+        <div class="qa">
+          <h4>Q4. Explain a full analysis pipeline in short.</h4>
+          <p><strong>Answer Script:</strong> My flow is inspect, clean, transform, analyze, visualize, and summarize actionable insights. I validate each stage with output checks so the final dashboard and conclusions are traceable to actual data operations.</p>
+        </div>
+
+        <div class="qa">
+          <h4>Q5. What are your top 3 Python interview strengths?</h4>
+          <p><strong>Answer Script:</strong> Pandas operations for business analysis, clean and reusable function design, and visualization choices aligned with decision-making rather than decorative charting.</p>
+        </div>
+
+        <h3>HR + Technical mixed rapid-fire round</h3>
+        <table>
+          <thead>
+            <tr><th>Question</th><th>Short answer script</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Why Python over Excel only?</td><td>Python scales better, is reproducible, and supports automation, APIs, and ML workflows.</td></tr>
+            <tr><td>What is <code>groupby</code>?</td><td>Split-apply-combine for grouped aggregation like total sales by region.</td></tr>
+            <tr><td>One mistake you avoid?</td><td>I never run complex analysis before checking data types and null patterns.</td></tr>
+            <tr><td>How do you explain an outlier?</td><td>I quantify it with IQR or z-score, then connect with business context before removal.</td></tr>
+            <tr><td>How do you present to non-technical users?</td><td>I use plain language, KPI summary first, and 2-3 focused visuals with action points.</td></tr>
+          </tbody>
+        </table>
+      </article>
+    </section>
+
+    <section class="grid" id="practical">
+      <article class="card w6">
+        <span class="chip">Practical Build</span>
+        <h2>B) Practical End-to-End Walkthrough</h2>
+        <p>Scenario: Analyze monthly sales and profit by region using raw CSV data.</p>
+
+        <h3>Step 1: Create and load sample data</h3>
+        <pre><code>import pandas as pd
+from io import StringIO
+
+csv_text = """date,order_id,region,category,sales,cost
+2026-01-05,101,North,Electronics,45000,32000
+2026-01-08,102,South,Home,29000,21000
+2026-01-15,103,North,Home,18000,12000
+2026-02-03,104,East,Electronics,52000,35000
+2026-02-11,105,South,Electronics,41000,30000
+2026-02-20,106,North,Home,25000,16000
+"""
+
+raw_df = pd.read_csv(StringIO(csv_text), parse_dates=["date"])
+print(raw_df.head())
+print(raw_df.dtypes)</code></pre>
+        <div class="out">
+          <strong>Expected Output:</strong>
+          <pre><code>        date  order_id region     category  sales   cost
+0 2026-01-05       101  North  Electronics  45000  32000
+1 2026-01-08       102  South         Home  29000  21000
+...
+
+date        datetime64[ns]
+order_id             int64
+region              object
+category            object
+sales                int64
+cost                 int64</code></pre>
+        </div>
+
+        <h3>Step 2: Feature engineering</h3>
+        <pre><code>df = raw_df.copy()
+df["profit"] = df["sales"] - df["cost"]
+df["month"] = df["date"].dt.to_period("M").astype(str)
+print(df[["order_id", "month", "region", "sales", "cost", "profit"]])</code></pre>
+        <div class="out">
+          <strong>Expected Output:</strong>
+          <pre><code>   order_id    month region  sales   cost  profit
+0       101  2026-01  North  45000  32000   13000
+1       102  2026-01  South  29000  21000    8000
+...</code></pre>
+        </div>
+
+        <h3>Step 3: KPI summary</h3>
+        <pre><code>total_sales = df["sales"].sum()
+total_profit = df["profit"].sum()
+profit_margin = (total_profit / total_sales) * 100
+
+print("Total Sales:", total_sales)
+print("Total Profit:", total_profit)
+print("Profit Margin %:", round(profit_margin, 2))</code></pre>
+        <div class="out">
+          <strong>Expected Output:</strong>
+          <pre><code>Total Sales: 210000
+Total Profit: 63000
+Profit Margin %: 30.0</code></pre>
+        </div>
+      </article>
+
+      <article class="card w6">
+        <span class="chip">Grouped Analysis</span>
+        <h2>C) Action + Output by Business Questions</h2>
+
+        <h3>Question 1: Sales by region</h3>
+        <pre><code>sales_by_region = df.groupby("region")["sales"].sum().sort_values(ascending=False)
+print(sales_by_region)</code></pre>
+        <div class="out">
+          <pre><code>region
+North    88000
+East     52000
+South    70000</code></pre>
+        </div>
+
+        <h3>Question 2: Profit by month</h3>
+        <pre><code>profit_by_month = df.groupby("month")["profit"].sum()
+print(profit_by_month)</code></pre>
+        <div class="out">
+          <pre><code>month
+2026-01    27000
+2026-02    36000</code></pre>
+        </div>
+
+        <h3>Question 3: Top category by revenue</h3>
+        <pre><code>top_category = df.groupby("category")["sales"].sum().sort_values(ascending=False)
+print(top_category)</code></pre>
+        <div class="out">
+          <pre><code>category
+Electronics    138000
+Home            72000</code></pre>
+        </div>
+
+        <div class="out warn">
+          <strong>Interview Tip:</strong> While presenting these outputs, always add one business sentence. Example: "Electronics contributes 65%+ of total revenue, so discount strategy should protect this category margin."
+        </div>
+      </article>
+    </section>
+
+    <section class="grid" id="viz">
+      <article class="card">
+        <span class="chip">Visualization</span>
+        <h2>D) Visualization Build (Code + Expected Chart Outputs)</h2>
+
+        <h3>Matplotlib code for 2 charts</h3>
+        <pre><code>import matplotlib.pyplot as plt
+
+fig, axes = plt.subplots(1, 2, figsize=(12, 4))
+
+sales_by_region.plot(kind="bar", ax=axes[0], color=["#0f6f61", "#b8572a", "#4a86b8"])
+axes[0].set_title("Sales by Region")
+axes[0].set_xlabel("Region")
+axes[0].set_ylabel("Sales")
+
+profit_by_month.plot(kind="line", marker="o", ax=axes[1], color="#0f6b2f")
+axes[1].set_title("Profit by Month")
+axes[1].set_xlabel("Month")
+axes[1].set_ylabel("Profit")
+
+plt.tight_layout()
+plt.show()</code></pre>
+
+        <div class="viz" aria-label="Visualization preview 1">
+          <svg viewBox="0 0 900 260" role="img" aria-label="Sales by region bar chart preview">
+            <rect x="0" y="0" width="900" height="260" fill="transparent"/>
+            <line x1="70" y1="220" x2="410" y2="220" stroke="#9fb2a7" stroke-width="2"/>
+            <line x1="70" y1="220" x2="70" y2="40" stroke="#9fb2a7" stroke-width="2"/>
+            <rect x="110" y="90" width="70" height="130" fill="#0f6f61"/>
+            <rect x="210" y="115" width="70" height="105" fill="#b8572a"/>
+            <rect x="310" y="140" width="70" height="80" fill="#4a86b8"/>
+            <text x="120" y="235" font-size="12" fill="#334">North</text>
+            <text x="226" y="235" font-size="12" fill="#334">South</text>
+            <text x="330" y="235" font-size="12" fill="#334">East</text>
+            <text x="150" y="28" font-size="14" font-weight="700" fill="#233">Sales by Region</text>
+
+            <line x1="500" y1="220" x2="840" y2="220" stroke="#9fb2a7" stroke-width="2"/>
+            <line x1="500" y1="220" x2="500" y2="40" stroke="#9fb2a7" stroke-width="2"/>
+            <polyline points="560,145 680,95 800,75" fill="none" stroke="#0f6b2f" stroke-width="4"/>
+            <circle cx="560" cy="145" r="5" fill="#0f6b2f"/>
+            <circle cx="680" cy="95" r="5" fill="#0f6b2f"/>
+            <circle cx="800" cy="75" r="5" fill="#0f6b2f"/>
+            <text x="560" y="236" font-size="12" fill="#334">2026-01</text>
+            <text x="760" y="236" font-size="12" fill="#334">2026-02</text>
+            <text x="600" y="28" font-size="14" font-weight="700" fill="#233">Profit by Month</text>
+          </svg>
+          <div class="viz-caption">Preview of expected chart shapes: left is bar chart by region, right is line chart of monthly profit trend.</div>
+        </div>
+
+        <h3>Seaborn alternative (for interview bonus)</h3>
+        <pre><code>import seaborn as sns
+
+sns.barplot(data=df, x="region", y="sales", estimator=sum)
+plt.title("Seaborn: Total Sales by Region")
+plt.show()</code></pre>
+      </article>
+    </section>
+
+    <section class="grid" id="revision">
+      <article class="card">
+        <span class="chip">Final Checklist</span>
+        <h2>E) What to say in interview after practical demo</h2>
+        <ol>
+          <li>I validated data types and created reproducible transformations.</li>
+          <li>I computed KPI-level outputs before moving to charts.</li>
+          <li>I aligned each visualization to one business question.</li>
+          <li>I added interpretation, not only code and numbers.</li>
+        </ol>
+        <p><strong>One-line closing script:</strong> I can independently handle analysis from raw data ingestion to insights visualization with explainable and production-ready Python workflow.</p>
+      </article>
+    </section>
+  </main>
+</body>
+</html>
